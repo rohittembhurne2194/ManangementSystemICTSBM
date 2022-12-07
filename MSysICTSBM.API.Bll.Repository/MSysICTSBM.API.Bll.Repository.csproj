@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MSysICTSBM.API.Bll.ViewModels\MSysICTSBM.API.Bll.ViewModels.csproj" />
+    <ProjectReference Include="..\MSysICTSBM.Dal.DataContexts\MSysICTSBM.Dal.DataContexts.csproj" />
+  </ItemGroup>
+
+</Project>
