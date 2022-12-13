@@ -18,6 +18,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         }
 
         public virtual DbSet<EmployeeMaster> EmployeeMasters { get; set; }
+        public virtual DbSet<QrPrinted> QrPrinteds { get; set; }
+        public virtual DbSet<QrSent> QrSents { get; set; }
         public virtual DbSet<ULB_Detail> ULB_Details { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -54,6 +56,40 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
                 entity.Property(e => e.Username).HasMaxLength(200);
 
                 entity.Property(e => e.lastModifyDateEntry).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<QrPrinted>(entity =>
+            {
+                entity.HasKey(e => e.PrintId);
+
+                entity.ToTable("QrPrinted");
+
+                entity.Property(e => e.CreationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Note)
+                    .HasMaxLength(500)
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.PrintDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdationDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<QrSent>(entity =>
+            {
+                entity.HasKey(e => e.SentId);
+
+                entity.ToTable("QrSent");
+
+                entity.Property(e => e.CreationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Note)
+                    .HasMaxLength(500)
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.SentDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdationDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<ULB_Detail>(entity =>

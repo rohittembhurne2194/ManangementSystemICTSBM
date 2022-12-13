@@ -125,6 +125,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString(), ex);
+                user.status = "error";
+                user.message = "Something is wrong,Try Again.. ";
+                user.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
                 return user;
             }
 
@@ -228,6 +231,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
                 return result;
             }
 
@@ -313,6 +319,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
                 return result;
             }
 
@@ -339,7 +348,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserid = a.CreateUserid,
                         CreateDate = a.CreateDate,
                         UpdateUserid = a.UpdateUserid,
-                        UpdateDate = a.UpdateDate
+                        UpdateDate = a.UpdateDate,
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault()
 
                     }).ToListAsync();
                 }
@@ -349,11 +360,279 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             catch(Exception ex)
             {
                 _logger.LogError(ex.ToString(), ex);
+
                 return result;
 
             }
             
        }
+
+
+
+        public async Task<Result> SaveQrPrintAsync(QrPrintedVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var printObj = await dbMain.QrPrinteds.Where(a => a.PrintId == obj.PrintId).FirstOrDefaultAsync();
+
+                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.UserId))
+                    {
+                        if (printObj != null)
+                        {
+                            printObj.ULBId = obj.ULBId;
+                            printObj.HouseQty = obj.HouseQty;
+                            printObj.HouseGreen = obj.HouseGreen;
+                            printObj.HouseBlue = obj.HouseBlue;
+                            printObj.BannerAcrylic = obj.BannerAcrylic;
+                            printObj.DumpAcrylic = obj.DumpAcrylic;
+                            printObj.AbhiprayForm = obj.AbhiprayForm;
+                            printObj.DumpQty = obj.DumpQty;
+                            printObj.StreetQty = obj.StreetQty;
+                            printObj.LiquidQty = obj.LiquidQty;
+                            printObj.Note = obj.Note;
+                            printObj.UserId = obj.UserId;
+                            printObj.UpdationDate = DateTime.Now;
+                            printObj.UpdateUserId = obj.UserId;
+
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "QR Print Details Updated Successfully";
+                            result.messageMar = "QR प्रिंट तपशील यशस्वीरित्या बदलले";
+
+                        }
+                        else
+                        {
+                            var printObjData = new QrPrinted();
+                            printObjData.ULBId = obj.ULBId;
+                            printObjData.PrintDate = obj.PrintDate;
+                            printObjData.CreationDate = DateTime.Now;
+                            printObjData.HouseQty = obj.HouseQty;
+                            printObjData.HouseGreen = obj.HouseGreen;
+                            printObjData.HouseBlue = obj.HouseBlue;
+                            printObjData.BannerAcrylic = obj.BannerAcrylic;
+                            printObjData.DumpAcrylic = obj.DumpAcrylic;
+                            printObjData.AbhiprayForm = obj.AbhiprayForm;
+                            printObjData.DumpQty = obj.DumpQty;
+                            printObjData.StreetQty = obj.StreetQty;
+                            printObjData.LiquidQty = obj.LiquidQty;
+                            printObjData.Note = obj.Note;
+                            printObjData.UserId = obj.UserId;
+                            
+                            dbMain.QrPrinteds.Add(printObjData);
+
+
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "QR Print Details Added Successfully";
+                            result.messageMar = "QR प्रिंट तपशील यशस्वीरित्या समाविष्ट केले";
+
+                        }
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "User Name  not Exist";
+                        result.messageMar = "वापरकर्ता नाव अस्तित्वात नाही..";
+
+                    }
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
+
+
+
+        public async Task<List<QrPrintedVM>> GetQrPrintDetailsAsync()
+        {
+            List<QrPrintedVM> result = new List<QrPrintedVM>();
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.QrPrinteds.Select(a => new QrPrintedVM
+                    {
+                        PrintId = a.PrintId,
+                        ULBId = a.ULBId,
+                        PrintDate = a.PrintDate,
+                        CreationDate = a.CreationDate,
+                        HouseQty = a.HouseQty,
+                        HouseGreen = a.HouseGreen,
+                        HouseBlue = a.HouseBlue,
+                        DumpQty = a.DumpQty,
+                        StreetQty = a.StreetQty,
+                        LiquidQty = a.LiquidQty,
+                        Note = a.Note,
+                        UpdationDate = a.UpdationDate,
+                        UserId = a.UserId,
+                        DumpAcrylic = a.DumpAcrylic,
+                        AbhiprayForm = a.AbhiprayForm,
+                        BannerAcrylic = a.BannerAcrylic,
+                        UpdateUserId = a.UpdateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
+
+                    }).ToListAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
+
+
+        public async Task<Result> SaveQrSentAsync(QrSentVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var sentObj = await dbMain.QrSents.Where(a => a.SentId == obj.SentId).FirstOrDefaultAsync();
+
+                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.UserId))
+                    {
+                        if (sentObj != null)
+                        {
+                            sentObj.ULBId = obj.ULBId;
+                            sentObj.HouseQty = obj.HouseQty;
+                            sentObj.HouseGreen = obj.HouseGreen;
+                            sentObj.HouseBlue = obj.HouseBlue;
+                            sentObj.BannerAcrylic = obj.BannerAcrylic;
+                            sentObj.DumpAcrylic = obj.DumpAcrylic;
+                            sentObj.AbhiprayForm = obj.AbhiprayForm;
+                            sentObj.DumpQty = obj.DumpQty;
+                            sentObj.StreetQty = obj.StreetQty;
+                            sentObj.LiquidQty = obj.LiquidQty;
+                            sentObj.Note = obj.Note;
+                            sentObj.UserId = obj.UserId;
+                            sentObj.UpdationDate = DateTime.Now;
+                            sentObj.UpdateUserId = obj.UserId;
+
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "QR Sent Details Updated Successfully";
+                            result.messageMar = "QR सेंट तपशील यशस्वीरित्या बदलले";
+
+                        }
+                        else
+                        {
+                            var sentObjData = new QrSent();
+                            sentObjData.ULBId = obj.ULBId;
+                            sentObjData.SentDate = obj.SentDate;
+                            sentObjData.CreationDate = DateTime.Now;
+                            sentObjData.HouseQty = obj.HouseQty;
+                            sentObjData.HouseGreen = obj.HouseGreen;
+                            sentObjData.HouseBlue = obj.HouseBlue;
+                            sentObjData.BannerAcrylic = obj.BannerAcrylic;
+                            sentObjData.DumpAcrylic = obj.DumpAcrylic;
+                            sentObjData.AbhiprayForm = obj.AbhiprayForm;
+                            sentObjData.DumpQty = obj.DumpQty;
+                            sentObjData.StreetQty = obj.StreetQty;
+                            sentObjData.LiquidQty = obj.LiquidQty;
+                            sentObjData.Note = obj.Note;
+                            sentObjData.UserId = obj.UserId;
+
+                            dbMain.QrSents.Add(sentObjData);
+
+
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "QR Sent Details Added Successfully";
+                            result.messageMar = "QR सेंट तपशील यशस्वीरित्या समाविष्ट केले";
+
+                        }
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "User Name  not Exist";
+                        result.messageMar = "वापरकर्ता नाव अस्तित्वात नाही..";
+
+                    }
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
+
+
+        public async Task<List<QrSentVM>> GetQrSentDetailsAsync()
+        {
+            List<QrSentVM> result = new List<QrSentVM>();
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.QrSents.Select(a => new QrSentVM
+                    {
+                        SentId = a.SentId,
+                        ULBId = a.ULBId,
+                        SentDate = a.SentDate,
+                        CreationDate = a.CreationDate,
+                        HouseQty = a.HouseQty,
+                        HouseGreen = a.HouseGreen,
+                        HouseBlue = a.HouseBlue,
+                        DumpQty = a.DumpQty,
+                        StreetQty = a.StreetQty,
+                        LiquidQty = a.LiquidQty,
+                        Note = a.Note,
+                        UpdationDate = a.UpdationDate,
+                        UserId = a.UserId,
+                        DumpAcrylic = a.DumpAcrylic,
+                        AbhiprayForm = a.AbhiprayForm,
+                        BannerAcrylic = a.BannerAcrylic,
+                        UpdateUserId = a.UpdateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
+
+                    }).ToListAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
+
 
     }
 }

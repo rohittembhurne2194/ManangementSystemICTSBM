@@ -18,5 +18,8 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public DateTime? CreateDate { get; set; }
         public long? UpdateUserid { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public string CreateUserName { get; set; }
+
+        public string UpdateUserName { get; set; }
     }
 }
