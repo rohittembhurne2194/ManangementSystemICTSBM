@@ -10,8 +10,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
     {
         Task<SBUser> CheckUserLoginAsync(SBUser obj);
         Task<SBUser> CheckUserLoginForNormalAsync(SBUser obj);
-        Task<List<QrPrintedVM>> GetQrPrintDetailsAsync();
-        Task<List<QrSentVM>> GetQrSentDetailsAsync();
+        Task<List<QrPrintedVM>> GetAllQrPrintDetailsAsync();
+        Task<List<QrSentVM>> GetAllQrSentDetailsAsync();
+        Task<QrPrintedVM> GetQrPrintDetailsAsync(int Id);
+        Task<QrSentVM> GetQrSentDetailsAsync(int Id);
         Task<List<ULB_DetailVM>> GetULBDetailsAsync();
         Task<string> LoginAsync(int AppId);
         Task<Result> SaveQrPrintAsync(QrPrintedVM obj);

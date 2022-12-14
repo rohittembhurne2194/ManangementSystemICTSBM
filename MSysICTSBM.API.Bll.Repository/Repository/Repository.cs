@@ -458,7 +458,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
 
 
-        public async Task<List<QrPrintedVM>> GetQrPrintDetailsAsync()
+        public async Task<List<QrPrintedVM>> GetAllQrPrintDetailsAsync()
         {
             List<QrPrintedVM> result = new List<QrPrintedVM>();
             try
@@ -501,6 +501,48 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
+        public async Task<QrPrintedVM> GetQrPrintDetailsAsync(int Id)
+        {
+            QrPrintedVM result = new QrPrintedVM();
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.QrPrinteds.Where(a => a.PrintId == Id).Select(a => new QrPrintedVM
+                    {
+                        PrintId = a.PrintId,
+                        ULBId = a.ULBId,
+                        PrintDate = a.PrintDate,
+                        CreationDate = a.CreationDate,
+                        HouseQty = a.HouseQty,
+                        HouseGreen = a.HouseGreen,
+                        HouseBlue = a.HouseBlue,
+                        DumpQty = a.DumpQty,
+                        StreetQty = a.StreetQty,
+                        LiquidQty = a.LiquidQty,
+                        Note = a.Note,
+                        UpdationDate = a.UpdationDate,
+                        UserId = a.UserId,
+                        DumpAcrylic = a.DumpAcrylic,
+                        AbhiprayForm = a.AbhiprayForm,
+                        BannerAcrylic = a.BannerAcrylic,
+                        UpdateUserId = a.UpdateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
+
+                    }).FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
 
         public async Task<Result> SaveQrSentAsync(QrSentVM obj)
         {
@@ -590,7 +632,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
 
-        public async Task<List<QrSentVM>> GetQrSentDetailsAsync()
+        public async Task<List<QrSentVM>> GetAllQrSentDetailsAsync()
         {
             List<QrSentVM> result = new List<QrSentVM>();
             try
@@ -633,6 +675,48 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
+        public async Task<QrSentVM> GetQrSentDetailsAsync(int Id)
+        {
+            QrSentVM result = new QrSentVM();
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.QrSents.Where(a => a.SentId == Id).Select(a => new QrSentVM
+                    {
+                        SentId = a.SentId,
+                        ULBId = a.ULBId,
+                        SentDate = a.SentDate,
+                        CreationDate = a.CreationDate,
+                        HouseQty = a.HouseQty,
+                        HouseGreen = a.HouseGreen,
+                        HouseBlue = a.HouseBlue,
+                        DumpQty = a.DumpQty,
+                        StreetQty = a.StreetQty,
+                        LiquidQty = a.LiquidQty,
+                        Note = a.Note,
+                        UpdationDate = a.UpdationDate,
+                        UserId = a.UserId,
+                        DumpAcrylic = a.DumpAcrylic,
+                        AbhiprayForm = a.AbhiprayForm,
+                        BannerAcrylic = a.BannerAcrylic,
+                        UpdateUserId = a.UpdateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
+
+                    }).FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
 
     }
 }

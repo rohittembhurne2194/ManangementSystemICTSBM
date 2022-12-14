@@ -33,14 +33,20 @@ namespace MSysICTSBM.Controllers
         }
 
 
-        [HttpGet("Get/QrSent")]
-        public async Task<List<QrSentVM>> GetQrPrintDetails()
+        [HttpGet("GetAll/QrSent")]
+        public async Task<List<QrSentVM>> GetAllQrPrintDetails()
         {
             List<QrSentVM> objResult = new List<QrSentVM>();
-            objResult = await objRep.GetQrSentDetailsAsync();
+            objResult = await objRep.GetAllQrSentDetailsAsync();
             return objResult;
         }
-
+        [HttpGet("Get/QrSent")]
+        public async Task<QrSentVM> GetQrPrintDetails(int Id)
+        {
+            QrSentVM objResult = new QrSentVM();
+            objResult = await objRep.GetQrSentDetailsAsync(Id);
+            return objResult;
+        }
 
     }
 }
