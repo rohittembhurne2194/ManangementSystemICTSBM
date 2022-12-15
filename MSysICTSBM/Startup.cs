@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MSysICTSBM.API.Bll.Repository.Repository;
+using MSysICTSBM.Dal.DataContexts.Models.DB;
 using MSysICTSBM.Dal.DataContexts.Models.DB.MainModels;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,7 @@ namespace MSysICTSBM
                     providerOptions => { providerOptions.EnableRetryOnFailure(20); });
 
             }, ServiceLifetime.Transient);
+            services.AddDbContext<MSysMainDb>(ServiceLifetime.Transient);
             services.AddControllers().AddJsonOptions(options =>
                 options.JsonSerializerOptions.PropertyNamingPolicy = null);
             services.AddTransient<IRepository, Repository>();

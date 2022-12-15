@@ -33,11 +33,27 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
-        [HttpGet("Get/ULBDetails")]
-        public async Task<List<ULB_DetailVM>> GetULBDetails()
+        [HttpGet("GetAll/ULBDetails")]
+        public async Task<List<ULB_DetailVM>> GetAllULBDetails()
         {
             List<ULB_DetailVM> objResult = new List<ULB_DetailVM>();
-            objResult = await objRep.GetULBDetailsAsync();
+            objResult = await objRep.GetAllULBDetailsAsync();
+            return objResult;
+        }
+
+        [HttpGet("Get/ULBDetails")]
+        public async Task<ULB_DetailVM> GetULBDetails(int Id)
+        {
+            ULB_DetailVM objResult = new ULB_DetailVM();
+            objResult = await objRep.GetULBDetailsAsync(Id);
+            return objResult;
+        }
+
+        [HttpGet("GetActive/ULBDetails")]
+        public async Task<List<ActiveULBVM>> GetActiveULBDetails()
+        {
+            List<ActiveULBVM> objResult = new List<ActiveULBVM>();
+            objResult = await objRep.GetActiveULBDetailsAsync();
             return objResult;
         }
     }

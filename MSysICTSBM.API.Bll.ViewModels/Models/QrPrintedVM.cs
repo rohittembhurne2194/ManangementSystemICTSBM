@@ -25,5 +25,6 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public int? UpdateUserId { get; set; }
         public string CreateUserName { get; set; }
         public string UpdateUserName { get; set; }
+        //public bool? IsOldULB { get; set; }
     }
 }

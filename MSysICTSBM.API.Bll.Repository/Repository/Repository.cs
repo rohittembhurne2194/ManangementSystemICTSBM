@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MSysICTSBM.API.Bll.ViewModels.Models;
+using MSysICTSBM.Dal.DataContexts.Models.DB;
 using MSysICTSBM.Dal.DataContexts.Models.DB.MainModels;
+using MSysICTSBM.Dal.DataContexts.Models.DB.MainSPModels;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,8 +21,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<Repository> _logger;
-        private readonly MSysMainEntities dbMain;
-        public Repository(IConfiguration configuration, ILogger<Repository> logger, MSysMainEntities dbMain)
+        private readonly MSysMainDb dbMain;
+        public Repository(IConfiguration configuration, ILogger<Repository> logger, MSysMainDb dbMain)
         {
             this.dbMain = dbMain;
             _configuration = configuration;
@@ -208,6 +211,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             ulbObjData.IsActive = obj.IsActive;
                             ulbObjData.CreateUserid = obj.CreateUserid;
                             ulbObjData.CreateDate = DateTime.Now;
+                            ulbObjData.UpdateDate = DateTime.Now;
+
                             dbMain.ULB_Details.Add(ulbObjData);
                             await dbMain.SaveChangesAsync();
 
@@ -328,7 +333,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-        public async Task<List<ULB_DetailVM>> GetULBDetailsAsync()
+        public async Task<List<ULB_DetailVM>> GetAllULBDetailsAsync()
         {
             List<ULB_DetailVM> result = new List<ULB_DetailVM>();
             try
@@ -354,7 +359,15 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                     }).ToListAsync();
                 }
+                if (result != null && result.Count > 0)
+                {
+                    foreach (var item in result)
+                    {
+                        item.IsOldULB = IsOldUlb(item.CreateDate);
+                    }
 
+                }
+               
                 return result;
             }
             catch(Exception ex)
@@ -367,6 +380,42 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             
        }
 
+        public async Task<ULB_DetailVM> GetULBDetailsAsync(int Id)
+        {
+            ULB_DetailVM result = new ULB_DetailVM();
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.ULB_Details.Where(a => a.Id == Id).Select(a => new ULB_DetailVM
+                    {
+                        Id = a.Id,
+                        AppID = a.AppID,
+                        AppName = a.AppName,
+                        House_property = a.House_property,
+                        Dump_property = a.Dump_property,
+                        Liquid_property = a.Liquid_property,
+                        Street_property = a.Street_property,
+                        IsActive = a.IsActive,
+                        CreateUserid = a.CreateUserid,
+                        CreateDate = a.CreateDate,
+                        UpdateUserid = a.UpdateUserid,
+                        UpdateDate = a.UpdateDate,
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault()
+                    }).FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
 
 
         public async Task<Result> SaveQrPrintAsync(QrPrintedVM obj)
@@ -410,6 +459,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             printObjData.ULBId = obj.ULBId;
                             printObjData.PrintDate = obj.PrintDate;
                             printObjData.CreationDate = DateTime.Now;
+                            printObjData.UpdationDate = DateTime.Now;
                             printObjData.HouseQty = obj.HouseQty;
                             printObjData.HouseGreen = obj.HouseGreen;
                             printObjData.HouseBlue = obj.HouseBlue;
@@ -489,7 +539,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                     }).ToListAsync();
                 }
-
+                
                 return result;
             }
             catch (Exception ex)
@@ -500,7 +550,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             }
 
         }
-
+        public bool IsOldUlb(DateTime? ulbDate)
+        {
+            DateTime dtToday = DateTime.Now;
+            DateTime dt = ulbDate ?? DateTime.Now;
+            
+            var diffOfDate = (dtToday - dt).TotalDays;
+            return diffOfDate > 15;
+        }
         public async Task<QrPrintedVM> GetQrPrintDetailsAsync(int Id)
         {
             QrPrintedVM result = new QrPrintedVM();
@@ -531,7 +588,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
                     }).FirstOrDefaultAsync();
+
                 }
+
 
                 return result;
             }
@@ -585,6 +644,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             sentObjData.ULBId = obj.ULBId;
                             sentObjData.SentDate = obj.SentDate;
                             sentObjData.CreationDate = DateTime.Now;
+                            sentObjData.UpdationDate = DateTime.Now;
                             sentObjData.HouseQty = obj.HouseQty;
                             sentObjData.HouseGreen = obj.HouseGreen;
                             sentObjData.HouseBlue = obj.HouseBlue;
@@ -715,6 +775,50 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 return result;
 
             }
+
+        }
+
+        public async Task<List<ActiveULBVM>> GetActiveULBDetailsAsync()
+        {
+            List<ActiveULBVM> result = new List<ActiveULBVM>();
+
+
+            try
+            {
+                using (dbMain)
+                {
+                    List<SqlParameter> parms = new List<SqlParameter>
+                                                {
+                                                    // Create parameter(s)    
+                                                    new SqlParameter { ParameterName = "@dateDiff", Value = 1 }
+                                                };
+                    var data = await dbMain.sp_Get_ActiveULB_results.FromSqlRaw<sp_Get_ActiveULB_result>("EXEC sp_Get_ActiveULB @dateDiff", parms.ToArray()).ToListAsync();
+
+                    if (data != null && data.Count > 0)
+                    {
+                        result = data.Select(a => new ActiveULBVM
+                        {
+                            Id = a.Id,
+                            AppName = a.AppName,
+                            LastUpdateDate = a.LastUpdateDate,
+                            ULBId = a.ULBId,
+                            dtDiff = a.dtDiff
+
+                        }).ToList();
+
+                    }
+                    
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
 
         }
 
