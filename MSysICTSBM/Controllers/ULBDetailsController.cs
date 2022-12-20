@@ -37,19 +37,22 @@ namespace MSysICTSBM.Controllers
 
         [HttpGet("GetAll/ULBDetails")]
         public async Task<List<ULB_DetailVM>> GetAllULBDetails()
+        //public async Task<List<ULB_DetailVM>> GetAllULBDetails([FromHeader] int userId)
         {
-            List<Claim> lstClaims = HttpContext.User.Claims.ToList();
+            //List<Claim> lstClaims = HttpContext.User.Claims.ToList();
+            int userId = Convert.ToInt32(HttpContext.User.Claims.ToList().First(claim => claim.Type == "UserId").Value);
             List<ULB_DetailVM> objResult = new List<ULB_DetailVM>();
-            objResult = await objRep.GetAllULBDetailsAsync();
+            objResult = await objRep.GetAllULBDetailsAsync(userId);
             return objResult;
         }
 
         [HttpGet("Get/ULBDetails")]
-        public async Task<ULB_DetailVM> GetULBDetails(int Id)
+        public async Task<ActionResult<ULB_DetailVM>> GetULBDetails(int Id)
         {
             ULB_DetailVM objResult = new ULB_DetailVM();
             objResult = await objRep.GetULBDetailsAsync(Id);
-            return objResult;
+            return Ok(objResult);
+
         }
 
         [HttpGet("GetActive/ULBDetails")]
@@ -57,6 +60,14 @@ namespace MSysICTSBM.Controllers
         {
             List<ActiveULBVM> objResult = new List<ActiveULBVM>();
             objResult = await objRep.GetActiveULBDetailsAsync();
+            return objResult;
+        }
+
+        [HttpGet("Get/ULBStatus")]
+        public async Task<List<ULBStatusVM>> GetULBStatus(int ulbId)
+        {
+            List<ULBStatusVM> objResult = new List<ULBStatusVM>();
+            objResult = await objRep.GetULBStatusAsync(ulbId);
             return objResult;
         }
     }

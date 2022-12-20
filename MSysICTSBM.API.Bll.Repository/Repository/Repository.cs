@@ -91,7 +91,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var userobj = await dbMain.EmployeeMasters.Where(a => a.Username == obj.userLoginId && a.Password == obj.userPassword && a.Type == obj.EmpType && a.IsActive == true).FirstOrDefaultAsync();
+                    var userobj = await dbMain.EmployeeMasters.Where(a => a.Username == obj.userLoginId && a.Password == obj.userPassword && a.IsActive == true).FirstOrDefaultAsync();
 
                     if (userobj == null)
                     {
@@ -120,7 +120,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         user.status = "success"; 
                         user.message = "Login Successfully"; 
                         user.messageMar = "लॉगिन यशस्वी";
-                        user.token = await LoginAsync(obj.userLoginId,obj.EmpType);
+                        user.token = await LoginAsync(userobj.Username, userobj.Type, userobj.Id);
 
                     }
                 }
@@ -137,7 +137,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             return user;
         }
 
-        public async Task<string> LoginAsync(string userName, string EmpType)
+        public async Task<string> LoginAsync(string userName, string EmpType, int UserId)
         {
             try
             {
@@ -150,6 +150,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         new Claim(ClaimTypes.Name,userName),
                          new Claim("EmpType",EmpType),
+                         new Claim("UserId",UserId.ToString()),
                         new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     };
                     var authSigninkey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:Secret"]));
@@ -333,31 +334,66 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-        public async Task<List<ULB_DetailVM>> GetAllULBDetailsAsync()
+        public async Task<List<ULB_DetailVM>> GetAllULBDetailsAsync(int userId)
         {
             List<ULB_DetailVM> result = new List<ULB_DetailVM>();
             try
             {
                 using (dbMain)
                 {
-                    result = await dbMain.ULB_Details.Select(a => new ULB_DetailVM
+                    var userobj = await dbMain.EmployeeMasters.Where(a => a.Id == userId && a.IsActive == true).FirstOrDefaultAsync();
+                    if (userobj != null)
                     {
-                        Id = a.Id,
-                        AppID = a.AppID,
-                        AppName = a.AppName,
-                        House_property = a.House_property,
-                        Dump_property = a.Dump_property,
-                        Liquid_property = a.Liquid_property,
-                        Street_property = a.Street_property,
-                        IsActive = a.IsActive,
-                        CreateUserid = a.CreateUserid,
-                        CreateDate = a.CreateDate,
-                        UpdateUserid = a.UpdateUserid,
-                        UpdateDate = a.UpdateDate,
-                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
-                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault()
+                        if (userobj.Type != null && (userobj.Type.ToUpper() == "S" || userobj.Type.ToUpper() == "A"))
+                        {
+                            if (userobj.IsActiveULB != null)
+                            {
+                                string[] arrAppId = userobj.IsActiveULB.Split(',');
+                                result = await dbMain.ULB_Details.Where(a => arrAppId.Contains(a.Id.ToString())).Select(a => new ULB_DetailVM
+                                {
+                                    Id = a.Id,
+                                    AppID = a.AppID,
+                                    AppName = a.AppName,
+                                    House_property = a.House_property,
+                                    Dump_property = a.Dump_property,
+                                    Liquid_property = a.Liquid_property,
+                                    Street_property = a.Street_property,
+                                    IsActive = a.IsActive,
+                                    CreateUserid = a.CreateUserid,
+                                    CreateDate = a.CreateDate,
+                                    UpdateUserid = a.UpdateUserid,
+                                    UpdateDate = a.UpdateDate,
+                                    CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
+                                    UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault()
 
-                    }).ToListAsync();
+                                }).ToListAsync();
+                            }
+                            
+                            
+                        }
+                        else if (userobj.Type != null && userobj.Type.ToUpper() == "SA")
+                        {
+                            result = await dbMain.ULB_Details.Select(a => new ULB_DetailVM
+                            {
+                                Id = a.Id,
+                                AppID = a.AppID,
+                                AppName = a.AppName,
+                                House_property = a.House_property,
+                                Dump_property = a.Dump_property,
+                                Liquid_property = a.Liquid_property,
+                                Street_property = a.Street_property,
+                                IsActive = a.IsActive,
+                                CreateUserid = a.CreateUserid,
+                                CreateDate = a.CreateDate,
+                                UpdateUserid = a.UpdateUserid,
+                                UpdateDate = a.UpdateDate,
+                                CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
+                                UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault()
+
+                            }).ToListAsync();
+                        }
+                    }
+                    
                 }
                 if (result != null && result.Count > 0)
                 {
@@ -790,7 +826,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     List<SqlParameter> parms = new List<SqlParameter>
                                                 {
                                                     // Create parameter(s)    
-                                                    new SqlParameter { ParameterName = "@dateDiff", Value = 1 }
+                                                    new SqlParameter { ParameterName = "@dateDiff", Value = 15 }
                                                 };
                     var data = await dbMain.sp_Get_ActiveULB_results.FromSqlRaw<sp_Get_ActiveULB_result>("EXEC sp_Get_ActiveULB @dateDiff", parms.ToArray()).ToListAsync();
 
@@ -808,6 +844,50 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                     }
                     
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+
+        }
+
+
+
+        public async Task<List<ULBStatusVM>> GetULBStatusAsync(int ulbId)
+        {
+            List<ULBStatusVM> result = new List<ULBStatusVM>();
+
+
+            try
+            {
+                using (dbMain)
+                {
+                    List<SqlParameter> parms = new List<SqlParameter>
+                                                {
+                                                    // Create parameter(s)    
+                                                    new SqlParameter { ParameterName = "@ulbId", Value = ulbId }
+                                                };
+                    var data = await dbMain.sp_getULB_statusById_Results.FromSqlRaw<sp_getULB_statusById_Result>("EXEC sp_getULB_statusById @ulbId", parms.ToArray()).ToListAsync();
+
+                    if (data != null && data.Count > 0)
+                    {
+                        result = data.Select(a => new ULBStatusVM
+                        {
+                            formType = a.formType,
+                            sent = a.sent,
+                            prin = a.prin
+
+                        }).ToList();
+
+                    }
+
                 }
 
                 return result;
