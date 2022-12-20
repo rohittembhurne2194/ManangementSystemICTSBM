@@ -7,6 +7,7 @@ using MSysICTSBM.API.Bll.ViewModels.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MSysICTSBM.Controllers
@@ -28,6 +29,7 @@ namespace MSysICTSBM.Controllers
         [HttpPost("Save/ULBDetails")]
         public async Task<Result> SaveULBDetails([FromBody] ULB_DetailVM obj)
         {
+            
             Result objResult = new Result();
             objResult = await objRep.SaveULBDetailsAsync(obj);
             return objResult;
@@ -36,6 +38,7 @@ namespace MSysICTSBM.Controllers
         [HttpGet("GetAll/ULBDetails")]
         public async Task<List<ULB_DetailVM>> GetAllULBDetails()
         {
+            List<Claim> lstClaims = HttpContext.User.Claims.ToList();
             List<ULB_DetailVM> objResult = new List<ULB_DetailVM>();
             objResult = await objRep.GetAllULBDetailsAsync();
             return objResult;
