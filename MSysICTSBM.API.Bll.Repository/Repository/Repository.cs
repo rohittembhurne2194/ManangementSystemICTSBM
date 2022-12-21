@@ -935,7 +935,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         StreetQty = a.StreetQty ?? 0
 
                     }).ToListAsync();
-
+                    result.QrCode.isPrinted = result.QrCode.Printed != null && result.QrCode.Printed.Count > 0 ? true : false;
                     result.QrCode.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 && a.HouseGreen > 0 && a.DumpQty > 0 && a.StreetQty > 0)).Select(a => new QrSentVM
                     {
                         HouseQty = a.HouseQty ?? 0,
@@ -945,6 +945,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         StreetQty = a.StreetQty ?? 0
 
                     }).ToListAsync();
+                    result.QrCode.isSent = result.QrCode.Sent != null && result.QrCode.Sent.Count > 0 ? true : false;
+
                     result.QrCode.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 && a.HouseGreen > 0 && a.DumpQty > 0 && a.StreetQty > 0)).Select(a => new QrReceiveVM
                     {
                         HouseQty = a.HouseQty ?? 0,
@@ -953,6 +955,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         DumpQty = a.DumpQty ?? 0,
                         StreetQty = a.StreetQty ?? 0
                     }).ToListAsync();
+                    result.QrCode.isReceived = result.QrCode.Received != null && result.QrCode.Received.Count > 0 ? true : false;
 
 
                     result.Banners.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrPrintedVM
@@ -960,50 +963,59 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         BannerAcrylic = a.BannerAcrylic ?? 0,
                         DumpAcrylic = a.DumpAcrylic ?? 0
                     }).ToListAsync();
+                    result.Banners.isPrinted = result.Banners.Printed != null && result.Banners.Printed.Count > 0 ? true : false;
 
                     result.Banners.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrSentVM
                     {
                         BannerAcrylic = a.BannerAcrylic ?? 0,
                         DumpAcrylic = a.DumpAcrylic ?? 0
                     }).ToListAsync();
+                    result.Banners.isSent = result.Banners.Sent != null && result.Banners.Sent.Count > 0 ? true : false;
 
                     result.Banners.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrReceiveVM
                     {
                         BannerAcrylic = a.BannerAcrylic ?? 0,
                         DumpAcrylic = a.DumpAcrylic ?? 0
                     }).ToListAsync();
+                    result.Banners.isReceived = result.Banners.Received != null && result.Banners.Received.Count > 0 ? true : false;
 
 
                     result.Abhipray.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrPrintedVM
                     {
                         AbhiprayForm = a.AbhiprayForm ?? 0
                     }).ToListAsync();
+                    result.Abhipray.isPrinted = result.Abhipray.Printed != null && result.Abhipray.Printed.Count > 0 ? true : false;
 
                     result.Abhipray.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrSentVM
                     {
                         AbhiprayForm = a.AbhiprayForm ?? 0
                     }).ToListAsync();
+                    result.Abhipray.isSent = result.Abhipray.Sent != null && result.Abhipray.Sent.Count > 0 ? true : false;
 
                     result.Abhipray.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrReceiveVM
                     {
                         AbhiprayForm = a.AbhiprayForm ?? 0
                     }).ToListAsync();
+                    result.Abhipray.isReceived = result.Abhipray.Received != null && result.Abhipray.Received.Count > 0 ? true : false;
 
 
                     result.Disclaimer.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrPrintedVM
                     {
                         DisclaimerForm = a.DisclaimerForm ?? 0
                     }).ToListAsync();
-
+                    result.Disclaimer.isPrinted = result.Disclaimer.Printed != null && result.Disclaimer.Printed.Count > 0 ? true : false;
+                   
                     result.Disclaimer.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrSentVM
                     {
                         DisclaimerForm = a.DisclaimerForm ?? 0
                     }).ToListAsync();
+                    result.Disclaimer.isSent = result.Disclaimer.Sent != null && result.Disclaimer.Sent.Count > 0 ? true : false;
 
                     result.Disclaimer.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrReceiveVM
                     {
                         DisclaimerForm = a.DisclaimerForm ?? 0
                     }).ToListAsync();
+                    result.Disclaimer.isReceived = result.Disclaimer.Received != null && result.Disclaimer.Received.Count > 0 ? true : false;
 
 
                     result.EntryBook.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrPrintedVM
@@ -1011,18 +1023,23 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         DataEntryBook = a.DataEntryBook ?? 0
 
                     }).ToListAsync();
-
+                    result.EntryBook.isPrinted = result.EntryBook.Printed != null && result.EntryBook.Printed.Count > 0 ? true : false;
+                    
                     result.EntryBook.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrSentVM
                     {
                         DataEntryBook = a.DataEntryBook ?? 0
 
                     }).ToListAsync();
+                    result.EntryBook.isSent = result.EntryBook.Sent != null && result.EntryBook.Sent.Count > 0 ? true : false;
+
 
                     result.EntryBook.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrReceiveVM
                     {
                         DataEntryBook = a.DataEntryBook ?? 0
 
                     }).ToListAsync();
+                    result.EntryBook.isReceived = result.EntryBook.Received != null && result.EntryBook.Received.Count > 0 ? true : false;
+
                 }
 
                 return result;
