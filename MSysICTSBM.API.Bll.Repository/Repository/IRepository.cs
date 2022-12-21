@@ -15,12 +15,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         Task<List<QrSentVM>> GetAllQrSentDetailsAsync();
         Task<QrPrintedVM> GetQrPrintDetailsAsync(int Id);
         Task<QrSentVM> GetQrSentDetailsAsync(int Id);
-        Task<List<ULB_DetailVM>> GetAllULBDetailsAsync();
+        Task<List<ULB_DetailVM>> GetAllULBDetailsAsync(int userId);
         Task<string> LoginAsync(int AppId);
         Task<Result> SaveQrPrintAsync(QrPrintedVM obj);
         Task<Result> SaveQrSentAsync(QrSentVM obj);
         Task<Result> SaveULBDetailsAsync(ULB_DetailVM obj);
         Task<Result> SaveUserAsync(EmployeeMasterVM obj);
         Task<ULB_DetailVM> GetULBDetailsAsync(int Id);
+        Task<List<ULBStatusVM>> GetULBStatusAsync(int ulbId);
     }
 }
