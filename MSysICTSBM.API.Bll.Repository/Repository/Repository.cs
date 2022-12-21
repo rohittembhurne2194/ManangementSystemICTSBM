@@ -109,13 +109,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     else
                     {
 
-                        user.type = userobj.Type;
+                        user.type ="";
                         user.typeId = 0;
                         user.userId = userobj.Id;
                         user.userLoginId = userobj.Username;
                         user.userPassword = "";
                         user.imiNo = "";
-                        user.EmpType = obj.EmpType;
+                        user.EmpType = userobj.Type;
                         
                         user.status = "success"; 
                         user.message = "Login Successfully"; 
