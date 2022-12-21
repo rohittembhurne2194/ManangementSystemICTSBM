@@ -9,5 +9,6 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainSPModels
         public string formType { get; set; }
         public Nullable<bool> sent { get; set; }
         public Nullable<bool> prin { get; set; }
+        public Nullable<bool> receive { get; set; }
     }
 }

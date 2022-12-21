@@ -20,6 +20,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public int? BannerAcrylic { get; set; }
         public int? DumpAcrylic { get; set; }
         public int? AbhiprayForm { get; set; }
+        public int? DisclaimerForm { get; set; }
+        public int? DataEntryBook { get; set; }
         public string Note { get; set; }
         public DateTime? UpdationDate { get; set; }
         public int? UserId { get; set; }

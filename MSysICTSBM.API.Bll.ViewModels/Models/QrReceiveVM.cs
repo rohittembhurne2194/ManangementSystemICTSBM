@@ -4,11 +4,11 @@ using System.Text;
 
 namespace MSysICTSBM.API.Bll.ViewModels.Models
 {
-    public class QrSentVM
+    public class QrReceiveVM
     {
-        public int SentId { get; set; }
+        public int ReceiveId { get; set; }
         public int? ULBId { get; set; }
-        public DateTime? SentDate { get; set; }
+        public DateTime? ReceiveDate { get; set; }
         public DateTime? CreationDate { get; set; }
         public int? HouseQty { get; set; }
         public int? HouseGreen { get; set; }

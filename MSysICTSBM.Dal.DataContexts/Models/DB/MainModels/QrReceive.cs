@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace MSysICTSBM.API.Bll.ViewModels.Models
+#nullable disable
+
+namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
 {
-    public class QrSentVM
+    public partial class QrReceive
     {
-        public int SentId { get; set; }
+        public int ReceiveId { get; set; }
         public int? ULBId { get; set; }
-        public DateTime? SentDate { get; set; }
+        public DateTime? ReceiveDate { get; set; }
         public DateTime? CreationDate { get; set; }
         public int? HouseQty { get; set; }
         public int? HouseGreen { get; set; }
@@ -25,7 +26,5 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public DateTime? UpdationDate { get; set; }
         public int? UserId { get; set; }
         public int? UpdateUserId { get; set; }
-        public string CreateUserName { get; set; }
-        public string UpdateUserName { get; set; }
     }
 }

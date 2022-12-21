@@ -23,5 +23,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         Task<Result> SaveUserAsync(EmployeeMasterVM obj);
         Task<ULB_DetailVM> GetULBDetailsAsync(int Id);
         Task<List<ULBStatusVM>> GetULBStatusAsync(int ulbId);
+        Task<Result> SaveQrReceiveAsync(QrReceiveVM obj);
+        Task<List<QrReceiveVM>> GetAllQrReceiveDetailsAsync();
+        Task<QrReceiveVM> GetQrReceiveDetailsAsync(int Id);
     }
 }

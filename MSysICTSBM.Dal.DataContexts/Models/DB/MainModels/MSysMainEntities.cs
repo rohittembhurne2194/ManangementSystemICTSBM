@@ -19,6 +19,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
 
         public virtual DbSet<EmployeeMaster> EmployeeMasters { get; set; }
         public virtual DbSet<QrPrinted> QrPrinteds { get; set; }
+        public virtual DbSet<QrReceive> QrReceives { get; set; }
         public virtual DbSet<QrSent> QrSents { get; set; }
         public virtual DbSet<ULB_Detail> ULB_Details { get; set; }
 
@@ -71,6 +72,23 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
                     .IsFixedLength(true);
 
                 entity.Property(e => e.PrintDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdationDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<QrReceive>(entity =>
+            {
+                entity.HasKey(e => e.ReceiveId);
+
+                entity.ToTable("QrReceive");
+
+                entity.Property(e => e.CreationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Note)
+                    .HasMaxLength(500)
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.ReceiveDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UpdationDate).HasColumnType("datetime");
             });

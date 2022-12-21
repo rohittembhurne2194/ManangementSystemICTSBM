@@ -9,5 +9,7 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public string formType { get; set; }
         public Nullable<bool> sent { get; set; }
         public Nullable<bool> prin { get; set; }
+        public Nullable<bool> receive { get; set; }
+
     }
 }

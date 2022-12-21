@@ -474,6 +474,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             printObj.BannerAcrylic = obj.BannerAcrylic;
                             printObj.DumpAcrylic = obj.DumpAcrylic;
                             printObj.AbhiprayForm = obj.AbhiprayForm;
+                            printObj.DisclaimerForm = obj.DisclaimerForm;
+                            printObj.DataEntryBook = obj.DataEntryBook;
                             printObj.DumpQty = obj.DumpQty;
                             printObj.StreetQty = obj.StreetQty;
                             printObj.LiquidQty = obj.LiquidQty;
@@ -502,6 +504,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             printObjData.BannerAcrylic = obj.BannerAcrylic;
                             printObjData.DumpAcrylic = obj.DumpAcrylic;
                             printObjData.AbhiprayForm = obj.AbhiprayForm;
+                            printObjData.DisclaimerForm = obj.DisclaimerForm;
+                            printObjData.DataEntryBook = obj.DataEntryBook;
                             printObjData.DumpQty = obj.DumpQty;
                             printObjData.StreetQty = obj.StreetQty;
                             printObjData.LiquidQty = obj.LiquidQty;
@@ -569,6 +573,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         DumpAcrylic = a.DumpAcrylic,
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
+                        DisclaimerForm = a.DisclaimerForm,
+                        DataEntryBook = a.DataEntryBook,
                         UpdateUserId = a.UpdateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
@@ -620,6 +626,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         UpdateUserId = a.UpdateUserId,
+                        DisclaimerForm = a.DisclaimerForm,
+                        DataEntryBook = a.DataEntryBook,
                         CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
@@ -666,7 +674,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             sentObj.UserId = obj.UserId;
                             sentObj.UpdationDate = DateTime.Now;
                             sentObj.UpdateUserId = obj.UserId;
-
+                            sentObj.DisclaimerForm = obj.DisclaimerForm;
+                            sentObj.DataEntryBook = obj.DataEntryBook;
                             await dbMain.SaveChangesAsync();
 
                             result.status = "success";
@@ -692,6 +701,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             sentObjData.LiquidQty = obj.LiquidQty;
                             sentObjData.Note = obj.Note;
                             sentObjData.UserId = obj.UserId;
+                            sentObjData.DisclaimerForm = obj.DisclaimerForm;
+                            sentObjData.DataEntryBook = obj.DataEntryBook;
 
                             dbMain.QrSents.Add(sentObjData);
 
@@ -754,6 +765,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         UpdateUserId = a.UpdateUserId,
+                        DisclaimerForm = a.DisclaimerForm,
+                        DataEntryBook = a.DataEntryBook,
                         CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
@@ -797,6 +810,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         UpdateUserId = a.UpdateUserId,
+                        DisclaimerForm = a.DisclaimerForm,
+                        DataEntryBook = a.DataEntryBook,
                         CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
@@ -882,8 +897,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             formType = a.formType,
                             sent = a.sent,
-                            prin = a.prin
-
+                            prin = a.prin,
+                            receive = a.receive
+                            
                         }).ToList();
 
                     }
@@ -901,6 +917,190 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
 
         }
+
+        public async Task<Result> SaveQrReceiveAsync(QrReceiveVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var receiveObj = await dbMain.QrReceives.Where(a => a.ReceiveId == obj.ReceiveId).FirstOrDefaultAsync();
+
+                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.UserId))
+                    {
+                        if (receiveObj != null)
+                        {
+                            receiveObj.ULBId = obj.ULBId;
+                            receiveObj.HouseQty = obj.HouseQty;
+                            receiveObj.HouseGreen = obj.HouseGreen;
+                            receiveObj.HouseBlue = obj.HouseBlue;
+                            receiveObj.BannerAcrylic = obj.BannerAcrylic;
+                            receiveObj.DumpAcrylic = obj.DumpAcrylic;
+                            receiveObj.AbhiprayForm = obj.AbhiprayForm;
+                            receiveObj.DumpQty = obj.DumpQty;
+                            receiveObj.StreetQty = obj.StreetQty;
+                            receiveObj.LiquidQty = obj.LiquidQty;
+                            receiveObj.Note = obj.Note;
+                            receiveObj.UserId = obj.UserId;
+                            receiveObj.UpdationDate = DateTime.Now;
+                            receiveObj.UpdateUserId = obj.UserId;
+                            receiveObj.DisclaimerForm = obj.DisclaimerForm;
+                            receiveObj.DataEntryBook = obj.DataEntryBook;
+
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "QR Receive Details Updated Successfully";
+                            result.messageMar = "QR प्राप्त तपशील यशस्वीरित्या अद्यतनित केले";
+
+                        }
+                        else
+                        {
+                            var receiveObjData = new QrReceive();
+                            receiveObjData.ULBId = obj.ULBId;
+                            receiveObjData.ReceiveDate = obj.ReceiveDate;
+                            receiveObjData.CreationDate = DateTime.Now;
+                            receiveObjData.UpdationDate = DateTime.Now;
+                            receiveObjData.HouseQty = obj.HouseQty;
+                            receiveObjData.HouseGreen = obj.HouseGreen;
+                            receiveObjData.HouseBlue = obj.HouseBlue;
+                            receiveObjData.BannerAcrylic = obj.BannerAcrylic;
+                            receiveObjData.DumpAcrylic = obj.DumpAcrylic;
+                            receiveObjData.AbhiprayForm = obj.AbhiprayForm;
+                            receiveObjData.DumpQty = obj.DumpQty;
+                            receiveObjData.StreetQty = obj.StreetQty;
+                            receiveObjData.LiquidQty = obj.LiquidQty;
+                            receiveObjData.Note = obj.Note;
+                            receiveObjData.UserId = obj.UserId;
+                            receiveObjData.DisclaimerForm = obj.DisclaimerForm;
+                            receiveObjData.DataEntryBook = obj.DataEntryBook;
+                            dbMain.QrReceives.Add(receiveObjData);
+
+
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "QR Receive Details Added Successfully";
+                            result.messageMar = "QR प्राप्त तपशील यशस्वीरित्या जोडले";
+
+                        }
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "User Name  not Exist";
+                        result.messageMar = "वापरकर्ता नाव अस्तित्वात नाही..";
+
+                    }
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
+
+        public async Task<List<QrReceiveVM>> GetAllQrReceiveDetailsAsync()
+        {
+            List<QrReceiveVM> result = new List<QrReceiveVM>();
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.QrReceives.Select(a => new QrReceiveVM
+                    {
+                        ReceiveId = a.ReceiveId,
+                        ULBId = a.ULBId,
+                        ReceiveDate = a.ReceiveDate,
+                        CreationDate = a.CreationDate,
+                        HouseQty = a.HouseQty,
+                        HouseGreen = a.HouseGreen,
+                        HouseBlue = a.HouseBlue,
+                        DumpQty = a.DumpQty,
+                        StreetQty = a.StreetQty,
+                        LiquidQty = a.LiquidQty,
+                        Note = a.Note,
+                        UpdationDate = a.UpdationDate,
+                        UserId = a.UserId,
+                        DumpAcrylic = a.DumpAcrylic,
+                        AbhiprayForm = a.AbhiprayForm,
+                        BannerAcrylic = a.BannerAcrylic,
+                        UpdateUserId = a.UpdateUserId,
+                        DisclaimerForm = a.DisclaimerForm,
+                        DataEntryBook = a.DataEntryBook,
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
+
+                    }).ToListAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
+
+        public async Task<QrReceiveVM> GetQrReceiveDetailsAsync(int Id)
+        {
+            QrReceiveVM result = new QrReceiveVM();
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.QrReceives.Where(a => a.ReceiveId == Id).Select(a => new QrReceiveVM
+                    {
+                        ReceiveId = a.ReceiveId,
+                        ULBId = a.ULBId,
+                        ReceiveDate = a.ReceiveDate,
+                        CreationDate = a.CreationDate,
+                        HouseQty = a.HouseQty,
+                        HouseGreen = a.HouseGreen,
+                        HouseBlue = a.HouseBlue,
+                        DumpQty = a.DumpQty,
+                        StreetQty = a.StreetQty,
+                        LiquidQty = a.LiquidQty,
+                        Note = a.Note,
+                        UpdationDate = a.UpdationDate,
+                        UserId = a.UserId,
+                        DumpAcrylic = a.DumpAcrylic,
+                        AbhiprayForm = a.AbhiprayForm,
+                        BannerAcrylic = a.BannerAcrylic,
+                        UpdateUserId = a.UpdateUserId,
+                        DisclaimerForm = a.DisclaimerForm,
+                        DataEntryBook = a.DataEntryBook,
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
+
+                    }).FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
+
+
+
 
     }
 }
