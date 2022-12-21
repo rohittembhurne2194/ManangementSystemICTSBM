@@ -918,6 +918,124 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
+
+        public async Task<ULBFormStatusVM> GetULBFormStatusAsync(int ulbId)
+        {
+            ULBFormStatusVM result = new ULBFormStatusVM();
+            try
+            {
+                using (dbMain)
+                {
+                    result.QrCode.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 && a.HouseGreen > 0 && a.DumpQty > 0 && a.StreetQty > 0)).Select(a => new QrPrintedVM
+                    {
+                        HouseQty = a.HouseQty ?? 0,
+                        HouseBlue = a.HouseBlue ?? 0,
+                        HouseGreen = a.HouseGreen ?? 0,
+                        DumpQty = a.DumpQty ?? 0,
+                        StreetQty = a.StreetQty ?? 0
+
+                    }).ToListAsync();
+
+                    result.QrCode.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 && a.HouseGreen > 0 && a.DumpQty > 0 && a.StreetQty > 0)).Select(a => new QrSentVM
+                    {
+                        HouseQty = a.HouseQty ?? 0,
+                        HouseBlue = a.HouseBlue ?? 0,
+                        HouseGreen = a.HouseGreen ?? 0,
+                        DumpQty = a.DumpQty ?? 0,
+                        StreetQty = a.StreetQty ?? 0
+
+                    }).ToListAsync();
+                    result.QrCode.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 && a.HouseGreen > 0 && a.DumpQty > 0 && a.StreetQty > 0)).Select(a => new QrReceiveVM
+                    {
+                        HouseQty = a.HouseQty ?? 0,
+                        HouseBlue = a.HouseBlue ?? 0,
+                        HouseGreen = a.HouseGreen ?? 0,
+                        DumpQty = a.DumpQty ?? 0,
+                        StreetQty = a.StreetQty ?? 0
+                    }).ToListAsync();
+
+
+                    result.Banners.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrPrintedVM
+                    {
+                        BannerAcrylic = a.BannerAcrylic ?? 0,
+                        DumpAcrylic = a.DumpAcrylic ?? 0
+                    }).ToListAsync();
+
+                    result.Banners.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrSentVM
+                    {
+                        BannerAcrylic = a.BannerAcrylic ?? 0,
+                        DumpAcrylic = a.DumpAcrylic ?? 0
+                    }).ToListAsync();
+
+                    result.Banners.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrReceiveVM
+                    {
+                        BannerAcrylic = a.BannerAcrylic ?? 0,
+                        DumpAcrylic = a.DumpAcrylic ?? 0
+                    }).ToListAsync();
+
+
+                    result.Abhipray.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrPrintedVM
+                    {
+                        AbhiprayForm = a.AbhiprayForm ?? 0
+                    }).ToListAsync();
+
+                    result.Abhipray.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrSentVM
+                    {
+                        AbhiprayForm = a.AbhiprayForm ?? 0
+                    }).ToListAsync();
+
+                    result.Abhipray.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrReceiveVM
+                    {
+                        AbhiprayForm = a.AbhiprayForm ?? 0
+                    }).ToListAsync();
+
+
+                    result.Disclaimer.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrPrintedVM
+                    {
+                        DisclaimerForm = a.DisclaimerForm ?? 0
+                    }).ToListAsync();
+
+                    result.Disclaimer.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrSentVM
+                    {
+                        DisclaimerForm = a.DisclaimerForm ?? 0
+                    }).ToListAsync();
+
+                    result.Disclaimer.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrReceiveVM
+                    {
+                        DisclaimerForm = a.DisclaimerForm ?? 0
+                    }).ToListAsync();
+
+
+                    result.EntryBook.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrPrintedVM
+                    {
+                        DataEntryBook = a.DataEntryBook ?? 0
+
+                    }).ToListAsync();
+
+                    result.EntryBook.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrSentVM
+                    {
+                        DataEntryBook = a.DataEntryBook ?? 0
+
+                    }).ToListAsync();
+
+                    result.EntryBook.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrReceiveVM
+                    {
+                        DataEntryBook = a.DataEntryBook ?? 0
+
+                    }).ToListAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+            
+        }
+
         public async Task<Result> SaveQrReceiveAsync(QrReceiveVM obj)
         {
             Result result = new Result();
