@@ -1235,7 +1235,143 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
 
+        public async Task<Result> SaveULBAppDetailsAsync(ULB_App_StatusVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var ulbObj = await dbMain.ULB_App_Statuses.Where(a => a.Id == obj.Id && a.ULBId == obj.ULBId).FirstOrDefaultAsync();
+                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
+                    {
+                        if (ulbObj != null)
+                        {
+                            ulbObj.ULBId = obj.ULBId;
+                            //ulbObj.CMSStatus = obj.CMSStatus;
+                            //ulbObj.AppStatus = obj.AppStatus;
+                            ulbObj.updateUserId = obj.userId;
+                            if ((ulbObj.CMSStatus is null || ulbObj.CMSStatus == false) && obj.CMSStatus == true) 
+                            {
+                                ulbObj.CMSDate = DateTime.Now;
+                                ulbObj.CMSStatus = true;
+                            }
+                            if ((ulbObj.AppStatus is null || ulbObj.AppStatus == false) && obj.AppStatus == true)
+                            {
+                                ulbObj.AppDate = DateTime.Now;
+                                ulbObj.AppStatus = true;
+                            }
+                            
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "ULB App Details Updated Successfully";
+                            result.messageMar = "ULB अॅप तपशील यशस्वीरित्या बदलले";
+
+                        }
+                        else
+                        {
+                            if (!await dbMain.ULB_App_Statuses.AnyAsync(a => a.ULBId == obj.ULBId))
+                            {
+
+                                var ulbObjData = new ULB_App_Status();
+
+                                ulbObjData.ULBId = obj.ULBId;
+                                ulbObjData.AppStatus = obj.AppStatus;
+                                ulbObjData.CMSStatus = obj.CMSStatus;
+                                ulbObjData.userId = obj.userId;
+                                if (obj.CMSStatus == true)
+                                {
+                                    ulbObjData.CMSStatus = true;
+                                    ulbObjData.CMSDate = DateTime.Now;
+                                }
+                                else
+                                {
+                                    ulbObjData.CMSStatus = false;
+                                }
+
+                                if (obj.AppStatus == true)
+                                {
+                                    ulbObjData.AppStatus = true;
+                                    ulbObjData.AppDate = DateTime.Now;
+                                }
+                                else
+                                {
+                                    ulbObjData.AppStatus = false;
+                                }
 
 
+                                dbMain.ULB_App_Statuses.Add(ulbObjData);
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB App Details Added Successfully";
+                                result.messageMar = "ULB अॅप तपशील यशस्वीरित्या समाविष्ट केले";
+                            }
+                            else
+                            {
+
+                                result.status = "Error";
+                                result.message = "ULB App Details already Exist";
+                                result.messageMar = "ULB अॅप तपशील आधीपासून अस्तित्वात आहेत";
+                            }
+                            
+
+                        }
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "User Name  not Exist";
+                        result.messageMar = "वापरकर्ता नाव अस्तित्वात नाही..";
+
+                    }
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
+
+        public async Task<ULB_App_StatusVM> GetULBAppDetailsAsync(int ulbId)
+        {
+            ULB_App_StatusVM result = new ULB_App_StatusVM();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.ULB_App_Statuses.Where(a => a.ULBId == ulbId).Select(a => new ULB_App_StatusVM
+                    {
+                        Id = a.Id,
+                        ULBId = a.ULBId,
+                        CMSStatus = a.CMSStatus,
+                        AppStatus = a.AppStatus,
+                        userId = a.userId,
+                        updateUserId = a.updateUserId,
+                        CMSDate = a.CMSDate,
+                        AppDate = a.AppDate
+                    }).FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
     }
 }

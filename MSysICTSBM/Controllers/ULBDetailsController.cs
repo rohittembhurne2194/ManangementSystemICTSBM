@@ -78,5 +78,23 @@ namespace MSysICTSBM.Controllers
             objResult = await objRep.GetULBFormStatusAsync(ulbId);
             return objResult;
         }
+
+        [HttpPost("Save/ULBAppDetails")]
+        public async Task<Result> SaveULBAppDetails([FromBody] ULB_App_StatusVM obj)
+        {
+
+            Result objResult = new Result();
+            objResult = await objRep.SaveULBAppDetailsAsync(obj);
+            return objResult;
+        }
+
+        [HttpGet("Get/ULBAppDetails")]
+        public async Task<ULB_App_StatusVM> GetULBAppDetails(int ulbId)
+        {
+
+            ULB_App_StatusVM objResult = new ULB_App_StatusVM();
+            objResult = await objRep.GetULBAppDetailsAsync(ulbId);
+            return objResult;
+        }
     }
 }

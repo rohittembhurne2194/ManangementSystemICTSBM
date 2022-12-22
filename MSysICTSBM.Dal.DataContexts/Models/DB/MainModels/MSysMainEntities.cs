@@ -21,6 +21,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public virtual DbSet<QrPrinted> QrPrinteds { get; set; }
         public virtual DbSet<QrReceive> QrReceives { get; set; }
         public virtual DbSet<QrSent> QrSents { get; set; }
+        public virtual DbSet<ULB_App_Status> ULB_App_Statuses { get; set; }
         public virtual DbSet<ULB_Detail> ULB_Details { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -108,6 +109,15 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
                 entity.Property(e => e.SentDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UpdationDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<ULB_App_Status>(entity =>
+            {
+                entity.ToTable("ULB_App_Status");
+
+                entity.Property(e => e.AppDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CMSDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<ULB_Detail>(entity =>
