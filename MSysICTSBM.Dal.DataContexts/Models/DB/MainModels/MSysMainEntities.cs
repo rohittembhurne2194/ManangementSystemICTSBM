@@ -23,6 +23,9 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public virtual DbSet<QrSent> QrSents { get; set; }
         public virtual DbSet<ULB_App_Status> ULB_App_Statuses { get; set; }
         public virtual DbSet<ULB_Detail> ULB_Details { get; set; }
+        public virtual DbSet<ULB_DigCopy_Rec> ULB_DigCopy_Recs { get; set; }
+        public virtual DbSet<ULB_Doc_Send> ULB_Doc_Sends { get; set; }
+        public virtual DbSet<ULB_HardCopy_Rec> ULB_HardCopy_Recs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -133,6 +136,51 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
                     .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<ULB_DigCopy_Rec>(entity =>
+            {
+                entity.ToTable("ULB_DigCopy_Rec");
+
+                entity.Property(e => e.AbhiprayDate).HasColumnType("datetime");
+
+                entity.Property(e => e.AgreementDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BannerDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DisclaimerDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EntryBookDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<ULB_Doc_Send>(entity =>
+            {
+                entity.ToTable("ULB_Doc_Send");
+
+                entity.Property(e => e.AbhiprayDate).HasColumnType("datetime");
+
+                entity.Property(e => e.AgreementDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BannerDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DisclaimerDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EntryBookDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<ULB_HardCopy_Rec>(entity =>
+            {
+                entity.ToTable("ULB_HardCopy_Rec");
+
+                entity.Property(e => e.AbhiprayDate).HasColumnType("datetime");
+
+                entity.Property(e => e.AgreementDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BannerDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DisclaimerDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EntryBookDate).HasColumnType("datetime");
             });
 
             OnModelCreatingPartial(modelBuilder);

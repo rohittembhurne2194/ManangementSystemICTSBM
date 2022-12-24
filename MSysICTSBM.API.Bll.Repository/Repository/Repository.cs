@@ -919,6 +919,49 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
 
+        public async Task<List<ULBDocStatusVM>> GetULBDocStatusAsync(int ulbId)
+        {
+            List<ULBDocStatusVM> result = new List<ULBDocStatusVM>();
+
+
+            try
+            {
+                using (dbMain)
+                {
+                    List<SqlParameter> parms = new List<SqlParameter>
+                                                {
+                                                    // Create parameter(s)    
+                                                    new SqlParameter { ParameterName = "@ulbId", Value = ulbId }
+                                                };
+                    var data = await dbMain.sp_getULB_DocStatusById_Results.FromSqlRaw<sp_getULB_DocStatusById_Result>("EXEC sp_getULB_DocStatusById @ulbId", parms.ToArray()).ToListAsync();
+
+                    if (data != null && data.Count > 0)
+                    {
+                        result = data.Select(a => new ULBDocStatusVM
+                        {
+                            DocType = a.DocType,
+                            DocSend = a.DocSend,
+                            DigCopyRec = a.DigCopyRec,
+                            HardCopyRec = a.HardCopyRec
+                        }).ToList();
+
+                    }
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+
+        }
+
+
         public async Task<ULBFormStatusVM> GetULBFormStatusAsync(int ulbId)
         {
             ULBFormStatusVM result = new ULBFormStatusVM();
@@ -1373,5 +1416,628 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             }
 
         }
+
+
+
+        public async Task<Result> SaveULBDocSendDetailsAsync(ULB_Doc_SendVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var ulbObj = await dbMain.ULB_Doc_Sends.Where(a => a.Id == obj.Id && a.ULBId == obj.ULBId).FirstOrDefaultAsync();
+                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
+                    {
+                        if (ulbObj != null)
+                        {
+                            ulbObj.ULBId = obj.ULBId;
+                            
+                            if (((ulbObj.Agreement is null || ulbObj.Agreement == false) && obj.Agreement == true) || (ulbObj.Agreement == true && obj.Agreement == false ))
+                            {
+                                ulbObj.Agreement = obj.Agreement;
+                                ulbObj.AgreementUserId = obj.userId;
+                                ulbObj.AgreementDate = DateTime.Now;
+                                
+                            }
+
+                            if (((ulbObj.Banner is null || ulbObj.Banner == false) && obj.Banner == true) || (ulbObj.Banner == true && obj.Banner == false))
+                            {
+                                ulbObj.Banner = obj.Banner;
+                                ulbObj.BannerUserId = obj.userId;
+                                ulbObj.BannerDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.Abhipray is null || ulbObj.Abhipray == false) && obj.Abhipray == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
+                            {
+                                ulbObj.Abhipray = obj.Abhipray;
+                                ulbObj.AbhiprayUserId = obj.userId;
+                                ulbObj.AbhiprayDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.Disclaimer is null || ulbObj.Disclaimer == false) && obj.Disclaimer == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
+                            {
+                                ulbObj.Disclaimer = obj.Disclaimer;
+                                ulbObj.DisclaimerUserId = obj.userId;
+                                ulbObj.DisclaimerDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.EntryBook is null || ulbObj.EntryBook == false) && obj.EntryBook == true) || (ulbObj.EntryBook == true && obj.EntryBook == false))
+                            {
+                                ulbObj.EntryBook = obj.EntryBook;
+                                ulbObj.EntryBookUserId = obj.userId;
+                                ulbObj.EntryBookDate = DateTime.Now;
+
+                            }
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "ULB Doc Details Updated Successfully";
+                            result.messageMar = "ULB डॉक तपशील यशस्वीरित्या बदलले";
+
+                        }
+                        else
+                        {
+                            if (!await dbMain.ULB_Doc_Sends.AnyAsync(a => a.ULBId == obj.ULBId))
+                            {
+
+                                var ulbObjData = new ULB_Doc_Send();
+
+                                ulbObjData.ULBId = obj.ULBId;
+                                
+                                
+                                if (obj.Agreement == true)
+                                {
+                                    ulbObjData.Agreement = true;
+                                    ulbObjData.AgreementDate = DateTime.Now;
+                                    ulbObjData.AgreementUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Agreement = false;
+                                }
+
+                                if (obj.Banner == true)
+                                {
+                                    ulbObjData.Banner = true;
+                                    ulbObjData.BannerDate = DateTime.Now;
+                                    ulbObjData.BannerUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Banner = false;
+                                }
+
+                                if (obj.Abhipray == true)
+                                {
+                                    ulbObjData.Abhipray = true;
+                                    ulbObjData.AbhiprayDate = DateTime.Now;
+                                    ulbObjData.AbhiprayUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Abhipray = false;
+                                }
+
+                                if (obj.Disclaimer == true)
+                                {
+                                    ulbObjData.Disclaimer = true;
+                                    ulbObjData.DisclaimerDate = DateTime.Now;
+                                    ulbObjData.DisclaimerUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Disclaimer = false;
+                                }
+
+                                if (obj.EntryBook == true)
+                                {
+                                    ulbObjData.EntryBook = true;
+                                    ulbObjData.EntryBookDate = DateTime.Now;
+                                    ulbObjData.EntryBookUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.EntryBook = false;
+                                }
+                                dbMain.ULB_Doc_Sends.Add(ulbObjData);
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB Doc Details Added Successfully";
+                                result.messageMar = "ULB डॉक तपशील यशस्वीरित्या समाविष्ट केले";
+                            }
+                            else
+                            {
+
+                                result.status = "Error";
+                                result.message = "ULB Doc Details already Exist";
+                                result.messageMar = "ULB डॉक तपशील आधीपासून अस्तित्वात आहेत";
+                            }
+
+
+                        }
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "User Name  not Exist";
+                        result.messageMar = "वापरकर्ता नाव अस्तित्वात नाही..";
+
+                    }
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
+
+        public async Task<ULB_Doc_SendVM> GetULBDocSendDetailsAsync(int ulbId)
+        {
+            ULB_Doc_SendVM result = new ULB_Doc_SendVM();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.ULB_Doc_Sends.Where(a => a.ULBId == ulbId).Select(a => new ULB_Doc_SendVM
+                    {
+                        Id = a.Id,
+                        ULBId = a.ULBId,
+                        Agreement = a.Agreement,
+                        AgreementDate = a.AgreementDate,
+                        AgreementUserId = a.AgreementUserId,
+                        Banner = a.Banner,
+                        BannerDate = a.BannerDate,
+                        BannerUserId = a.BannerUserId,
+                        Abhipray = a.Abhipray,
+                        AbhiprayDate = a.AbhiprayDate,
+                        AbhiprayUserId = a.AbhiprayUserId,
+                        Disclaimer = a.Disclaimer,
+                        DisclaimerDate = a.DisclaimerDate,
+                        DisclaimerUserId = a.DisclaimerUserId,
+                        EntryBook = a.EntryBook,
+                        EntryBookDate = a.EntryBookDate,
+                        EntryBookUserId = a.EntryBookUserId
+                    }).FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
+
+
+        public async Task<Result> SaveULBDigCopyDetailsAsync(ULB_DigCopy_RecVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var ulbObj = await dbMain.ULB_DigCopy_Recs.Where(a => a.Id == obj.Id && a.ULBId == obj.ULBId).FirstOrDefaultAsync();
+                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
+                    {
+                        if (ulbObj != null)
+                        {
+                            ulbObj.ULBId = obj.ULBId;
+
+                            if (((ulbObj.Agreement is null || ulbObj.Agreement == false) && obj.Agreement == true) || (ulbObj.Agreement == true && obj.Agreement == false))
+                            {
+                                ulbObj.Agreement = obj.Agreement;
+                                ulbObj.AgreementUserId = obj.userId;
+                                ulbObj.AgreementDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.Banner is null || ulbObj.Banner == false) && obj.Banner == true) || (ulbObj.Banner == true && obj.Banner == false))
+                            {
+                                ulbObj.Banner = obj.Banner;
+                                ulbObj.BannerUserId = obj.userId;
+                                ulbObj.BannerDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.Abhipray is null || ulbObj.Abhipray == false) && obj.Abhipray == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
+                            {
+                                ulbObj.Abhipray = obj.Abhipray;
+                                ulbObj.AbhiprayUserId = obj.userId;
+                                ulbObj.AbhiprayDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.Disclaimer is null || ulbObj.Disclaimer == false) && obj.Disclaimer == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
+                            {
+                                ulbObj.Disclaimer = obj.Disclaimer;
+                                ulbObj.DisclaimerUserId = obj.userId;
+                                ulbObj.DisclaimerDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.EntryBook is null || ulbObj.EntryBook == false) && obj.EntryBook == true) || (ulbObj.EntryBook == true && obj.EntryBook == false))
+                            {
+                                ulbObj.EntryBook = obj.EntryBook;
+                                ulbObj.EntryBookUserId = obj.userId;
+                                ulbObj.EntryBookDate = DateTime.Now;
+
+                            }
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "ULB Digital Copy Receive Details Updated Successfully";
+                            result.messageMar = "ULB डिजिटल कॉपी प्राप्त तपशील यशस्वीरित्या बदलले";
+
+                        }
+                        else
+                        {
+                            if (!await dbMain.ULB_DigCopy_Recs.AnyAsync(a => a.ULBId == obj.ULBId))
+                            {
+
+                                var ulbObjData = new ULB_DigCopy_Rec();
+
+                                ulbObjData.ULBId = obj.ULBId;
+
+
+                                if (obj.Agreement == true)
+                                {
+                                    ulbObjData.Agreement = true;
+                                    ulbObjData.AgreementDate = DateTime.Now;
+                                    ulbObjData.AgreementUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Agreement = false;
+                                }
+
+                                if (obj.Banner == true)
+                                {
+                                    ulbObjData.Banner = true;
+                                    ulbObjData.BannerDate = DateTime.Now;
+                                    ulbObjData.BannerUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Banner = false;
+                                }
+
+                                if (obj.Abhipray == true)
+                                {
+                                    ulbObjData.Abhipray = true;
+                                    ulbObjData.AbhiprayDate = DateTime.Now;
+                                    ulbObjData.AbhiprayUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Abhipray = false;
+                                }
+
+                                if (obj.Disclaimer == true)
+                                {
+                                    ulbObjData.Disclaimer = true;
+                                    ulbObjData.DisclaimerDate = DateTime.Now;
+                                    ulbObjData.DisclaimerUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Disclaimer = false;
+                                }
+
+                                if (obj.EntryBook == true)
+                                {
+                                    ulbObjData.EntryBook = true;
+                                    ulbObjData.EntryBookDate = DateTime.Now;
+                                    ulbObjData.EntryBookUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.EntryBook = false;
+                                }
+                                dbMain.ULB_DigCopy_Recs.Add(ulbObjData);
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB Digital Copy Receive Details Added Successfully";
+                                result.messageMar = "ULB डिजिटल कॉपी प्राप्त तपशील यशस्वीरित्या समाविष्ट केले";
+                            }
+                            else
+                            {
+
+                                result.status = "Error";
+                                result.message = "ULB Digital Copy Details already Exist";
+                                result.messageMar = "ULB डिजिटल कॉपी प्राप्त तपशील आधीपासून अस्तित्वात आहेत";
+                            }
+
+
+                        }
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "User Name  not Exist";
+                        result.messageMar = "वापरकर्ता नाव अस्तित्वात नाही..";
+
+                    }
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
+
+        public async Task<ULB_DigCopy_RecVM> GetULBDigCopyDetailsAsync(int ulbId)
+        {
+            ULB_DigCopy_RecVM result = new ULB_DigCopy_RecVM();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.ULB_DigCopy_Recs.Where(a => a.ULBId == ulbId).Select(a => new ULB_DigCopy_RecVM
+                    {
+                        Id = a.Id,
+                        ULBId = a.ULBId,
+                        Agreement = a.Agreement,
+                        AgreementDate = a.AgreementDate,
+                        AgreementUserId = a.AgreementUserId,
+                        Banner = a.Banner,
+                        BannerDate = a.BannerDate,
+                        BannerUserId = a.BannerUserId,
+                        Abhipray = a.Abhipray,
+                        AbhiprayDate = a.AbhiprayDate,
+                        AbhiprayUserId = a.AbhiprayUserId,
+                        Disclaimer = a.Disclaimer,
+                        DisclaimerDate = a.DisclaimerDate,
+                        DisclaimerUserId = a.DisclaimerUserId,
+                        EntryBook = a.EntryBook,
+                        EntryBookDate = a.EntryBookDate,
+                        EntryBookUserId = a.EntryBookUserId
+                    }).FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
+
+        public async Task<Result> SaveULBHardCopyDetailsAsync(ULB_HardCopy_RecVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var ulbObj = await dbMain.ULB_HardCopy_Recs.Where(a => a.Id == obj.Id && a.ULBId == obj.ULBId).FirstOrDefaultAsync();
+                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
+                    {
+                        if (ulbObj != null)
+                        {
+                            ulbObj.ULBId = obj.ULBId;
+
+                            if (((ulbObj.Agreement is null || ulbObj.Agreement == false) && obj.Agreement == true) || (ulbObj.Agreement == true && obj.Agreement == false))
+                            {
+                                ulbObj.Agreement = obj.Agreement;
+                                ulbObj.AgreementUserId = obj.userId;
+                                ulbObj.AgreementDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.Banner is null || ulbObj.Banner == false) && obj.Banner == true) || (ulbObj.Banner == true && obj.Banner == false))
+                            {
+                                ulbObj.Banner = obj.Banner;
+                                ulbObj.BannerUserId = obj.userId;
+                                ulbObj.BannerDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.Abhipray is null || ulbObj.Abhipray == false) && obj.Abhipray == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
+                            {
+                                ulbObj.Abhipray = obj.Abhipray;
+                                ulbObj.AbhiprayUserId = obj.userId;
+                                ulbObj.AbhiprayDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.Disclaimer is null || ulbObj.Disclaimer == false) && obj.Disclaimer == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
+                            {
+                                ulbObj.Disclaimer = obj.Disclaimer;
+                                ulbObj.DisclaimerUserId = obj.userId;
+                                ulbObj.DisclaimerDate = DateTime.Now;
+
+                            }
+
+                            if (((ulbObj.EntryBook is null || ulbObj.EntryBook == false) && obj.EntryBook == true) || (ulbObj.EntryBook == true && obj.EntryBook == false))
+                            {
+                                ulbObj.EntryBook = obj.EntryBook;
+                                ulbObj.EntryBookUserId = obj.userId;
+                                ulbObj.EntryBookDate = DateTime.Now;
+
+                            }
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "ULB Hard Copy Receive Details Updated Successfully";
+                            result.messageMar = "ULB हार्ड कॉपी प्राप्त तपशील यशस्वीरित्या बदलले";
+
+                        }
+                        else
+                        {
+                            if (!await dbMain.ULB_HardCopy_Recs.AnyAsync(a => a.ULBId == obj.ULBId))
+                            {
+
+                                var ulbObjData = new ULB_HardCopy_Rec();
+
+                                ulbObjData.ULBId = obj.ULBId;
+
+
+                                if (obj.Agreement == true)
+                                {
+                                    ulbObjData.Agreement = true;
+                                    ulbObjData.AgreementDate = DateTime.Now;
+                                    ulbObjData.AgreementUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Agreement = false;
+                                }
+
+                                if (obj.Banner == true)
+                                {
+                                    ulbObjData.Banner = true;
+                                    ulbObjData.BannerDate = DateTime.Now;
+                                    ulbObjData.BannerUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Banner = false;
+                                }
+
+                                if (obj.Abhipray == true)
+                                {
+                                    ulbObjData.Abhipray = true;
+                                    ulbObjData.AbhiprayDate = DateTime.Now;
+                                    ulbObjData.AbhiprayUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Abhipray = false;
+                                }
+
+                                if (obj.Disclaimer == true)
+                                {
+                                    ulbObjData.Disclaimer = true;
+                                    ulbObjData.DisclaimerDate = DateTime.Now;
+                                    ulbObjData.DisclaimerUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.Disclaimer = false;
+                                }
+
+                                if (obj.EntryBook == true)
+                                {
+                                    ulbObjData.EntryBook = true;
+                                    ulbObjData.EntryBookDate = DateTime.Now;
+                                    ulbObjData.EntryBookUserId = obj.userId;
+                                }
+                                else
+                                {
+                                    ulbObjData.EntryBook = false;
+                                }
+                                dbMain.ULB_HardCopy_Recs.Add(ulbObjData);
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB Hard Copy Receive Details Added Successfully";
+                                result.messageMar = "ULB हार्ड कॉपी प्राप्त तपशील यशस्वीरित्या समाविष्ट केले";
+                            }
+                            else
+                            {
+
+                                result.status = "Error";
+                                result.message = "ULB Hard Copy Receive Details already Exist";
+                                result.messageMar = "ULB हार्ड कॉपी प्राप्त तपशील आधीपासून अस्तित्वात आहेत";
+                            }
+
+
+                        }
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "User Name  not Exist";
+                        result.messageMar = "वापरकर्ता नाव अस्तित्वात नाही..";
+
+                    }
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
+
+        public async Task<ULB_HardCopy_RecVM> GetULBHardCopyDetailsAsync(int ulbId)
+        {
+            ULB_HardCopy_RecVM result = new ULB_HardCopy_RecVM();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.ULB_HardCopy_Recs.Where(a => a.ULBId == ulbId).Select(a => new ULB_HardCopy_RecVM
+                    {
+                        Id = a.Id,
+                        ULBId = a.ULBId,
+                        Agreement = a.Agreement,
+                        AgreementDate = a.AgreementDate,
+                        AgreementUserId = a.AgreementUserId,
+                        Banner = a.Banner,
+                        BannerDate = a.BannerDate,
+                        BannerUserId = a.BannerUserId,
+                        Abhipray = a.Abhipray,
+                        AbhiprayDate = a.AbhiprayDate,
+                        AbhiprayUserId = a.AbhiprayUserId,
+                        Disclaimer = a.Disclaimer,
+                        DisclaimerDate = a.DisclaimerDate,
+                        DisclaimerUserId = a.DisclaimerUserId,
+                        EntryBook = a.EntryBook,
+                        EntryBookDate = a.EntryBookDate,
+                        EntryBookUserId = a.EntryBookUserId
+                    }).FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+        }
+
+
     }
 }

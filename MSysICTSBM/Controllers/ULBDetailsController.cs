@@ -71,6 +71,15 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
+        [HttpGet("Get/ULBDocStatus")]
+        public async Task<List<ULBDocStatusVM>> GetULBDocStatus(int ulbId)
+        {
+            List<ULBDocStatusVM> objResult = new List<ULBDocStatusVM>();
+            objResult = await objRep.GetULBDocStatusAsync(ulbId);
+            return objResult;
+        }
+
+
         [HttpGet("Get/ULBFormStatus")]
         public async Task<ULBFormStatusVM> GetULBFormStatus(int ulbId)
         {
@@ -96,5 +105,65 @@ namespace MSysICTSBM.Controllers
             objResult = await objRep.GetULBAppDetailsAsync(ulbId);
             return objResult;
         }
+
+
+        [HttpPost("Save/ULBDocSendDetails")]
+        public async Task<Result> SaveULBDocDetails([FromBody] ULB_Doc_SendVM obj)
+        {
+
+            Result objResult = new Result();
+            objResult = await objRep.SaveULBDocSendDetailsAsync(obj);
+            return objResult;
+        }
+
+        [HttpGet("Get/ULBDocSendDetails")]
+        public async Task<ULB_Doc_SendVM> GetULBDocDetails(int ulbId)
+        {
+
+            ULB_Doc_SendVM objResult = new ULB_Doc_SendVM();
+            objResult = await objRep.GetULBDocSendDetailsAsync(ulbId);
+            return objResult;
+        }
+
+
+        [HttpPost("Save/ULBDigCopyDetails")]
+        public async Task<Result> SaveULBDigCopyDetails([FromBody] ULB_DigCopy_RecVM obj)
+        {
+
+            Result objResult = new Result();
+            objResult = await objRep.SaveULBDigCopyDetailsAsync(obj);
+            return objResult;
+        }
+
+
+        [HttpGet("Get/ULBDigCopyDetails")]
+        public async Task<ULB_DigCopy_RecVM> GetULBDigCopyDetails(int ulbId)
+        {
+
+            ULB_DigCopy_RecVM objResult = new ULB_DigCopy_RecVM();
+            objResult = await objRep.GetULBDigCopyDetailsAsync(ulbId);
+            return objResult;
+        }
+
+
+        [HttpPost("Save/ULBHardCopyDetails")]
+        public async Task<Result> SaveULBHardCopyDetails([FromBody] ULB_HardCopy_RecVM obj)
+        {
+
+            Result objResult = new Result();
+            objResult = await objRep.SaveULBHardCopyDetailsAsync(obj);
+            return objResult;
+        }
+
+        [HttpGet("Get/ULBHardCopyDetails")]
+        public async Task<ULB_HardCopy_RecVM> GetULBHardCopyDetails(int ulbId)
+        {
+
+            ULB_HardCopy_RecVM objResult = new ULB_HardCopy_RecVM();
+            objResult = await objRep.GetULBHardCopyDetailsAsync(ulbId);
+            return objResult;
+        }
+
+
     }
 }
