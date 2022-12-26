@@ -1260,8 +1260,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         UpdateUserId = a.UpdateUserId,
                         DisclaimerForm = a.DisclaimerForm,
                         DataEntryBook = a.DataEntryBook,
-                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
-                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.UserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.UpdateUserId ?? 0)).Select(e => e.Username).FirstOrDefault()
 
                     }).FirstOrDefaultAsync();
                 }
@@ -1286,23 +1286,25 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 using (dbMain)
                 {
                     var ulbObj = await dbMain.ULB_App_Statuses.Where(a => a.Id == obj.Id && a.ULBId == obj.ULBId).FirstOrDefaultAsync();
-                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
+                    if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.UserId))
                     {
                         if (ulbObj != null)
                         {
                             ulbObj.ULBId = obj.ULBId;
                             //ulbObj.CMSStatus = obj.CMSStatus;
                             //ulbObj.AppStatus = obj.AppStatus;
-                            ulbObj.updateUserId = obj.userId;
-                            if ((ulbObj.CMSStatus is null || ulbObj.CMSStatus == false) && obj.CMSStatus == true) 
+                            
+                            if (((ulbObj.CMSStatus is null || ulbObj.CMSStatus == false) && obj.CMSStatus == true) || (ulbObj.CMSStatus == true && obj.CMSStatus == false)) 
                             {
                                 ulbObj.CMSDate = DateTime.Now;
-                                ulbObj.CMSStatus = true;
+                                ulbObj.CMSStatus = obj.CMSStatus;
+                                ulbObj.CMSUserId = obj.UserId;
                             }
-                            if ((ulbObj.AppStatus is null || ulbObj.AppStatus == false) && obj.AppStatus == true)
+                            if (((ulbObj.AppStatus is null || ulbObj.AppStatus == false) && obj.AppStatus == true) || (ulbObj.AppStatus == true && obj.AppStatus == false))
                             {
                                 ulbObj.AppDate = DateTime.Now;
-                                ulbObj.AppStatus = true;
+                                ulbObj.AppStatus = obj.AppStatus;
+                                ulbObj.AppUserId = obj.UserId;
                             }
                             
                             await dbMain.SaveChangesAsync();
@@ -1322,11 +1324,12 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObjData.ULBId = obj.ULBId;
                                 ulbObjData.AppStatus = obj.AppStatus;
                                 ulbObjData.CMSStatus = obj.CMSStatus;
-                                ulbObjData.userId = obj.userId;
+                                
                                 if (obj.CMSStatus == true)
                                 {
                                     ulbObjData.CMSStatus = true;
                                     ulbObjData.CMSDate = DateTime.Now;
+                                    ulbObjData.CMSUserId = obj.UserId;
                                 }
                                 else
                                 {
@@ -1337,7 +1340,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 {
                                     ulbObjData.AppStatus = true;
                                     ulbObjData.AppDate = DateTime.Now;
+                                    ulbObjData.AppUserId = obj.UserId;
                                 }
+
                                 else
                                 {
                                     ulbObjData.AppStatus = false;
@@ -1399,10 +1404,12 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         ULBId = a.ULBId,
                         CMSStatus = a.CMSStatus,
                         AppStatus = a.AppStatus,
-                        userId = a.userId,
-                        updateUserId = a.updateUserId,
+                        CMSUserId = a.CMSUserId,
+                        AppUserId = a.AppUserId,
                         CMSDate = a.CMSDate,
-                        AppDate = a.AppDate
+                        AppDate = a.AppDate,
+                        CMSUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.CMSUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        AppUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AppUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
                     }).FirstOrDefaultAsync();
                 }
 
@@ -1610,7 +1617,12 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         DisclaimerUserId = a.DisclaimerUserId,
                         EntryBook = a.EntryBook,
                         EntryBookDate = a.EntryBookDate,
-                        EntryBookUserId = a.EntryBookUserId
+                        EntryBookUserId = a.EntryBookUserId,
+                        AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
                     }).FirstOrDefaultAsync();
                 }
 
@@ -1817,7 +1829,12 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         DisclaimerUserId = a.DisclaimerUserId,
                         EntryBook = a.EntryBook,
                         EntryBookDate = a.EntryBookDate,
-                        EntryBookUserId = a.EntryBookUserId
+                        EntryBookUserId = a.EntryBookUserId,
+                        AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
                     }).FirstOrDefaultAsync();
                 }
 
@@ -2023,7 +2040,12 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         DisclaimerUserId = a.DisclaimerUserId,
                         EntryBook = a.EntryBook,
                         EntryBookDate = a.EntryBookDate,
-                        EntryBookUserId = a.EntryBookUserId
+                        EntryBookUserId = a.EntryBookUserId,
+                        AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
                     }).FirstOrDefaultAsync();
                 }
 

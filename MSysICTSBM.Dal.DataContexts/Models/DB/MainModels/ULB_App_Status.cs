@@ -11,8 +11,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public int? ULBId { get; set; }
         public bool? CMSStatus { get; set; }
         public bool? AppStatus { get; set; }
-        public int? userId { get; set; }
-        public int? updateUserId { get; set; }
+        public int? CMSUserId { get; set; }
+        public int? AppUserId { get; set; }
         public DateTime? CMSDate { get; set; }
         public DateTime? AppDate { get; set; }
     }
