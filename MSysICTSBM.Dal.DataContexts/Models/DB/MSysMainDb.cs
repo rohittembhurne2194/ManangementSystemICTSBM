@@ -23,7 +23,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB
 
         public DbSet<sp_Get_ActiveULB_result> sp_Get_ActiveULB_results { get; set; }
         public DbSet<sp_getULB_statusById_Result> sp_getULB_statusById_Results { get; set; }
-        public DbSet<sp_getULB_DocStatusById_Result> sp_getULB_DocStatusById_Results { get; set; }
+        public DbSet<sp_getULB_DocStatus_Result> sp_getULB_DocStatus_Results { get; set; }
 
 
 
@@ -34,7 +34,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<sp_Get_ActiveULB_result>().HasNoKey();
             modelBuilder.Entity<sp_getULB_statusById_Result>().HasNoKey();
-            modelBuilder.Entity<sp_getULB_DocStatusById_Result>().HasNoKey();
+            modelBuilder.Entity<sp_getULB_DocStatus_Result>().HasNoKey();
 
         }
 

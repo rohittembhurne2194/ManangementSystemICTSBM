@@ -8,31 +8,16 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     {
         public int Id { get; set; }
         public int? ULBId { get; set; }
+        public int? DocSubID { get; set; }
+        public bool? DocStatus { get; set; }
         public int? userId { get; set; }
-        public bool? Agreement { get; set; }
-        public int? AgreementUserId { get; set; }
-        public string AgreementUserName { get; set; }
+        public int? DocCreateUserId { get; set; }
+        public string DocCreateUserName { get; set; }
+        public DateTime? DocCreateDate { get; set; }
+        public int? DocUpdateUserId { get; set; }
+        public string DocUpdateUserName { get; set; }
+        public DateTime? DocUpdateDate { get; set; }
+        public string Note { get; set; }
 
-        public DateTime? AgreementDate { get; set; }
-        public bool? Banner { get; set; }
-        public int? BannerUserId { get; set; }
-        public string BannerUserName { get; set; }
-
-        public DateTime? BannerDate { get; set; }
-        public bool? Abhipray { get; set; }
-        public int? AbhiprayUserId { get; set; }
-        public string AbhiprayUserName { get; set; }
-
-        public DateTime? AbhiprayDate { get; set; }
-        public bool? Disclaimer { get; set; }
-        public int? DisclaimerUserId { get; set; }
-        public string DisclaimerUserName { get; set; }
-
-        public DateTime? DisclaimerDate { get; set; }
-        public bool? EntryBook { get; set; }
-        public int? EntryBookUserId { get; set; }
-        public string EntryBookUserName { get; set; }
-
-        public DateTime? EntryBookDate { get; set; }
     }
 }

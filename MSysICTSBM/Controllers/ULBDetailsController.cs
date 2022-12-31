@@ -72,10 +72,10 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBDocStatus")]
-        public async Task<List<ULBDocStatusVM>> GetULBDocStatus(int ulbId)
+        public async Task<List<ULBDocStatusVM>> GetULBDocStatus(int ulbId,int docId)
         {
             List<ULBDocStatusVM> objResult = new List<ULBDocStatusVM>();
-            objResult = await objRep.GetULBDocStatusAsync(ulbId);
+            objResult = await objRep.GetULBDocStatusAsync(ulbId,docId);
             return objResult;
         }
 
@@ -106,6 +106,69 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
+        [HttpPost("Save/ULBDocMasters")]
+        public async Task<Result> SaveULBDocMaster([FromBody] DocMasterVM obj)
+        {
+
+            Result objResult = new Result();
+            objResult = await objRep.SaveULBDocMasterAsync(obj);
+            return objResult;
+        }
+
+        [HttpGet("Get/ULBDocMasters")]
+        public async Task<DocMasterVM> GetULBDocMaster(int docId)
+        {
+
+            DocMasterVM objResult = new DocMasterVM();
+            objResult = await objRep.GetULBDocMasterAsync(docId);
+            return objResult;
+        }
+
+        [HttpGet("GetAll/ULBDocMasters")]
+        public async Task<List<DocMasterVM>> GetAllULBDocMaster()
+        {
+
+            List<DocMasterVM> objResult = new List<DocMasterVM>();
+            objResult = await objRep.GetAllULBDocMasterAsync();
+            return objResult;
+        }
+
+
+        [HttpPost("Save/ULBDocSubMasters")]
+        public async Task<Result> SaveULBDocSubMaster([FromBody] DocSubMasterVM obj)
+        {
+
+            Result objResult = new Result();
+            objResult = await objRep.SaveULBDocSubMasterAsync(obj);
+            return objResult;
+        }
+
+        [HttpGet("Get/ULBDocSubMasters")]
+        public async Task<DocSubMasterVM> GetULBDocSubMaster(int docId)
+        {
+
+            DocSubMasterVM objResult = new DocSubMasterVM();
+            objResult = await objRep.GetULBDocSubMasterAsync(docId);
+            return objResult;
+        }
+
+        [HttpGet("GetAll/ULBDocSubMasters")]
+        public async Task<List<DocSubMasterVM>> GetAllULBDocSubMaster()
+        {
+
+            List<DocSubMasterVM> objResult = new List<DocSubMasterVM>();
+            objResult = await objRep.GetAllULBDocSubMasterAsync();
+            return objResult;
+        }
+
+        [HttpGet("GetAll/ULBDocSubMastersById")]
+        public async Task<List<DocSubMasterVM>> GetAllULBDocSubMasterById(int docId)
+        {
+
+            List<DocSubMasterVM> objResult = new List<DocSubMasterVM>();
+            objResult = await objRep.GetAllULBDocSubMasterByIdAsync(docId);
+            return objResult;
+        }
 
         [HttpPost("Save/ULBDocSendDetails")]
         public async Task<Result> SaveULBDocDetails([FromBody] ULB_Doc_SendVM obj)
@@ -116,14 +179,14 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
-        [HttpGet("Get/ULBDocSendDetails")]
-        public async Task<ULB_Doc_SendVM> GetULBDocDetails(int ulbId)
-        {
+        //[HttpGet("Get/ULBDocSendDetails")]
+        //public async Task<ULB_Doc_SendVM> GetULBDocDetails(int ulbId)
+        //{
 
-            ULB_Doc_SendVM objResult = new ULB_Doc_SendVM();
-            objResult = await objRep.GetULBDocSendDetailsAsync(ulbId);
-            return objResult;
-        }
+        //    ULB_Doc_SendVM objResult = new ULB_Doc_SendVM();
+        //    objResult = await objRep.GetULBDocSendDetailsAsync(ulbId);
+        //    return objResult;
+        //}
 
 
         [HttpPost("Save/ULBDigCopyDetails")]
@@ -136,14 +199,14 @@ namespace MSysICTSBM.Controllers
         }
 
 
-        [HttpGet("Get/ULBDigCopyDetails")]
-        public async Task<ULB_DigCopy_RecVM> GetULBDigCopyDetails(int ulbId)
-        {
+        //[HttpGet("Get/ULBDigCopyDetails")]
+        //public async Task<ULB_DigCopy_RecVM> GetULBDigCopyDetails(int ulbId)
+        //{
 
-            ULB_DigCopy_RecVM objResult = new ULB_DigCopy_RecVM();
-            objResult = await objRep.GetULBDigCopyDetailsAsync(ulbId);
-            return objResult;
-        }
+        //    ULB_DigCopy_RecVM objResult = new ULB_DigCopy_RecVM();
+        //    objResult = await objRep.GetULBDigCopyDetailsAsync(ulbId);
+        //    return objResult;
+        //}
 
 
         [HttpPost("Save/ULBHardCopyDetails")]
@@ -155,14 +218,14 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
-        [HttpGet("Get/ULBHardCopyDetails")]
-        public async Task<ULB_HardCopy_RecVM> GetULBHardCopyDetails(int ulbId)
-        {
+        //[HttpGet("Get/ULBHardCopyDetails")]
+        //public async Task<ULB_HardCopy_RecVM> GetULBHardCopyDetails(int ulbId)
+        //{
 
-            ULB_HardCopy_RecVM objResult = new ULB_HardCopy_RecVM();
-            objResult = await objRep.GetULBHardCopyDetailsAsync(ulbId);
-            return objResult;
-        }
+        //    ULB_HardCopy_RecVM objResult = new ULB_HardCopy_RecVM();
+        //    objResult = await objRep.GetULBHardCopyDetailsAsync(ulbId);
+        //    return objResult;
+        //}
 
 
     }

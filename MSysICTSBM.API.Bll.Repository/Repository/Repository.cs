@@ -919,7 +919,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
 
-        public async Task<List<ULBDocStatusVM>> GetULBDocStatusAsync(int ulbId)
+        public async Task<List<ULBDocStatusVM>> GetULBDocStatusAsync(int ulbId, int docId)
         {
             List<ULBDocStatusVM> result = new List<ULBDocStatusVM>();
 
@@ -931,18 +931,33 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     List<SqlParameter> parms = new List<SqlParameter>
                                                 {
                                                     // Create parameter(s)    
-                                                    new SqlParameter { ParameterName = "@ulbId", Value = ulbId }
+                                                    new SqlParameter { ParameterName = "@ulbId", Value = ulbId },
+                                                    new SqlParameter { ParameterName = "@DocId", Value = docId }
                                                 };
-                    var data = await dbMain.sp_getULB_DocStatusById_Results.FromSqlRaw<sp_getULB_DocStatusById_Result>("EXEC sp_getULB_DocStatusById @ulbId", parms.ToArray()).ToListAsync();
+                    var data = await dbMain.sp_getULB_DocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_DocStatus @ulbId,@DocId", parms.ToArray()).ToListAsync();
 
                     if (data != null && data.Count > 0)
                     {
                         result = data.Select(a => new ULBDocStatusVM
                         {
-                            DocType = a.DocType,
-                            DocSend = a.DocSend,
-                            DigCopyRec = a.DigCopyRec,
-                            HardCopyRec = a.HardCopyRec
+                            AppName = a.AppName,
+                            DocSubName = a.DocSubName,
+                            DocSentStatus = a.DocSentStatus,
+                            DocSentCreateUserName = a.DocSentCreateUserName,
+                            DocSentUpdateUserName = a.DocSentUpdateUserName,
+                            DocSentCreateDate = a.DocSentCreateDate,
+                            DocSentUpdateDate = a.DocSentUpdateDate,
+                            DocDigCopyRecStatus = a.DocDigCopyRecStatus,
+                            DocDigCopyRecCreateUserName = a.DocDigCopyRecCreateUserName,
+                            DocDigCopyRecUpdateUserName = a.DocDigCopyRecUpdateUserName,
+                            DocDigCopyRecCreateDate = a.DocDigCopyRecCreateDate,
+                            DocDigCopyRecUpdateDate = a.DocDigCopyRecUpdateDate,
+                            DocHardCopyRecStatus = a.DocHardCopyRecStatus,
+                            DocHardCopyRecCreateUserName = a.DocHardCopyRecCreateUserName,
+                            DocHardCopyRecUpdateUserName = a.DocHardCopyRecUpdateUserName,
+                            DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
+                            DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate
+                            
                         }).ToList();
 
                     }
@@ -1424,6 +1439,328 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
+        public async Task<Result> SaveULBDocMasterAsync(DocMasterVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var docObj = await dbMain.DocMasters.Where(a => a.Id == obj.Id).FirstOrDefaultAsync();
+                    if(docObj != null)
+                    {
+                        if(!await dbMain.DocMasters.AnyAsync(a => a.DocName.ToUpper() == obj.DocName.ToUpper() && a.Id != obj.Id))
+                        {
+                            docObj.DocName = obj.DocName;
+                            docObj.DocDate = DateTime.Now;
+
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "ULB Doc Master Details Updated Successfully";
+                            result.messageMar = "ULB डॉक मास्टर तपशील यशस्वीरित्या बदलले";
+                        }
+                        else
+                        {
+                            result.status = "Error";
+                            result.message = "ULB Doc Name already Exist";
+                            result.messageMar = "ULB डॉक नाव आधीपासून अस्तित्वात आहे";
+
+                        }
+
+                    }
+                    else
+                    {
+                        if (!await dbMain.DocMasters.AnyAsync(a => a.DocName.ToUpper() == obj.DocName.ToUpper()))
+                        {
+                            var docObjData = new DocMaster();
+                            docObjData.DocName = obj.DocName;
+                            docObjData.DocDate = DateTime.Now;
+
+                            dbMain.DocMasters.Add(docObjData);
+                            await dbMain.SaveChangesAsync();
+
+                            result.status = "success";
+                            result.message = "ULB Doc Master Details Added Successfully";
+                            result.messageMar = "ULB डॉक मास्टर तपशील यशस्वीरित्या समाविष्ट केले";
+                        }
+                        else
+                        {
+                            result.status = "Error";
+                            result.message = "ULB Doc Name already Exist";
+                            result.messageMar = "ULB डॉक नाव आधीपासून अस्तित्वात आहे";
+
+                        }
+
+                    }
+                }
+                return result;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+        }
+
+        public async Task<DocMasterVM> GetULBDocMasterAsync(int docId)
+        {
+            var result = new DocMasterVM();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.DocMasters.Where(a => a.Id == docId).Select( a => new DocMasterVM 
+                    { 
+                        Id = a.Id,
+                        DocName = a.DocName,
+                        DocDate = a.DocDate
+
+                    }).FirstOrDefaultAsync();
+
+                }
+
+                return result;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+
+            }
+
+
+        }
+
+        public async Task<List<DocMasterVM>> GetAllULBDocMasterAsync()
+        {
+            var result = new List<DocMasterVM>();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.DocMasters.Select(a => new DocMasterVM
+                    {
+                        Id = a.Id,
+                        DocName = a.DocName,
+                        DocDate = a.DocDate
+
+                    }).ToListAsync();
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+
+            }
+
+
+        }
+
+
+
+        public async Task<Result> SaveULBDocSubMasterAsync(DocSubMasterVM obj)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var docObj = await dbMain.DocSubMasters.Where(a => a.Id == obj.Id).FirstOrDefaultAsync();
+                    if (docObj != null)
+                    {
+                        if (!await dbMain.DocSubMasters.AnyAsync(a => a.DocSubName.ToUpper() == obj.DocSubName.ToUpper() && a.Id != obj.Id))
+                        {
+                            if (await dbMain.DocMasters.AnyAsync(a => a.Id == obj.DocId))
+                            {
+                                docObj.DocId = obj.DocId;
+                                docObj.DocSubName = obj.DocSubName;
+                                docObj.DocSubDate = DateTime.Now;
+
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB Doc Sub Master Details Updated Successfully";
+                                result.messageMar = "ULB डॉक सब मास्टर तपशील यशस्वीरित्या बदलले";
+                            }
+                            else
+                            {
+                                result.status = "Error";
+                                result.message = "ULB Doc Name Does Not Exist";
+                                result.messageMar = "ULB डॉक नाव अस्तित्वात नाही";
+
+                            }
+
+                            
+                        }
+                        else
+                        {
+                            result.status = "Error";
+                            result.message = "ULB Doc Name already Exist";
+                            result.messageMar = "ULB डॉक नाव आधीपासून अस्तित्वात आहे";
+
+                        }
+
+                    }
+                    else
+                    {
+                        if (!await dbMain.DocSubMasters.AnyAsync(a => a.DocSubName.ToUpper() == obj.DocSubName.ToUpper()))
+                        {
+
+                            if (await dbMain.DocMasters.AnyAsync(a => a.Id == obj.DocId))
+                            {
+                                var docObjData = new DocSubMaster();
+                                docObjData.DocId = obj.DocId;
+                                docObjData.DocSubName = obj.DocSubName;
+                                docObjData.DocSubDate = DateTime.Now;
+
+                                dbMain.DocSubMasters.Add(docObjData);
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB Doc Sub Master Details Added Successfully";
+                                result.messageMar = "ULB डॉक सब मास्टर तपशील यशस्वीरित्या समाविष्ट केले";
+                            }
+                            else
+                            {
+                                result.status = "Error";
+                                result.message = "ULB Doc Name Does Not Exist";
+                                result.messageMar = "ULB डॉक नाव अस्तित्वात नाही";
+
+                            }
+                            
+                        }
+                        else
+                        {
+                            result.status = "Error";
+                            result.message = "ULB Doc Sub Name already Exist";
+                            result.messageMar = "ULB डॉक सब नाव आधीपासून अस्तित्वात आहे";
+
+                        }
+
+                    }
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                result.message = "Something is wrong,Try Again.. ";
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+        }
+
+
+        public async Task<DocSubMasterVM> GetULBDocSubMasterAsync(int docId)
+        {
+            var result = new DocSubMasterVM();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.DocSubMasters.Where(a => a.Id == docId).Select(a => new DocSubMasterVM
+                    {
+                        Id = a.Id,
+                        DocId = a.DocId,
+                        DocSubName = a.DocSubName,
+                        DocSubDate = a.DocSubDate
+
+                    }).FirstOrDefaultAsync();
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+
+            }
+
+
+        }
+
+        public async Task<List<DocSubMasterVM>> GetAllULBDocSubMasterAsync()
+        {
+            var result = new List<DocSubMasterVM>();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.DocSubMasters.Select(a => new DocSubMasterVM
+                    {
+                        Id = a.Id,
+                        DocId = a.DocId,
+                        DocSubName = a.DocSubName,
+                        DocSubDate = a.DocSubDate
+
+                    }).ToListAsync();
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+
+            }
+
+
+        }
+
+        public async Task<List<DocSubMasterVM>> GetAllULBDocSubMasterByIdAsync(int docId)
+        {
+            var result = new List<DocSubMasterVM>();
+
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.DocSubMasters.Where(a => a.DocId == docId).Select(a => new DocSubMasterVM
+                    {
+                        Id = a.Id,
+                        DocId = a.DocId,
+                        DocSubName = a.DocSubName,
+                        DocSubDate = a.DocSubDate
+
+                    }).ToListAsync();
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+
+            }
+
+
+        }
 
 
         public async Task<Result> SaveULBDocSendDetailsAsync(ULB_Doc_SendVM obj)
@@ -1433,136 +1770,62 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var ulbObj = await dbMain.ULB_Doc_Sends.Where(a => a.Id == obj.Id && a.ULBId == obj.ULBId).FirstOrDefaultAsync();
+                    var ulbObj = await dbMain.ULB_Doc_Sends.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID).FirstOrDefaultAsync();
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
                     {
                         if (ulbObj != null)
                         {
-                            ulbObj.ULBId = obj.ULBId;
+                            if(await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
+                            {
+                                if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
+                                {
+                                    ulbObj.DocStatus = obj.DocStatus;
+                                    ulbObj.DocUpdateUserId = obj.userId;
+                                    ulbObj.DocUpdateDate = DateTime.Now;
+                                }
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB Doc Send Details Updated Successfully";
+                                result.messageMar = "ULB डॉक तपशील यशस्वीरित्या बदलले";
+                            }
+                            else
+                            {
+                                result.status = "Error";
+                                result.message = "ULB Doc Sub Name Does Not Exist";
+                                result.messageMar = "ULB डॉक सब नाव अस्तित्वात नाही";
+
+                            }
                             
-                            if (((ulbObj.Agreement is null || ulbObj.Agreement == false) && obj.Agreement == true) || (ulbObj.Agreement == true && obj.Agreement == false ))
-                            {
-                                ulbObj.Agreement = obj.Agreement;
-                                ulbObj.AgreementUserId = obj.userId;
-                                ulbObj.AgreementDate = DateTime.Now;
-                                
-                            }
-
-                            if (((ulbObj.Banner is null || ulbObj.Banner == false) && obj.Banner == true) || (ulbObj.Banner == true && obj.Banner == false))
-                            {
-                                ulbObj.Banner = obj.Banner;
-                                ulbObj.BannerUserId = obj.userId;
-                                ulbObj.BannerDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.Abhipray is null || ulbObj.Abhipray == false) && obj.Abhipray == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
-                            {
-                                ulbObj.Abhipray = obj.Abhipray;
-                                ulbObj.AbhiprayUserId = obj.userId;
-                                ulbObj.AbhiprayDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.Disclaimer is null || ulbObj.Disclaimer == false) && obj.Disclaimer == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
-                            {
-                                ulbObj.Disclaimer = obj.Disclaimer;
-                                ulbObj.DisclaimerUserId = obj.userId;
-                                ulbObj.DisclaimerDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.EntryBook is null || ulbObj.EntryBook == false) && obj.EntryBook == true) || (ulbObj.EntryBook == true && obj.EntryBook == false))
-                            {
-                                ulbObj.EntryBook = obj.EntryBook;
-                                ulbObj.EntryBookUserId = obj.userId;
-                                ulbObj.EntryBookDate = DateTime.Now;
-
-                            }
                             await dbMain.SaveChangesAsync();
-
-                            result.status = "success";
-                            result.message = "ULB Doc Details Updated Successfully";
-                            result.messageMar = "ULB डॉक तपशील यशस्वीरित्या बदलले";
 
                         }
                         else
                         {
-                            if (!await dbMain.ULB_Doc_Sends.AnyAsync(a => a.ULBId == obj.ULBId))
+                            if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
 
                                 var ulbObjData = new ULB_Doc_Send();
 
                                 ulbObjData.ULBId = obj.ULBId;
+                                ulbObjData.DocSubID = obj.DocSubID;
+                                ulbObjData.DocStatus = obj.DocStatus;
+                                ulbObjData.DocCreateDate = DateTime.Now;
+                                ulbObjData.DocCreateUserId = obj.userId;
                                 
-                                
-                                if (obj.Agreement == true)
-                                {
-                                    ulbObjData.Agreement = true;
-                                    ulbObjData.AgreementDate = DateTime.Now;
-                                    ulbObjData.AgreementUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Agreement = false;
-                                }
-
-                                if (obj.Banner == true)
-                                {
-                                    ulbObjData.Banner = true;
-                                    ulbObjData.BannerDate = DateTime.Now;
-                                    ulbObjData.BannerUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Banner = false;
-                                }
-
-                                if (obj.Abhipray == true)
-                                {
-                                    ulbObjData.Abhipray = true;
-                                    ulbObjData.AbhiprayDate = DateTime.Now;
-                                    ulbObjData.AbhiprayUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Abhipray = false;
-                                }
-
-                                if (obj.Disclaimer == true)
-                                {
-                                    ulbObjData.Disclaimer = true;
-                                    ulbObjData.DisclaimerDate = DateTime.Now;
-                                    ulbObjData.DisclaimerUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Disclaimer = false;
-                                }
-
-                                if (obj.EntryBook == true)
-                                {
-                                    ulbObjData.EntryBook = true;
-                                    ulbObjData.EntryBookDate = DateTime.Now;
-                                    ulbObjData.EntryBookUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.EntryBook = false;
-                                }
                                 dbMain.ULB_Doc_Sends.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
 
                                 result.status = "success";
-                                result.message = "ULB Doc Details Added Successfully";
-                                result.messageMar = "ULB डॉक तपशील यशस्वीरित्या समाविष्ट केले";
+                                result.message = "ULB Doc Send Details Added Successfully";
+                                result.messageMar = "ULB डॉक सेंड तपशील यशस्वीरित्या समाविष्ट केले";
                             }
                             else
                             {
 
                                 result.status = "Error";
-                                result.message = "ULB Doc Details already Exist";
-                                result.messageMar = "ULB डॉक तपशील आधीपासून अस्तित्वात आहेत";
+                                result.message = "ULB Doc Sub Name Does Not Exist";
+                                result.messageMar = "ULB डॉक सब नाव अस्तित्वात नाही";
                             }
 
 
@@ -1591,51 +1854,51 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-        public async Task<ULB_Doc_SendVM> GetULBDocSendDetailsAsync(int ulbId)
-        {
-            ULB_Doc_SendVM result = new ULB_Doc_SendVM();
+        //public async Task<ULB_Doc_SendVM> GetULBDocSendDetailsAsync(int ulbId)
+        //{
+        //    ULB_Doc_SendVM result = new ULB_Doc_SendVM();
 
-            try
-            {
-                using (dbMain)
-                {
-                    result = await dbMain.ULB_Doc_Sends.Where(a => a.ULBId == ulbId).Select(a => new ULB_Doc_SendVM
-                    {
-                        Id = a.Id,
-                        ULBId = a.ULBId,
-                        Agreement = a.Agreement,
-                        AgreementDate = a.AgreementDate,
-                        AgreementUserId = a.AgreementUserId,
-                        Banner = a.Banner,
-                        BannerDate = a.BannerDate,
-                        BannerUserId = a.BannerUserId,
-                        Abhipray = a.Abhipray,
-                        AbhiprayDate = a.AbhiprayDate,
-                        AbhiprayUserId = a.AbhiprayUserId,
-                        Disclaimer = a.Disclaimer,
-                        DisclaimerDate = a.DisclaimerDate,
-                        DisclaimerUserId = a.DisclaimerUserId,
-                        EntryBook = a.EntryBook,
-                        EntryBookDate = a.EntryBookDate,
-                        EntryBookUserId = a.EntryBookUserId,
-                        AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                    }).FirstOrDefaultAsync();
-                }
+        //    try
+        //    {
+        //        using (dbMain)
+        //        {
+        //            result = await dbMain.ULB_Doc_Sends.Where(a => a.ULBId == ulbId).Select(a => new ULB_Doc_SendVM
+        //            {
+        //                Id = a.Id,
+        //                ULBId = a.ULBId,
+        //                Agreement = a.Agreement,
+        //                AgreementDate = a.AgreementDate,
+        //                AgreementUserId = a.AgreementUserId,
+        //                Banner = a.Banner,
+        //                BannerDate = a.BannerDate,
+        //                BannerUserId = a.BannerUserId,
+        //                Abhipray = a.Abhipray,
+        //                AbhiprayDate = a.AbhiprayDate,
+        //                AbhiprayUserId = a.AbhiprayUserId,
+        //                Disclaimer = a.Disclaimer,
+        //                DisclaimerDate = a.DisclaimerDate,
+        //                DisclaimerUserId = a.DisclaimerUserId,
+        //                EntryBook = a.EntryBook,
+        //                EntryBookDate = a.EntryBookDate,
+        //                EntryBookUserId = a.EntryBookUserId,
+        //                AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //            }).FirstOrDefaultAsync();
+        //        }
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString(), ex);
-                return result;
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.ToString(), ex);
+        //        return result;
 
-            }
+        //    }
 
-        }
+        //}
 
 
         public async Task<Result> SaveULBDigCopyDetailsAsync(ULB_DigCopy_RecVM obj)
@@ -1645,136 +1908,62 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var ulbObj = await dbMain.ULB_DigCopy_Recs.Where(a => a.Id == obj.Id && a.ULBId == obj.ULBId).FirstOrDefaultAsync();
+                    var ulbObj = await dbMain.ULB_DigCopy_Recs.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID).FirstOrDefaultAsync();
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
                     {
                         if (ulbObj != null)
                         {
-                            ulbObj.ULBId = obj.ULBId;
-
-                            if (((ulbObj.Agreement is null || ulbObj.Agreement == false) && obj.Agreement == true) || (ulbObj.Agreement == true && obj.Agreement == false))
+                            if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
-                                ulbObj.Agreement = obj.Agreement;
-                                ulbObj.AgreementUserId = obj.userId;
-                                ulbObj.AgreementDate = DateTime.Now;
+                                if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
+                                {
+                                    ulbObj.DocStatus = obj.DocStatus;
+                                    ulbObj.DocUpdateUserId = obj.userId;
+                                    ulbObj.DocUpdateDate = DateTime.Now;
+                                }
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB Doc Digital Copy Details Updated Successfully";
+                                result.messageMar = "ULB डॉक डिजिटल कॉपी तपशील यशस्वीरित्या बदलले";
+                            }
+                            else
+                            {
+                                result.status = "Error";
+                                result.message = "ULB Doc Sub Name Does Not Exist";
+                                result.messageMar = "ULB डॉक सब नाव अस्तित्वात नाही";
 
                             }
 
-                            if (((ulbObj.Banner is null || ulbObj.Banner == false) && obj.Banner == true) || (ulbObj.Banner == true && obj.Banner == false))
-                            {
-                                ulbObj.Banner = obj.Banner;
-                                ulbObj.BannerUserId = obj.userId;
-                                ulbObj.BannerDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.Abhipray is null || ulbObj.Abhipray == false) && obj.Abhipray == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
-                            {
-                                ulbObj.Abhipray = obj.Abhipray;
-                                ulbObj.AbhiprayUserId = obj.userId;
-                                ulbObj.AbhiprayDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.Disclaimer is null || ulbObj.Disclaimer == false) && obj.Disclaimer == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
-                            {
-                                ulbObj.Disclaimer = obj.Disclaimer;
-                                ulbObj.DisclaimerUserId = obj.userId;
-                                ulbObj.DisclaimerDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.EntryBook is null || ulbObj.EntryBook == false) && obj.EntryBook == true) || (ulbObj.EntryBook == true && obj.EntryBook == false))
-                            {
-                                ulbObj.EntryBook = obj.EntryBook;
-                                ulbObj.EntryBookUserId = obj.userId;
-                                ulbObj.EntryBookDate = DateTime.Now;
-
-                            }
                             await dbMain.SaveChangesAsync();
-
-                            result.status = "success";
-                            result.message = "ULB Digital Copy Receive Details Updated Successfully";
-                            result.messageMar = "ULB डिजिटल कॉपी प्राप्त तपशील यशस्वीरित्या बदलले";
 
                         }
                         else
                         {
-                            if (!await dbMain.ULB_DigCopy_Recs.AnyAsync(a => a.ULBId == obj.ULBId))
+                            if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
 
                                 var ulbObjData = new ULB_DigCopy_Rec();
 
                                 ulbObjData.ULBId = obj.ULBId;
+                                ulbObjData.DocSubID = obj.DocSubID;
+                                ulbObjData.DocStatus = obj.DocStatus;
+                                ulbObjData.DocCreateDate = DateTime.Now;
+                                ulbObjData.DocCreateUserId = obj.userId;
 
-
-                                if (obj.Agreement == true)
-                                {
-                                    ulbObjData.Agreement = true;
-                                    ulbObjData.AgreementDate = DateTime.Now;
-                                    ulbObjData.AgreementUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Agreement = false;
-                                }
-
-                                if (obj.Banner == true)
-                                {
-                                    ulbObjData.Banner = true;
-                                    ulbObjData.BannerDate = DateTime.Now;
-                                    ulbObjData.BannerUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Banner = false;
-                                }
-
-                                if (obj.Abhipray == true)
-                                {
-                                    ulbObjData.Abhipray = true;
-                                    ulbObjData.AbhiprayDate = DateTime.Now;
-                                    ulbObjData.AbhiprayUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Abhipray = false;
-                                }
-
-                                if (obj.Disclaimer == true)
-                                {
-                                    ulbObjData.Disclaimer = true;
-                                    ulbObjData.DisclaimerDate = DateTime.Now;
-                                    ulbObjData.DisclaimerUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Disclaimer = false;
-                                }
-
-                                if (obj.EntryBook == true)
-                                {
-                                    ulbObjData.EntryBook = true;
-                                    ulbObjData.EntryBookDate = DateTime.Now;
-                                    ulbObjData.EntryBookUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.EntryBook = false;
-                                }
                                 dbMain.ULB_DigCopy_Recs.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
 
                                 result.status = "success";
-                                result.message = "ULB Digital Copy Receive Details Added Successfully";
-                                result.messageMar = "ULB डिजिटल कॉपी प्राप्त तपशील यशस्वीरित्या समाविष्ट केले";
+                                result.message = "ULB Doc Digital Copy Details Added Successfully";
+                                result.messageMar = "ULB डॉक डिजिटल कॉपी तपशील यशस्वीरित्या समाविष्ट केले";
                             }
                             else
                             {
 
                                 result.status = "Error";
-                                result.message = "ULB Digital Copy Details already Exist";
-                                result.messageMar = "ULB डिजिटल कॉपी प्राप्त तपशील आधीपासून अस्तित्वात आहेत";
+                                result.message = "ULB Doc Sub Name Does Not Exist";
+                                result.messageMar = "ULB डॉक सब नाव अस्तित्वात नाही";
                             }
 
 
@@ -1803,51 +1992,51 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-        public async Task<ULB_DigCopy_RecVM> GetULBDigCopyDetailsAsync(int ulbId)
-        {
-            ULB_DigCopy_RecVM result = new ULB_DigCopy_RecVM();
+        //public async Task<ULB_DigCopy_RecVM> GetULBDigCopyDetailsAsync(int ulbId)
+        //{
+        //    ULB_DigCopy_RecVM result = new ULB_DigCopy_RecVM();
 
-            try
-            {
-                using (dbMain)
-                {
-                    result = await dbMain.ULB_DigCopy_Recs.Where(a => a.ULBId == ulbId).Select(a => new ULB_DigCopy_RecVM
-                    {
-                        Id = a.Id,
-                        ULBId = a.ULBId,
-                        Agreement = a.Agreement,
-                        AgreementDate = a.AgreementDate,
-                        AgreementUserId = a.AgreementUserId,
-                        Banner = a.Banner,
-                        BannerDate = a.BannerDate,
-                        BannerUserId = a.BannerUserId,
-                        Abhipray = a.Abhipray,
-                        AbhiprayDate = a.AbhiprayDate,
-                        AbhiprayUserId = a.AbhiprayUserId,
-                        Disclaimer = a.Disclaimer,
-                        DisclaimerDate = a.DisclaimerDate,
-                        DisclaimerUserId = a.DisclaimerUserId,
-                        EntryBook = a.EntryBook,
-                        EntryBookDate = a.EntryBookDate,
-                        EntryBookUserId = a.EntryBookUserId,
-                        AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                    }).FirstOrDefaultAsync();
-                }
+        //    try
+        //    {
+        //        using (dbMain)
+        //        {
+        //            result = await dbMain.ULB_DigCopy_Recs.Where(a => a.ULBId == ulbId).Select(a => new ULB_DigCopy_RecVM
+        //            {
+        //                Id = a.Id,
+        //                ULBId = a.ULBId,
+        //                Agreement = a.Agreement,
+        //                AgreementDate = a.AgreementDate,
+        //                AgreementUserId = a.AgreementUserId,
+        //                Banner = a.Banner,
+        //                BannerDate = a.BannerDate,
+        //                BannerUserId = a.BannerUserId,
+        //                Abhipray = a.Abhipray,
+        //                AbhiprayDate = a.AbhiprayDate,
+        //                AbhiprayUserId = a.AbhiprayUserId,
+        //                Disclaimer = a.Disclaimer,
+        //                DisclaimerDate = a.DisclaimerDate,
+        //                DisclaimerUserId = a.DisclaimerUserId,
+        //                EntryBook = a.EntryBook,
+        //                EntryBookDate = a.EntryBookDate,
+        //                EntryBookUserId = a.EntryBookUserId,
+        //                AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //            }).FirstOrDefaultAsync();
+        //        }
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString(), ex);
-                return result;
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.ToString(), ex);
+        //        return result;
 
-            }
+        //    }
 
-        }
+        //}
 
         public async Task<Result> SaveULBHardCopyDetailsAsync(ULB_HardCopy_RecVM obj)
         {
@@ -1856,136 +2045,62 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var ulbObj = await dbMain.ULB_HardCopy_Recs.Where(a => a.Id == obj.Id && a.ULBId == obj.ULBId).FirstOrDefaultAsync();
+                    var ulbObj = await dbMain.ULB_HardCopy_Recs.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID).FirstOrDefaultAsync();
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
                     {
                         if (ulbObj != null)
                         {
-                            ulbObj.ULBId = obj.ULBId;
-
-                            if (((ulbObj.Agreement is null || ulbObj.Agreement == false) && obj.Agreement == true) || (ulbObj.Agreement == true && obj.Agreement == false))
+                            if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
-                                ulbObj.Agreement = obj.Agreement;
-                                ulbObj.AgreementUserId = obj.userId;
-                                ulbObj.AgreementDate = DateTime.Now;
+                                if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
+                                {
+                                    ulbObj.DocStatus = obj.DocStatus;
+                                    ulbObj.DocUpdateUserId = obj.userId;
+                                    ulbObj.DocUpdateDate = DateTime.Now;
+                                }
+                                await dbMain.SaveChangesAsync();
+
+                                result.status = "success";
+                                result.message = "ULB Doc Hard Copy Details Updated Successfully";
+                                result.messageMar = "ULB डॉक हार्ड कॉपी तपशील यशस्वीरित्या बदलले";
+                            }
+                            else
+                            {
+                                result.status = "Error";
+                                result.message = "ULB Doc Sub Name Does Not Exist";
+                                result.messageMar = "ULB डॉक सब नाव अस्तित्वात नाही";
 
                             }
 
-                            if (((ulbObj.Banner is null || ulbObj.Banner == false) && obj.Banner == true) || (ulbObj.Banner == true && obj.Banner == false))
-                            {
-                                ulbObj.Banner = obj.Banner;
-                                ulbObj.BannerUserId = obj.userId;
-                                ulbObj.BannerDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.Abhipray is null || ulbObj.Abhipray == false) && obj.Abhipray == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
-                            {
-                                ulbObj.Abhipray = obj.Abhipray;
-                                ulbObj.AbhiprayUserId = obj.userId;
-                                ulbObj.AbhiprayDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.Disclaimer is null || ulbObj.Disclaimer == false) && obj.Disclaimer == true) || (ulbObj.Abhipray == true && obj.Abhipray == false))
-                            {
-                                ulbObj.Disclaimer = obj.Disclaimer;
-                                ulbObj.DisclaimerUserId = obj.userId;
-                                ulbObj.DisclaimerDate = DateTime.Now;
-
-                            }
-
-                            if (((ulbObj.EntryBook is null || ulbObj.EntryBook == false) && obj.EntryBook == true) || (ulbObj.EntryBook == true && obj.EntryBook == false))
-                            {
-                                ulbObj.EntryBook = obj.EntryBook;
-                                ulbObj.EntryBookUserId = obj.userId;
-                                ulbObj.EntryBookDate = DateTime.Now;
-
-                            }
                             await dbMain.SaveChangesAsync();
-
-                            result.status = "success";
-                            result.message = "ULB Hard Copy Receive Details Updated Successfully";
-                            result.messageMar = "ULB हार्ड कॉपी प्राप्त तपशील यशस्वीरित्या बदलले";
 
                         }
                         else
                         {
-                            if (!await dbMain.ULB_HardCopy_Recs.AnyAsync(a => a.ULBId == obj.ULBId))
+                            if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
 
                                 var ulbObjData = new ULB_HardCopy_Rec();
 
                                 ulbObjData.ULBId = obj.ULBId;
+                                ulbObjData.DocSubID = obj.DocSubID;
+                                ulbObjData.DocStatus = obj.DocStatus;
+                                ulbObjData.DocCreateDate = DateTime.Now;
+                                ulbObjData.DocCreateUserId = obj.userId;
 
-
-                                if (obj.Agreement == true)
-                                {
-                                    ulbObjData.Agreement = true;
-                                    ulbObjData.AgreementDate = DateTime.Now;
-                                    ulbObjData.AgreementUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Agreement = false;
-                                }
-
-                                if (obj.Banner == true)
-                                {
-                                    ulbObjData.Banner = true;
-                                    ulbObjData.BannerDate = DateTime.Now;
-                                    ulbObjData.BannerUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Banner = false;
-                                }
-
-                                if (obj.Abhipray == true)
-                                {
-                                    ulbObjData.Abhipray = true;
-                                    ulbObjData.AbhiprayDate = DateTime.Now;
-                                    ulbObjData.AbhiprayUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Abhipray = false;
-                                }
-
-                                if (obj.Disclaimer == true)
-                                {
-                                    ulbObjData.Disclaimer = true;
-                                    ulbObjData.DisclaimerDate = DateTime.Now;
-                                    ulbObjData.DisclaimerUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.Disclaimer = false;
-                                }
-
-                                if (obj.EntryBook == true)
-                                {
-                                    ulbObjData.EntryBook = true;
-                                    ulbObjData.EntryBookDate = DateTime.Now;
-                                    ulbObjData.EntryBookUserId = obj.userId;
-                                }
-                                else
-                                {
-                                    ulbObjData.EntryBook = false;
-                                }
                                 dbMain.ULB_HardCopy_Recs.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
 
                                 result.status = "success";
-                                result.message = "ULB Hard Copy Receive Details Added Successfully";
-                                result.messageMar = "ULB हार्ड कॉपी प्राप्त तपशील यशस्वीरित्या समाविष्ट केले";
+                                result.message = "ULB Doc Hard Copy Details Added Successfully";
+                                result.messageMar = "ULB डॉक हार्ड कॉपी तपशील यशस्वीरित्या समाविष्ट केले";
                             }
                             else
                             {
 
                                 result.status = "Error";
-                                result.message = "ULB Hard Copy Receive Details already Exist";
-                                result.messageMar = "ULB हार्ड कॉपी प्राप्त तपशील आधीपासून अस्तित्वात आहेत";
+                                result.message = "ULB Doc Sub Name Does Not Exist";
+                                result.messageMar = "ULB डॉक सब नाव अस्तित्वात नाही";
                             }
 
 
@@ -2014,51 +2129,51 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-        public async Task<ULB_HardCopy_RecVM> GetULBHardCopyDetailsAsync(int ulbId)
-        {
-            ULB_HardCopy_RecVM result = new ULB_HardCopy_RecVM();
+        //public async Task<ULB_HardCopy_RecVM> GetULBHardCopyDetailsAsync(int ulbId)
+        //{
+        //    ULB_HardCopy_RecVM result = new ULB_HardCopy_RecVM();
 
-            try
-            {
-                using (dbMain)
-                {
-                    result = await dbMain.ULB_HardCopy_Recs.Where(a => a.ULBId == ulbId).Select(a => new ULB_HardCopy_RecVM
-                    {
-                        Id = a.Id,
-                        ULBId = a.ULBId,
-                        Agreement = a.Agreement,
-                        AgreementDate = a.AgreementDate,
-                        AgreementUserId = a.AgreementUserId,
-                        Banner = a.Banner,
-                        BannerDate = a.BannerDate,
-                        BannerUserId = a.BannerUserId,
-                        Abhipray = a.Abhipray,
-                        AbhiprayDate = a.AbhiprayDate,
-                        AbhiprayUserId = a.AbhiprayUserId,
-                        Disclaimer = a.Disclaimer,
-                        DisclaimerDate = a.DisclaimerDate,
-                        DisclaimerUserId = a.DisclaimerUserId,
-                        EntryBook = a.EntryBook,
-                        EntryBookDate = a.EntryBookDate,
-                        EntryBookUserId = a.EntryBookUserId,
-                        AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                        EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
-                    }).FirstOrDefaultAsync();
-                }
+        //    try
+        //    {
+        //        using (dbMain)
+        //        {
+        //            result = await dbMain.ULB_HardCopy_Recs.Where(a => a.ULBId == ulbId).Select(a => new ULB_HardCopy_RecVM
+        //            {
+        //                Id = a.Id,
+        //                ULBId = a.ULBId,
+        //                Agreement = a.Agreement,
+        //                AgreementDate = a.AgreementDate,
+        //                AgreementUserId = a.AgreementUserId,
+        //                Banner = a.Banner,
+        //                BannerDate = a.BannerDate,
+        //                BannerUserId = a.BannerUserId,
+        //                Abhipray = a.Abhipray,
+        //                AbhiprayDate = a.AbhiprayDate,
+        //                AbhiprayUserId = a.AbhiprayUserId,
+        //                Disclaimer = a.Disclaimer,
+        //                DisclaimerDate = a.DisclaimerDate,
+        //                DisclaimerUserId = a.DisclaimerUserId,
+        //                EntryBook = a.EntryBook,
+        //                EntryBookDate = a.EntryBookDate,
+        //                EntryBookUserId = a.EntryBookUserId,
+        //                AgreementUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AgreementUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                BannerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.BannerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                AbhiprayUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AbhiprayUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                DisclaimerUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.DisclaimerUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //                EntryBookUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.EntryBookUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+        //            }).FirstOrDefaultAsync();
+        //        }
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString(), ex);
-                return result;
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.ToString(), ex);
+        //        return result;
 
-            }
+        //    }
 
-        }
+        //}
 
 
     }

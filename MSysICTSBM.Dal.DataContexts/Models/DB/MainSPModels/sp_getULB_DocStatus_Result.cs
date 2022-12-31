@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MSysICTSBM.API.Bll.ViewModels.Models
+namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainSPModels
 {
-    public class ULBDocStatusVM
+    public class sp_getULB_DocStatus_Result
     {
         public string AppName { get; set; }
         public string DocSubName { get; set; }

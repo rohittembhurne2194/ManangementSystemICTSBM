@@ -29,12 +29,22 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         Task<ULBFormStatusVM> GetULBFormStatusAsync(int ulbId);
         Task<Result> SaveULBAppDetailsAsync(ULB_App_StatusVM obj);
         Task<ULB_App_StatusVM> GetULBAppDetailsAsync(int ulbId);
-        Task<ULB_Doc_SendVM> GetULBDocSendDetailsAsync(int ulbId);
+        //Task<ULB_Doc_SendVM> GetULBDocSendDetailsAsync(int ulbId);
+        //Task<Result> SaveULBDocSendDetailsAsync(ULB_Doc_SendVM obj);
+        //Task<Result> SaveULBDigCopyDetailsAsync(ULB_DigCopy_RecVM obj);
+        //Task<ULB_DigCopy_RecVM> GetULBDigCopyDetailsAsync(int ulbId);
+        //Task<Result> SaveULBHardCopyDetailsAsync(ULB_HardCopy_RecVM obj);
+        //Task<ULB_HardCopy_RecVM> GetULBHardCopyDetailsAsync(int ulbId);
+        Task<Result> SaveULBDocMasterAsync(DocMasterVM obj);
+        Task<DocMasterVM> GetULBDocMasterAsync(int docId);
+        Task<List<DocMasterVM>> GetAllULBDocMasterAsync();
+        Task<Result> SaveULBDocSubMasterAsync(DocSubMasterVM obj);
+        Task<DocSubMasterVM> GetULBDocSubMasterAsync(int docId);
+        Task<List<DocSubMasterVM>> GetAllULBDocSubMasterAsync();
+        Task<List<DocSubMasterVM>> GetAllULBDocSubMasterByIdAsync(int docId);
         Task<Result> SaveULBDocSendDetailsAsync(ULB_Doc_SendVM obj);
         Task<Result> SaveULBDigCopyDetailsAsync(ULB_DigCopy_RecVM obj);
-        Task<ULB_DigCopy_RecVM> GetULBDigCopyDetailsAsync(int ulbId);
+        Task<List<ULBDocStatusVM>> GetULBDocStatusAsync(int ulbId, int docId);
         Task<Result> SaveULBHardCopyDetailsAsync(ULB_HardCopy_RecVM obj);
-        Task<ULB_HardCopy_RecVM> GetULBHardCopyDetailsAsync(int ulbId);
-        Task<List<ULBDocStatusVM>> GetULBDocStatusAsync(int ulbId);
     }
 }

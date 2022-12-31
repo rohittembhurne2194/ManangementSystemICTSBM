@@ -17,6 +17,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         {
         }
 
+        public virtual DbSet<DocMaster> DocMasters { get; set; }
+        public virtual DbSet<DocSubMaster> DocSubMasters { get; set; }
         public virtual DbSet<EmployeeMaster> EmployeeMasters { get; set; }
         public virtual DbSet<QrPrinted> QrPrinteds { get; set; }
         public virtual DbSet<QrReceive> QrReceives { get; set; }
@@ -39,6 +41,24 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Latin1_General_CI_AI");
+
+            modelBuilder.Entity<DocMaster>(entity =>
+            {
+                entity.ToTable("DocMaster");
+
+                entity.Property(e => e.DocDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DocName).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<DocSubMaster>(entity =>
+            {
+                entity.ToTable("DocSubMaster");
+
+                entity.Property(e => e.DocSubDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DocSubName).HasMaxLength(100);
+            });
 
             modelBuilder.Entity<EmployeeMaster>(entity =>
             {
@@ -142,45 +162,33 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
             {
                 entity.ToTable("ULB_DigCopy_Rec");
 
-                entity.Property(e => e.AbhiprayDate).HasColumnType("datetime");
+                entity.Property(e => e.DocCreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.AgreementDate).HasColumnType("datetime");
+                entity.Property(e => e.DocUpdateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.BannerDate).HasColumnType("datetime");
-
-                entity.Property(e => e.DisclaimerDate).HasColumnType("datetime");
-
-                entity.Property(e => e.EntryBookDate).HasColumnType("datetime");
+                entity.Property(e => e.Note).HasMaxLength(500);
             });
 
             modelBuilder.Entity<ULB_Doc_Send>(entity =>
             {
                 entity.ToTable("ULB_Doc_Send");
 
-                entity.Property(e => e.AbhiprayDate).HasColumnType("datetime");
+                entity.Property(e => e.DocCreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.AgreementDate).HasColumnType("datetime");
+                entity.Property(e => e.DocUpdateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.BannerDate).HasColumnType("datetime");
-
-                entity.Property(e => e.DisclaimerDate).HasColumnType("datetime");
-
-                entity.Property(e => e.EntryBookDate).HasColumnType("datetime");
+                entity.Property(e => e.Note).HasMaxLength(500);
             });
 
             modelBuilder.Entity<ULB_HardCopy_Rec>(entity =>
             {
                 entity.ToTable("ULB_HardCopy_Rec");
 
-                entity.Property(e => e.AbhiprayDate).HasColumnType("datetime");
+                entity.Property(e => e.DocCreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.AgreementDate).HasColumnType("datetime");
+                entity.Property(e => e.DocUpdateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.BannerDate).HasColumnType("datetime");
-
-                entity.Property(e => e.DisclaimerDate).HasColumnType("datetime");
-
-                entity.Property(e => e.EntryBookDate).HasColumnType("datetime");
+                entity.Property(e => e.Note).HasMaxLength(500);
             });
 
             OnModelCreatingPartial(modelBuilder);
