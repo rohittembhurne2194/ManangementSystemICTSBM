@@ -25,6 +25,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB
         public DbSet<sp_getULB_statusById_Result> sp_getULB_statusById_Results { get; set; }
         public DbSet<sp_getULB_DocStatus_Result> sp_getULB_DocStatus_Results { get; set; }
 
+        public DbSet<sp_getULB_DocStatus_Result> sp_getULB_AllDocStatus_Results { get; set; }
 
 
 

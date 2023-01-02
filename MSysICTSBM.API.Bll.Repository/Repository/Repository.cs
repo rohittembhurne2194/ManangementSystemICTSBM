@@ -941,6 +941,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         result = data.Select(a => new ULBDocStatusVM
                         {
                             AppName = a.AppName,
+                            DocName = a.DocName,
                             DocSubName = a.DocSubName,
                             DocSentStatus = a.DocSentStatus,
                             DocSentCreateUserName = a.DocSentCreateUserName,
@@ -958,6 +959,63 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
                             DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate
                             
+                        }).ToList();
+
+                    }
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+
+            }
+
+
+        }
+
+        public async Task<List<ULBDocStatusVM>> GetAllULBDocStatusAsync(int ulbId)
+        {
+            List<ULBDocStatusVM> result = new List<ULBDocStatusVM>();
+
+
+            try
+            {
+                using (dbMain)
+                {
+                    List<SqlParameter> parms = new List<SqlParameter>
+                                                {
+                                                    // Create parameter(s)    
+                                                    new SqlParameter { ParameterName = "@ulbId", Value = ulbId }
+                                                };
+                    var data = await dbMain.sp_getULB_AllDocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_All_DocStatus @ulbId", parms.ToArray()).ToListAsync();
+
+                    if (data != null && data.Count > 0)
+                    {
+                        result = data.Select(a => new ULBDocStatusVM
+                        {
+                            AppName = a.AppName,
+                            DocName = a.DocName,
+                            DocSubName = a.DocSubName,
+                            DocSentStatus = a.DocSentStatus,
+                            DocSentCreateUserName = a.DocSentCreateUserName,
+                            DocSentUpdateUserName = a.DocSentUpdateUserName,
+                            DocSentCreateDate = a.DocSentCreateDate,
+                            DocSentUpdateDate = a.DocSentUpdateDate,
+                            DocDigCopyRecStatus = a.DocDigCopyRecStatus,
+                            DocDigCopyRecCreateUserName = a.DocDigCopyRecCreateUserName,
+                            DocDigCopyRecUpdateUserName = a.DocDigCopyRecUpdateUserName,
+                            DocDigCopyRecCreateDate = a.DocDigCopyRecCreateDate,
+                            DocDigCopyRecUpdateDate = a.DocDigCopyRecUpdateDate,
+                            DocHardCopyRecStatus = a.DocHardCopyRecStatus,
+                            DocHardCopyRecCreateUserName = a.DocHardCopyRecCreateUserName,
+                            DocHardCopyRecUpdateUserName = a.DocHardCopyRecUpdateUserName,
+                            DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
+                            DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate
+
                         }).ToList();
 
                     }
@@ -1782,6 +1840,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     ulbObj.DocStatus = obj.DocStatus;
                                     ulbObj.DocUpdateUserId = obj.userId;
                                     ulbObj.DocUpdateDate = DateTime.Now;
+                                    ulbObj.Note = obj.Note;
                                 }
                                 await dbMain.SaveChangesAsync();
 
@@ -1812,6 +1871,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObjData.DocStatus = obj.DocStatus;
                                 ulbObjData.DocCreateDate = DateTime.Now;
                                 ulbObjData.DocCreateUserId = obj.userId;
+                                ulbObjData.Note = obj.Note;
                                 
                                 dbMain.ULB_Doc_Sends.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
@@ -1920,6 +1980,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     ulbObj.DocStatus = obj.DocStatus;
                                     ulbObj.DocUpdateUserId = obj.userId;
                                     ulbObj.DocUpdateDate = DateTime.Now;
+                                    ulbObj.Note = obj.Note;
                                 }
                                 await dbMain.SaveChangesAsync();
 
@@ -1950,6 +2011,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObjData.DocStatus = obj.DocStatus;
                                 ulbObjData.DocCreateDate = DateTime.Now;
                                 ulbObjData.DocCreateUserId = obj.userId;
+                                ulbObjData.Note = obj.Note;
 
                                 dbMain.ULB_DigCopy_Recs.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
@@ -2057,6 +2119,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     ulbObj.DocStatus = obj.DocStatus;
                                     ulbObj.DocUpdateUserId = obj.userId;
                                     ulbObj.DocUpdateDate = DateTime.Now;
+                                    ulbObj.Note = obj.Note;
                                 }
                                 await dbMain.SaveChangesAsync();
 
@@ -2087,6 +2150,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObjData.DocStatus = obj.DocStatus;
                                 ulbObjData.DocCreateDate = DateTime.Now;
                                 ulbObjData.DocCreateUserId = obj.userId;
+                                ulbObjData.Note = obj.Note;
 
                                 dbMain.ULB_HardCopy_Recs.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();

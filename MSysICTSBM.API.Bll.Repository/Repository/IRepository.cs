@@ -46,5 +46,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         Task<Result> SaveULBDigCopyDetailsAsync(ULB_DigCopy_RecVM obj);
         Task<List<ULBDocStatusVM>> GetULBDocStatusAsync(int ulbId, int docId);
         Task<Result> SaveULBHardCopyDetailsAsync(ULB_HardCopy_RecVM obj);
+        Task<List<ULBDocStatusVM>> GetAllULBDocStatusAsync(int ulbId);
     }
 }

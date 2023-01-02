@@ -7,6 +7,7 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     public class ULBDocStatusVM
     {
         public string AppName { get; set; }
+        public string DocName { get; set; }
         public string DocSubName { get; set; }
         public Nullable<bool> DocSentStatus { get; set; }
         public string DocSentCreateUserName { get; set; }
