@@ -212,7 +212,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             ulbObjData.IsActive = obj.IsActive;
                             ulbObjData.CreateUserid = obj.CreateUserid;
                             ulbObjData.CreateDate = DateTime.Now;
-                            ulbObjData.UpdateDate = DateTime.Now;
+                            ulbObjData.UpdateDate = DateTime.Now;  // In 15 days ULB working or not that's why Update date insert on save time. 
 
                             dbMain.ULB_Details.Add(ulbObjData);
                             await dbMain.SaveChangesAsync();
@@ -471,16 +471,22 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             printObj.HouseQty = obj.HouseQty;
                             printObj.HouseGreen = obj.HouseGreen;
                             printObj.HouseBlue = obj.HouseBlue;
-                            printObj.BannerAcrylic = obj.BannerAcrylic;
-                            printObj.DumpAcrylic = obj.DumpAcrylic;
-                            printObj.AbhiprayForm = obj.AbhiprayForm;
-                            printObj.DisclaimerForm = obj.DisclaimerForm;
-                            printObj.DataEntryBook = obj.DataEntryBook;
                             printObj.DumpQty = obj.DumpQty;
                             printObj.StreetQty = obj.StreetQty;
                             printObj.LiquidQty = obj.LiquidQty;
+
+                            printObj.BannerAcrylic = obj.BannerAcrylic;
+                            printObj.DumpAcrylic = obj.DumpAcrylic;
+
+                            printObj.AbhiprayForm = obj.AbhiprayForm;
+
+                            printObj.DisclaimerForm = obj.DisclaimerForm;
+
+                            printObj.DataEntryBook = obj.DataEntryBook;
+
+
                             printObj.Note = obj.Note;
-                            printObj.UserId = obj.UserId;
+                            //printObj.UserId = obj.UserId;
                             printObj.UpdationDate = DateTime.Now;
                             printObj.UpdateUserId = obj.UserId;
 
@@ -671,7 +677,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             sentObj.StreetQty = obj.StreetQty;
                             sentObj.LiquidQty = obj.LiquidQty;
                             sentObj.Note = obj.Note;
-                            sentObj.UserId = obj.UserId;
+                            //sentObj.UserId = obj.UserId;
                             sentObj.UpdationDate = DateTime.Now;
                             sentObj.UpdateUserId = obj.UserId;
                             sentObj.DisclaimerForm = obj.DisclaimerForm;
@@ -897,7 +903,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             formType = a.formType,
                             sent = a.sent,
-                            prin = a.prin,
+                            print = a.prin,
                             receive = a.receive
                             
                         }).ToList();
@@ -1048,7 +1054,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         HouseBlue = a.HouseBlue ?? 0,
                         HouseGreen = a.HouseGreen ?? 0,
                         DumpQty = a.DumpQty ?? 0,
-                        StreetQty = a.StreetQty ?? 0
+                        StreetQty = a.StreetQty ?? 0,
+                        UserId=a.UserId,
+                        CreateUserName=dbMain.EmployeeMasters.Where(s=>s.Id==a.UserId).Select(s=>s.Name).FirstOrDefault(),
+                        UpdationDate=a.UpdationDate,
+                        Note=a.Note,
+                       // UpdateUserId=a.UpdateUserId,
+                       // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
+
 
                     }).ToListAsync();
                     result.QrCode.isPrinted = result.QrCode.Printed != null && result.QrCode.Printed.Count > 0 ? true : false;
@@ -1058,7 +1071,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         HouseBlue = a.HouseBlue ?? 0,
                         HouseGreen = a.HouseGreen ?? 0,
                         DumpQty = a.DumpQty ?? 0,
-                        StreetQty = a.StreetQty ?? 0
+                        StreetQty = a.StreetQty ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
                     }).ToListAsync();
                     result.QrCode.isSent = result.QrCode.Sent != null && result.QrCode.Sent.Count > 0 ? true : false;
@@ -1069,7 +1088,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         HouseBlue = a.HouseBlue ?? 0,
                         HouseGreen = a.HouseGreen ?? 0,
                         DumpQty = a.DumpQty ?? 0,
-                        StreetQty = a.StreetQty ?? 0
+                        StreetQty = a.StreetQty ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.QrCode.isReceived = result.QrCode.Received != null && result.QrCode.Received.Count > 0 ? true : false;
 
@@ -1077,73 +1102,139 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.Banners.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrPrintedVM
                     {
                         BannerAcrylic = a.BannerAcrylic ?? 0,
-                        DumpAcrylic = a.DumpAcrylic ?? 0
+                        DumpAcrylic = a.DumpAcrylic ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Banners.isPrinted = result.Banners.Printed != null && result.Banners.Printed.Count > 0 ? true : false;
 
                     result.Banners.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrSentVM
                     {
                         BannerAcrylic = a.BannerAcrylic ?? 0,
-                        DumpAcrylic = a.DumpAcrylic ?? 0
+                        DumpAcrylic = a.DumpAcrylic ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Banners.isSent = result.Banners.Sent != null && result.Banners.Sent.Count > 0 ? true : false;
 
                     result.Banners.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.BannerAcrylic > 0 || a.DumpAcrylic > 0)).Select(a => new QrReceiveVM
                     {
                         BannerAcrylic = a.BannerAcrylic ?? 0,
-                        DumpAcrylic = a.DumpAcrylic ?? 0
+                        DumpAcrylic = a.DumpAcrylic ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Banners.isReceived = result.Banners.Received != null && result.Banners.Received.Count > 0 ? true : false;
 
 
                     result.Abhipray.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrPrintedVM
                     {
-                        AbhiprayForm = a.AbhiprayForm ?? 0
+                        AbhiprayForm = a.AbhiprayForm ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Abhipray.isPrinted = result.Abhipray.Printed != null && result.Abhipray.Printed.Count > 0 ? true : false;
 
                     result.Abhipray.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrSentVM
                     {
-                        AbhiprayForm = a.AbhiprayForm ?? 0
+                        AbhiprayForm = a.AbhiprayForm ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Abhipray.isSent = result.Abhipray.Sent != null && result.Abhipray.Sent.Count > 0 ? true : false;
 
                     result.Abhipray.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrReceiveVM
                     {
-                        AbhiprayForm = a.AbhiprayForm ?? 0
+                        AbhiprayForm = a.AbhiprayForm ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Abhipray.isReceived = result.Abhipray.Received != null && result.Abhipray.Received.Count > 0 ? true : false;
 
 
                     result.Disclaimer.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrPrintedVM
                     {
-                        DisclaimerForm = a.DisclaimerForm ?? 0
+                        DisclaimerForm = a.DisclaimerForm ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Disclaimer.isPrinted = result.Disclaimer.Printed != null && result.Disclaimer.Printed.Count > 0 ? true : false;
                    
                     result.Disclaimer.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrSentVM
                     {
-                        DisclaimerForm = a.DisclaimerForm ?? 0
+                        DisclaimerForm = a.DisclaimerForm ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Disclaimer.isSent = result.Disclaimer.Sent != null && result.Disclaimer.Sent.Count > 0 ? true : false;
 
                     result.Disclaimer.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrReceiveVM
                     {
-                        DisclaimerForm = a.DisclaimerForm ?? 0
+                        DisclaimerForm = a.DisclaimerForm ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Disclaimer.isReceived = result.Disclaimer.Received != null && result.Disclaimer.Received.Count > 0 ? true : false;
 
 
                     result.EntryBook.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrPrintedVM
                     {
-                        DataEntryBook = a.DataEntryBook ?? 0
+                        DataEntryBook = a.DataEntryBook ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
                     }).ToListAsync();
                     result.EntryBook.isPrinted = result.EntryBook.Printed != null && result.EntryBook.Printed.Count > 0 ? true : false;
                     
                     result.EntryBook.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrSentVM
                     {
-                        DataEntryBook = a.DataEntryBook ?? 0
+                        DataEntryBook = a.DataEntryBook ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
                     }).ToListAsync();
                     result.EntryBook.isSent = result.EntryBook.Sent != null && result.EntryBook.Sent.Count > 0 ? true : false;
@@ -1151,7 +1242,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                     result.EntryBook.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrReceiveVM
                     {
-                        DataEntryBook = a.DataEntryBook ?? 0
+                        DataEntryBook = a.DataEntryBook ?? 0,
+                        UserId = a.UserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
                     }).ToListAsync();
                     result.EntryBook.isReceived = result.EntryBook.Received != null && result.EntryBook.Received.Count > 0 ? true : false;
@@ -1193,7 +1290,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             receiveObj.StreetQty = obj.StreetQty;
                             receiveObj.LiquidQty = obj.LiquidQty;
                             receiveObj.Note = obj.Note;
-                            receiveObj.UserId = obj.UserId;
+                            //receiveObj.UserId = obj.UserId;
                             receiveObj.UpdationDate = DateTime.Now;
                             receiveObj.UpdateUserId = obj.UserId;
                             receiveObj.DisclaimerForm = obj.DisclaimerForm;

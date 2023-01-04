@@ -47,7 +47,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBDetails")]
-        public async Task<ActionResult<ULB_DetailVM>> GetULBDetails(int Id)
+        public async Task<ActionResult<ULB_DetailVM>> GetULBDetails([FromHeader]int Id)
         {
             ULB_DetailVM objResult = new ULB_DetailVM();
             objResult = await objRep.GetULBDetailsAsync(Id);
@@ -64,7 +64,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBStatus")]
-        public async Task<List<ULBStatusVM>> GetULBStatus(int ulbId)
+        public async Task<List<ULBStatusVM>> GetULBStatus( [FromHeader]  int ulbId)
         {
             List<ULBStatusVM> objResult = new List<ULBStatusVM>();
             objResult = await objRep.GetULBStatusAsync(ulbId);
@@ -88,7 +88,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBFormStatus")]
-        public async Task<ULBFormStatusVM> GetULBFormStatus(int ulbId)
+        public async Task<ULBFormStatusVM> GetULBFormStatus([FromHeader]int ulbId)
         {
             ULBFormStatusVM objResult = new ULBFormStatusVM();
             objResult = await objRep.GetULBFormStatusAsync(ulbId);
