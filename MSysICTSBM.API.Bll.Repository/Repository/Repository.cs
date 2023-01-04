@@ -516,7 +516,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             printObjData.StreetQty = obj.StreetQty;
                             printObjData.LiquidQty = obj.LiquidQty;
                             printObjData.Note = obj.Note;
-                            printObjData.UserId = obj.UserId;
+                            printObjData.CreateUserId = obj.UserId;
                             
                             dbMain.QrPrinteds.Add(printObjData);
 
@@ -575,14 +575,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         LiquidQty = a.LiquidQty,
                         Note = a.Note,
                         UpdationDate = a.UpdationDate,
-                        UserId = a.UserId,
+                        CreateUserId = a.CreateUserId,
                         DumpAcrylic = a.DumpAcrylic,
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         DisclaimerForm = a.DisclaimerForm,
                         DataEntryBook = a.DataEntryBook,
                         UpdateUserId = a.UpdateUserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
                     }).ToListAsync();
@@ -627,14 +627,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         LiquidQty = a.LiquidQty,
                         Note = a.Note,
                         UpdationDate = a.UpdationDate,
-                        UserId = a.UserId,
+                        CreateUserId = a.CreateUserId,
                         DumpAcrylic = a.DumpAcrylic,
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         UpdateUserId = a.UpdateUserId,
                         DisclaimerForm = a.DisclaimerForm,
                         DataEntryBook = a.DataEntryBook,
-                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
                     }).FirstOrDefaultAsync();
@@ -706,7 +706,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             sentObjData.StreetQty = obj.StreetQty;
                             sentObjData.LiquidQty = obj.LiquidQty;
                             sentObjData.Note = obj.Note;
-                            sentObjData.UserId = obj.UserId;
+                            sentObjData.CreateUserId = obj.UserId;
                             sentObjData.DisclaimerForm = obj.DisclaimerForm;
                             sentObjData.DataEntryBook = obj.DataEntryBook;
 
@@ -766,14 +766,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         LiquidQty = a.LiquidQty,
                         Note = a.Note,
                         UpdationDate = a.UpdationDate,
-                        UserId = a.UserId,
+                        CreateUserId = a.CreateUserId,
                         DumpAcrylic = a.DumpAcrylic,
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         UpdateUserId = a.UpdateUserId,
                         DisclaimerForm = a.DisclaimerForm,
                         DataEntryBook = a.DataEntryBook,
-                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
                     }).ToListAsync();
@@ -811,14 +811,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         LiquidQty = a.LiquidQty,
                         Note = a.Note,
                         UpdationDate = a.UpdationDate,
-                        UserId = a.UserId,
+                        CreateUserId = a.CreateUserId,
                         DumpAcrylic = a.DumpAcrylic,
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         UpdateUserId = a.UpdateUserId,
                         DisclaimerForm = a.DisclaimerForm,
                         DataEntryBook = a.DataEntryBook,
-                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
                     }).FirstOrDefaultAsync();
@@ -1048,16 +1048,16 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    result.QrCode.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 && a.HouseGreen > 0 && a.DumpQty > 0 && a.StreetQty > 0)).Select(a => new QrPrintedVM
+                    result.QrCode.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 || a.HouseGreen > 0 || a.DumpQty > 0 || a.StreetQty > 0)).Select(a => new QrPrintedVM
                     {
                         HouseQty = a.HouseQty ?? 0,
                         HouseBlue = a.HouseBlue ?? 0,
                         HouseGreen = a.HouseGreen ?? 0,
                         DumpQty = a.DumpQty ?? 0,
                         StreetQty = a.StreetQty ?? 0,
-                        UserId=a.UserId,
-                        CreateUserName=dbMain.EmployeeMasters.Where(s=>s.Id==a.UserId).Select(s=>s.Name).FirstOrDefault(),
-                        UpdationDate=a.UpdationDate,
+                        CreateUserId =a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s=>s.Id==a.CreateUserId).Select(s=>s.Name).FirstOrDefault(),
+                        UpdationDate = a.UpdationDate,
                         Note=a.Note,
                        // UpdateUserId=a.UpdateUserId,
                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
@@ -1065,15 +1065,15 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                     }).ToListAsync();
                     result.QrCode.isPrinted = result.QrCode.Printed != null && result.QrCode.Printed.Count > 0 ? true : false;
-                    result.QrCode.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 && a.HouseGreen > 0 && a.DumpQty > 0 && a.StreetQty > 0)).Select(a => new QrSentVM
+                    result.QrCode.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 || a.HouseGreen > 0 || a.DumpQty > 0 || a.StreetQty > 0)).Select(a => new QrSentVM
                     {
                         HouseQty = a.HouseQty ?? 0,
                         HouseBlue = a.HouseBlue ?? 0,
                         HouseGreen = a.HouseGreen ?? 0,
                         DumpQty = a.DumpQty ?? 0,
                         StreetQty = a.StreetQty ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1082,15 +1082,15 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     }).ToListAsync();
                     result.QrCode.isSent = result.QrCode.Sent != null && result.QrCode.Sent.Count > 0 ? true : false;
 
-                    result.QrCode.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 && a.HouseGreen > 0 && a.DumpQty > 0 && a.StreetQty > 0)).Select(a => new QrReceiveVM
+                    result.QrCode.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.HouseQty > 0 || a.HouseBlue > 0 || a.HouseGreen > 0 || a.DumpQty > 0 || a.StreetQty > 0)).Select(a => new QrReceiveVM
                     {
                         HouseQty = a.HouseQty ?? 0,
                         HouseBlue = a.HouseBlue ?? 0,
                         HouseGreen = a.HouseGreen ?? 0,
                         DumpQty = a.DumpQty ?? 0,
                         StreetQty = a.StreetQty ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1103,8 +1103,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         BannerAcrylic = a.BannerAcrylic ?? 0,
                         DumpAcrylic = a.DumpAcrylic ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1116,8 +1116,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         BannerAcrylic = a.BannerAcrylic ?? 0,
                         DumpAcrylic = a.DumpAcrylic ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1129,8 +1129,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         BannerAcrylic = a.BannerAcrylic ?? 0,
                         DumpAcrylic = a.DumpAcrylic ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1142,8 +1142,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.Abhipray.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrPrintedVM
                     {
                         AbhiprayForm = a.AbhiprayForm ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1154,8 +1154,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.Abhipray.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrSentVM
                     {
                         AbhiprayForm = a.AbhiprayForm ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1166,8 +1166,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.Abhipray.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.AbhiprayForm > 0)).Select(a => new QrReceiveVM
                     {
                         AbhiprayForm = a.AbhiprayForm ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1179,8 +1179,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.Disclaimer.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrPrintedVM
                     {
                         DisclaimerForm = a.DisclaimerForm ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1191,8 +1191,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.Disclaimer.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrSentVM
                     {
                         DisclaimerForm = a.DisclaimerForm ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1203,8 +1203,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.Disclaimer.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrReceiveVM
                     {
                         DisclaimerForm = a.DisclaimerForm ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1216,8 +1216,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.EntryBook.Printed = await dbMain.QrPrinteds.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrPrintedVM
                     {
                         DataEntryBook = a.DataEntryBook ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1229,8 +1229,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.EntryBook.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrSentVM
                     {
                         DataEntryBook = a.DataEntryBook ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1243,8 +1243,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     result.EntryBook.Received = await dbMain.QrReceives.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrReceiveVM
                     {
                         DataEntryBook = a.DataEntryBook ?? 0,
-                        UserId = a.UserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UserId).Select(s => s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
                         Note = a.Note,
                         // UpdateUserId=a.UpdateUserId,
@@ -1320,7 +1320,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             receiveObjData.StreetQty = obj.StreetQty;
                             receiveObjData.LiquidQty = obj.LiquidQty;
                             receiveObjData.Note = obj.Note;
-                            receiveObjData.UserId = obj.UserId;
+                            receiveObjData.CreateUserId = obj.UserId;
                             receiveObjData.DisclaimerForm = obj.DisclaimerForm;
                             receiveObjData.DataEntryBook = obj.DataEntryBook;
                             dbMain.QrReceives.Add(receiveObjData);
@@ -1378,14 +1378,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         LiquidQty = a.LiquidQty,
                         Note = a.Note,
                         UpdationDate = a.UpdationDate,
-                        UserId = a.UserId,
+                        CreateUserId = a.CreateUserId,
                         DumpAcrylic = a.DumpAcrylic,
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         UpdateUserId = a.UpdateUserId,
                         DisclaimerForm = a.DisclaimerForm,
                         DataEntryBook = a.DataEntryBook,
-                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UserId).Select(e => e.Username).FirstOrDefault(),
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserId).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserId).Select(e => e.Username).FirstOrDefault()
 
                     }).ToListAsync();
@@ -1423,14 +1423,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         LiquidQty = a.LiquidQty,
                         Note = a.Note,
                         UpdationDate = a.UpdationDate,
-                        UserId = a.UserId,
+                        CreateUserId = a.CreateUserId,
                         DumpAcrylic = a.DumpAcrylic,
                         AbhiprayForm = a.AbhiprayForm,
                         BannerAcrylic = a.BannerAcrylic,
                         UpdateUserId = a.UpdateUserId,
                         DisclaimerForm = a.DisclaimerForm,
                         DataEntryBook = a.DataEntryBook,
-                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.UserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
+                        CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.CreateUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.UpdateUserId ?? 0)).Select(e => e.Username).FirstOrDefault()
 
                     }).FirstOrDefaultAsync();

@@ -91,9 +91,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
 
                 entity.Property(e => e.CreationDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Note)
-                    .HasMaxLength(500)
-                    .IsFixedLength(true);
+                entity.Property(e => e.Note).HasMaxLength(500);
 
                 entity.Property(e => e.PrintDate).HasColumnType("datetime");
 
@@ -108,9 +106,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
 
                 entity.Property(e => e.CreationDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Note)
-                    .HasMaxLength(500)
-                    .IsFixedLength(true);
+                entity.Property(e => e.Note).HasMaxLength(500);
 
                 entity.Property(e => e.ReceiveDate).HasColumnType("datetime");
 
@@ -125,9 +121,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
 
                 entity.Property(e => e.CreationDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Note)
-                    .HasMaxLength(500)
-                    .IsFixedLength(true);
+                entity.Property(e => e.Note).HasMaxLength(500);
 
                 entity.Property(e => e.SentDate).HasColumnType("datetime");
 

@@ -24,7 +24,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public int? DataEntryBook { get; set; }
         public string Note { get; set; }
         public DateTime? UpdationDate { get; set; }
-        public int? UserId { get; set; }
+        public int? CreateUserId { get; set; }
         public int? UpdateUserId { get; set; }
     }
 }
