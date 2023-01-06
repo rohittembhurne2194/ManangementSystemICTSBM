@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MSysICTSBM.API.Bll.Repository.Repository;
 using MSysICTSBM.Dal.DataContexts.Models.DB;
+using MSysICTSBM.Dal.DataContexts.Models.DB.MainContext;
 using MSysICTSBM.Dal.DataContexts.Models.DB.MainModels;
 using System;
 using System.Collections.Generic;
