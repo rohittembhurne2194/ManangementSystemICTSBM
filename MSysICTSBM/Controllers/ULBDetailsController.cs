@@ -105,7 +105,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBAppDetails")]
-        public async Task<ULB_App_StatusVM> GetULBAppDetails(int ulbId)
+        public async Task<ULB_App_StatusVM> GetULBAppDetails([FromHeader] int ulbId)
         {
 
             ULB_App_StatusVM objResult = new ULB_App_StatusVM();
@@ -123,7 +123,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBDocMasters")]
-        public async Task<DocMasterVM> GetULBDocMaster(int docId)
+        public async Task<DocMasterVM> GetULBDocMaster([FromHeader] int docId)
         {
 
             DocMasterVM objResult = new DocMasterVM();
@@ -151,11 +151,11 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBDocSubMasters")]
-        public async Task<DocSubMasterVM> GetULBDocSubMaster(int docId)
+        public async Task<DocSubMasterVM> GetULBDocSubMaster([FromHeader]  int Id)
         {
 
             DocSubMasterVM objResult = new DocSubMasterVM();
-            objResult = await objRep.GetULBDocSubMasterAsync(docId);
+            objResult = await objRep.GetULBDocSubMasterAsync(Id);
             return objResult;
         }
 
@@ -169,7 +169,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("GetAll/ULBDocSubMastersById")]
-        public async Task<List<DocSubMasterVM>> GetAllULBDocSubMasterById(int docId)
+        public async Task<List<DocSubMasterVM>> GetAllULBDocSubMasterById([FromHeader] int docId)
         {
 
             List<DocSubMasterVM> objResult = new List<DocSubMasterVM>();

@@ -41,7 +41,7 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
         [HttpGet("Get/QrSent")]
-        public async Task<QrSentVM> GetQrPrintDetails(int Id)
+        public async Task<QrSentVM> GetQrPrintDetails([FromHeader] int Id)
         {
             QrSentVM objResult = new QrSentVM();
             objResult = await objRep.GetQrSentDetailsAsync(Id);
