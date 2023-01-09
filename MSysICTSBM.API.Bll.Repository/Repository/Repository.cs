@@ -109,19 +109,51 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     }
                     else
                     {
+                        if (string.IsNullOrEmpty(userobj.imoNo))
+                        {
 
-                        user.type ="";
-                        user.typeId = 0;
-                        user.userId = userobj.Id;
-                        user.userLoginId = userobj.Username;
-                        user.userPassword = "";
-                        user.imiNo = "";
-                        user.EmpType = userobj.Type;
-                        
-                        user.status = "success"; 
-                        user.message = "Login Successfully"; 
-                        user.messageMar = "लॉगिन यशस्वी";
-                        user.token = await LoginAsync(userobj.Username, userobj.Type, userobj.Id);
+                            userobj.imoNo = obj.imiNo;
+                            await dbMain.SaveChangesAsync();
+                            user.type = "";
+                            user.typeId = 0;
+                            user.userId = userobj.Id;
+                            user.userLoginId = userobj.Username;
+                            user.userPassword = "";
+                            user.imiNo = "";
+                            user.EmpType = userobj.Type;
+
+                            user.status = "success";
+                            user.message = "Login Successfully";
+                            user.messageMar = "लॉगिन यशस्वी";
+                            user.token = await LoginAsync(userobj.Username, userobj.Type, userobj.Id);
+                        }
+                        else if(userobj.imoNo == obj.imiNo)
+                        {
+                            user.type = "";
+                            user.typeId = 0;
+                            user.userId = userobj.Id;
+                            user.userLoginId = userobj.Username;
+                            user.userPassword = "";
+                            user.imiNo = "";
+                            user.EmpType = userobj.Type;
+
+                            user.status = "success";
+                            user.message = "Login Successfully";
+                            user.messageMar = "लॉगिन यशस्वी";
+                            user.token = await LoginAsync(userobj.Username, userobj.Type, userobj.Id);
+                        }
+                        else
+                        {
+                            user.userId = 0;
+                            user.userLoginId = "";
+                            user.userPassword = "";
+                            user.status = "error";
+                            user.gtFeatures = false;
+                            user.imiNo = "";
+                            user.EmpType = "";
+                            user.message = "User is already login with another mobile.";
+                            user.messageMar = "वापरकर्ता दुसर्या मोबाइलवर आधीपासूनच लॉगिन आहे.";
+                        }
 
                     }
                 }

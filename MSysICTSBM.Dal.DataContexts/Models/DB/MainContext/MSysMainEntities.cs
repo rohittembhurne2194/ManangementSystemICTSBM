@@ -81,6 +81,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainContext
 
                 entity.Property(e => e.Username).HasMaxLength(200);
 
+                entity.Property(e => e.imoNo).HasMaxLength(200);
+
                 entity.Property(e => e.lastModifyDateEntry).HasColumnType("datetime");
             });
 

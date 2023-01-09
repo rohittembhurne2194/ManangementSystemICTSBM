@@ -18,5 +18,6 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public string IsActiveULB { get; set; }
         public DateTime? Create_Date { get; set; }
         public DateTime? lastModifyDateEntry { get; set; }
+        public string imoNo { get; set; }
     }
 }
