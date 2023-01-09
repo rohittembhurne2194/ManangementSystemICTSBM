@@ -43,7 +43,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/QrReceive")]
-        public async Task<QrReceiveVM> GetQrReceiveDetails(int Id)
+        public async Task<QrReceiveVM> GetQrReceiveDetails([FromHeader]int Id)
         {
             QrReceiveVM objResult = new QrReceiveVM();
             objResult = await objRep.GetQrReceiveDetailsAsync(Id);

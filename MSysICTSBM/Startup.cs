@@ -18,6 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MSysICTSBM
@@ -35,7 +37,8 @@ namespace MSysICTSBM
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddDbContext<MSysMainEntities>(ServiceLifetime.Transient);
-            services.AddDbContext<MSysMainEntities>(options => {
+            services.AddDbContext<MSysMainEntities>(options =>
+            {
                 options.UseSqlServer(Configuration.GetConnectionString("mainDbCon"),
                     providerOptions => { providerOptions.EnableRetryOnFailure(20); });
 
@@ -97,6 +100,25 @@ namespace MSysICTSBM
 
                 };
             });
+
+            services.AddControllers()
+      .AddJsonOptions(options =>
+          options.JsonSerializerOptions.Converters.Add(new TimeSpanToStringConverter()));
+        }
+
+
+        public class TimeSpanToStringConverter : JsonConverter<TimeSpan>
+        {
+            public override TimeSpan Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                var value = reader.GetString();
+                return TimeSpan.Parse(value);
+            }
+
+            public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToString());
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
