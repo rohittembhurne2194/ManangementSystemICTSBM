@@ -987,16 +987,21 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             DocSentUpdateUserName = a.DocSentUpdateUserName,
                             DocSentCreateDate = a.DocSentCreateDate,
                             DocSentUpdateDate = a.DocSentUpdateDate,
+                            DocSentNote=a.DocSentNote,
+
                             DocDigCopyRecStatus = a.DocDigCopyRecStatus,
                             DocDigCopyRecCreateUserName = a.DocDigCopyRecCreateUserName,
                             DocDigCopyRecUpdateUserName = a.DocDigCopyRecUpdateUserName,
                             DocDigCopyRecCreateDate = a.DocDigCopyRecCreateDate,
                             DocDigCopyRecUpdateDate = a.DocDigCopyRecUpdateDate,
+                            DocDigCopyNote=a.DocDigCopyNote,
+
                             DocHardCopyRecStatus = a.DocHardCopyRecStatus,
                             DocHardCopyRecCreateUserName = a.DocHardCopyRecCreateUserName,
                             DocHardCopyRecUpdateUserName = a.DocHardCopyRecUpdateUserName,
                             DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
-                            DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate
+                            DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate,
+                            DocHardCopyNote=a.DocHardCopyNote
                             
                         }).ToList();
 

@@ -72,7 +72,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBDocStatus")]
-        public async Task<List<ULBDocStatusVM>> GetULBDocStatus(int ulbId,int docId)
+        public async Task<List<ULBDocStatusVM>> GetULBDocStatus([FromHeader]  int ulbId, [FromHeader]  int docId)
         {
             List<ULBDocStatusVM> objResult = new List<ULBDocStatusVM>();
             objResult = await objRep.GetULBDocStatusAsync(ulbId,docId);
