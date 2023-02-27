@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace MSysICTSBM.API.Bll.Repository.Repository
 {
-    public class Repository:IRepository
+    public class Repository : IRepository
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<Repository> _logger;
@@ -81,14 +81,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         {
             SBUser user = new SBUser();
             user = await CheckUserLoginForNormalAsync(obj);
-            
+
             return user;
         }
-         
+
         public async Task<SBUser> CheckUserLoginForNormalAsync(SBUser obj)
         {
             SBUser user = new SBUser();
-            try 
+            try
             {
                 using (dbMain)
                 {
@@ -127,7 +127,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             user.messageMar = "लॉगिन यशस्वी";
                             user.token = await LoginAsync(userobj.Username, userobj.Type, userobj.Id);
                         }
-                        else if(userobj.imoNo == obj.imiNo)
+                        else if (userobj.imoNo == obj.imiNo)
                         {
                             user.type = "";
                             user.typeId = 0;
@@ -174,27 +174,27 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         {
             try
             {
-                    
-                    if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(EmpType))
-                    {
-                        return null;
-                    }
-                    var authClaims = new List<Claim>
+
+                if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(EmpType))
+                {
+                    return null;
+                }
+                var authClaims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name,userName),
                          new Claim("EmpType",EmpType),
                          new Claim("UserId",UserId.ToString()),
                         new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     };
-                    var authSigninkey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:Secret"]));
-                    var token = new JwtSecurityToken(
-                        issuer: _configuration["JWT:ValidIssuer"],
-                        audience: _configuration["JWT:ValidAudience"],
-                        expires: DateTime.Now.AddHours(12),
-                        claims: authClaims,
-                        signingCredentials: new SigningCredentials(authSigninkey, SecurityAlgorithms.HmacSha256Signature));
-                    return new JwtSecurityTokenHandler().WriteToken(token);
-                
+                var authSigninkey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:Secret"]));
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["JWT:ValidIssuer"],
+                    audience: _configuration["JWT:ValidAudience"],
+                    expires: DateTime.Now.AddHours(12),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(authSigninkey, SecurityAlgorithms.HmacSha256Signature));
+                return new JwtSecurityTokenHandler().WriteToken(token);
+
             }
             catch (Exception ex)
             {
@@ -263,7 +263,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         result.messageMar = "वापरकर्ता नाव अस्तित्वात नाही..";
 
                     }
-                    
+
                 }
                 return result;
             }
@@ -317,13 +317,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             result.messageMar = "वापरकर्ता तपशील यशस्वीरित्या बदलले";
 
                         }
-                        
+
 
                     }
                     else
                     {
-                        if (await dbMain.EmployeeMasters.AnyAsync(a => a.Username == obj.Username)) {
-                            
+                        if (await dbMain.EmployeeMasters.AnyAsync(a => a.Username == obj.Username))
+                        {
+
 
                             result.status = "Error";
                             result.message = "User Name  already Exist";
@@ -401,8 +402,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                                 }).ToListAsync();
                             }
-                            
-                            
+
+
                         }
                         else if (userobj.Type != null && userobj.Type.ToUpper() == "SA")
                         {
@@ -426,7 +427,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             }).ToListAsync();
                         }
                     }
-                    
+
                 }
                 if (result != null && result.Count > 0)
                 {
@@ -436,18 +437,18 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     }
 
                 }
-               
+
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.ToString(), ex);
 
                 return result;
 
             }
-            
-       }
+
+        }
 
         public async Task<ULB_DetailVM> GetULBDetailsAsync(int Id)
         {
@@ -550,7 +551,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             printObjData.LiquidQty = obj.LiquidQty;
                             printObjData.Note = obj.Note;
                             printObjData.CreateUserId = obj.UserId;
-                            
+
                             dbMain.QrPrinteds.Add(printObjData);
 
 
@@ -620,7 +621,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                     }).ToListAsync();
                 }
-                
+
                 return result;
             }
             catch (Exception ex)
@@ -635,7 +636,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         {
             DateTime dtToday = DateTime.Now;
             DateTime dt = ulbDate ?? DateTime.Now;
-            
+
             var diffOfDate = (dtToday - dt).TotalDays;
             return diffOfDate > 15;
         }
@@ -897,7 +898,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         }).ToList();
 
                     }
-                    
+
                 }
 
                 return result;
@@ -938,7 +939,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             sent = a.sent,
                             print = a.prin,
                             receive = a.receive
-                            
+
                         }).ToList();
 
                     }
@@ -987,22 +988,22 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             DocSentUpdateUserName = a.DocSentUpdateUserName,
                             DocSentCreateDate = a.DocSentCreateDate,
                             DocSentUpdateDate = a.DocSentUpdateDate,
-                            DocSentNote=a.DocSentNote,
+                            DocSentNote = a.DocSentNote,
 
                             DocDigCopyRecStatus = a.DocDigCopyRecStatus,
                             DocDigCopyRecCreateUserName = a.DocDigCopyRecCreateUserName,
                             DocDigCopyRecUpdateUserName = a.DocDigCopyRecUpdateUserName,
                             DocDigCopyRecCreateDate = a.DocDigCopyRecCreateDate,
                             DocDigCopyRecUpdateDate = a.DocDigCopyRecUpdateDate,
-                            DocDigCopyNote=a.DocDigCopyNote,
+                            DocDigCopyNote = a.DocDigCopyNote,
 
                             DocHardCopyRecStatus = a.DocHardCopyRecStatus,
                             DocHardCopyRecCreateUserName = a.DocHardCopyRecCreateUserName,
                             DocHardCopyRecUpdateUserName = a.DocHardCopyRecUpdateUserName,
                             DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
                             DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate,
-                            DocHardCopyNote=a.DocHardCopyNote
-                            
+                            DocHardCopyNote = a.DocHardCopyNote
+
                         }).ToList();
 
                     }
@@ -1021,10 +1022,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-        public async Task<List<ULBDocStatusVM>> GetAllULBDocStatusAsync(int ulbId)
+        public async Task<List<ULBDocStatusVMNew>> GetAllULBDocStatusAsync(int ulbId)
         {
-            List<ULBDocStatusVM> result = new List<ULBDocStatusVM>();
-
+            List<ULBDocStatusVMNew> result = new List<ULBDocStatusVMNew>();
+            List<SubDatum> sd = new List<SubDatum>();
 
             try
             {
@@ -1036,33 +1037,69 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                     new SqlParameter { ParameterName = "@ulbId", Value = ulbId }
                                                 };
                     var data = await dbMain.sp_getULB_AllDocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_All_DocStatus @ulbId", parms.ToArray()).ToListAsync();
+                    var docData = await dbMain.DocMasters.ToListAsync();
 
-                    if (data != null && data.Count > 0)
+                    if (docData != null)
                     {
-                        result = data.Select(a => new ULBDocStatusVM
+                        foreach (var a in docData)
                         {
-                            AppName = a.AppName,
-                            DocName = a.DocName,
-                            DocSubName = a.DocSubName,
-                            DocSentStatus = a.DocSentStatus,
-                            DocSentCreateUserName = a.DocSentCreateUserName,
-                            DocSentUpdateUserName = a.DocSentUpdateUserName,
-                            DocSentCreateDate = a.DocSentCreateDate,
-                            DocSentUpdateDate = a.DocSentUpdateDate,
-                            DocDigCopyRecStatus = a.DocDigCopyRecStatus,
-                            DocDigCopyRecCreateUserName = a.DocDigCopyRecCreateUserName,
-                            DocDigCopyRecUpdateUserName = a.DocDigCopyRecUpdateUserName,
-                            DocDigCopyRecCreateDate = a.DocDigCopyRecCreateDate,
-                            DocDigCopyRecUpdateDate = a.DocDigCopyRecUpdateDate,
-                            DocHardCopyRecStatus = a.DocHardCopyRecStatus,
-                            DocHardCopyRecCreateUserName = a.DocHardCopyRecCreateUserName,
-                            DocHardCopyRecUpdateUserName = a.DocHardCopyRecUpdateUserName,
-                            DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
-                            DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate
+                            var data1 = data.Where(c => c.DocName == a.DocName).ToList();
+                            foreach (var b in data1)
+                            {
+                                sd.Add(new SubDatum()
+                                {
+                                    DocNameNew= a.DocName,
+                                    DocSubName = b.DocSubName,
+                                    DocSentStatus =Convert.ToBoolean( b.DocSentStatus),
+                                    DocDigCopyRecStatus = Convert.ToBoolean(b.DocDigCopyRecStatus),
+                                    DocHardCopyRecStatus = Convert.ToBoolean(b.DocHardCopyRecStatus),
 
-                        }).ToList();
+                                });
+                            }
 
+                            result.Add(new ULBDocStatusVMNew()
+                            {
+                                AppName = dbMain.ULB_Details.Where(s => s.Id == ulbId).Select(s => s.AppName).FirstOrDefault(),
+                                DocName = a.DocName,
+                                SubData = sd.Where(s => s.DocNameNew == a.DocName).ToList()
+                            }) ;
+                        }
                     }
+
+
+                    // Milind Code
+
+                    //if (data != null && data.Count > 0 )
+                    //{
+                    //    result = data.Select(a => new ULBDocStatusVMNew
+                    //    {
+                    //        AppName = a.AppName,
+                    //        DocName = a.DocName,
+
+                    //        //DocSubName = a.DocSubName,
+                    //        //DocSentStatus = a.DocSentStatus,
+                    //        //DocSentCreateUserName = a.DocSentCreateUserName,
+                    //        //DocSentUpdateUserName = a.DocSentUpdateUserName,
+                    //        //DocSentCreateDate = a.DocSentCreateDate,
+                    //        //DocSentUpdateDate = a.DocSentUpdateDate,
+                    //        //DocDigCopyRecStatus = a.DocDigCopyRecStatus,
+                    //        //DocDigCopyRecCreateUserName = a.DocDigCopyRecCreateUserName,
+                    //        //DocDigCopyRecUpdateUserName = a.DocDigCopyRecUpdateUserName,
+                    //        //DocDigCopyRecCreateDate = a.DocDigCopyRecCreateDate,
+                    //        //DocDigCopyRecUpdateDate = a.DocDigCopyRecUpdateDate,
+                    //        //DocHardCopyRecStatus = a.DocHardCopyRecStatus,
+                    //        //DocHardCopyRecCreateUserName = a.DocHardCopyRecCreateUserName,
+                    //        //DocHardCopyRecUpdateUserName = a.DocHardCopyRecUpdateUserName,
+                    //        //DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
+                    //        //DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate
+
+                    //    }).ToList();
+
+
+
+                    //}
+
+                    // Milind Code End
 
                 }
 
@@ -1093,12 +1130,12 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         HouseGreen = a.HouseGreen ?? 0,
                         DumpQty = a.DumpQty ?? 0,
                         StreetQty = a.StreetQty ?? 0,
-                        CreateUserId =a.CreateUserId,
-                        CreateUserName = dbMain.EmployeeMasters.Where(s=>s.Id==a.CreateUserId).Select(s=>s.Name).FirstOrDefault(),
+                        CreateUserId = a.CreateUserId,
+                        CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note=a.Note,
-                       // UpdateUserId=a.UpdateUserId,
-                       // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
+                        Note = a.Note,
+                        // UpdateUserId=a.UpdateUserId,
+                        // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
 
                     }).ToListAsync();
@@ -1225,7 +1262,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
                     result.Disclaimer.isPrinted = result.Disclaimer.Printed != null && result.Disclaimer.Printed.Count > 0 ? true : false;
-                   
+
                     result.Disclaimer.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DisclaimerForm > 0)).Select(a => new QrSentVM
                     {
                         DisclaimerForm = a.DisclaimerForm ?? 0,
@@ -1263,7 +1300,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                     }).ToListAsync();
                     result.EntryBook.isPrinted = result.EntryBook.Printed != null && result.EntryBook.Printed.Count > 0 ? true : false;
-                    
+
                     result.EntryBook.Sent = await dbMain.QrSents.Where(a => a.ULBId == ulbId && (a.DataEntryBook > 0)).Select(a => new QrSentVM
                     {
                         DataEntryBook = a.DataEntryBook ?? 0,
@@ -1301,7 +1338,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 return result;
 
             }
-            
+
         }
 
         public async Task<Result> SaveQrReceiveAsync(QrReceiveVM obj)
@@ -1501,8 +1538,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             ulbObj.ULBId = obj.ULBId;
                             //ulbObj.CMSStatus = obj.CMSStatus;
                             //ulbObj.AppStatus = obj.AppStatus;
-                            
-                            if (((ulbObj.CMSStatus is null || ulbObj.CMSStatus == false) && obj.CMSStatus == true) || (ulbObj.CMSStatus == true && obj.CMSStatus == false)) 
+
+                            if (((ulbObj.CMSStatus is null || ulbObj.CMSStatus == false) && obj.CMSStatus == true) || (ulbObj.CMSStatus == true && obj.CMSStatus == false))
                             {
                                 ulbObj.CMSDate = DateTime.Now;
                                 ulbObj.CMSStatus = obj.CMSStatus;
@@ -1514,7 +1551,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObj.AppStatus = obj.AppStatus;
                                 ulbObj.AppUserId = obj.UserId;
                             }
-                            
+
                             await dbMain.SaveChangesAsync();
 
                             result.status = "success";
@@ -1532,7 +1569,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObjData.ULBId = obj.ULBId;
                                 ulbObjData.AppStatus = obj.AppStatus;
                                 ulbObjData.CMSStatus = obj.CMSStatus;
-                                
+
                                 if (obj.CMSStatus == true)
                                 {
                                     ulbObjData.CMSStatus = true;
@@ -1571,7 +1608,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 result.message = "ULB App Details already Exist";
                                 result.messageMar = "ULB अॅप तपशील आधीपासून अस्तित्वात आहेत";
                             }
-                            
+
 
                         }
                     }
@@ -1640,9 +1677,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 using (dbMain)
                 {
                     var docObj = await dbMain.DocMasters.Where(a => a.Id == obj.Id).FirstOrDefaultAsync();
-                    if(docObj != null)
+                    if (docObj != null)
                     {
-                        if(!await dbMain.DocMasters.AnyAsync(a => a.DocName.ToUpper() == obj.DocName.ToUpper() && a.Id != obj.Id))
+                        if (!await dbMain.DocMasters.AnyAsync(a => a.DocName.ToUpper() == obj.DocName.ToUpper() && a.Id != obj.Id))
                         {
                             docObj.DocName = obj.DocName;
                             docObj.DocDate = DateTime.Now;
@@ -1689,7 +1726,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 }
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.ToString(), ex);
                 result.status = "Error";
@@ -1708,8 +1745,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    result = await dbMain.DocMasters.Where(a => a.Id == docId).Select( a => new DocMasterVM 
-                    { 
+                    result = await dbMain.DocMasters.Where(a => a.Id == docId).Select(a => new DocMasterVM
+                    {
                         Id = a.Id,
                         DocName = a.DocName,
                         DocDate = a.DocDate
@@ -1720,7 +1757,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.ToString(), ex);
                 return result;
@@ -1796,7 +1833,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                             }
 
-                            
+
                         }
                         else
                         {
@@ -1833,7 +1870,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 result.messageMar = "ULB डॉक नाव अस्तित्वात नाही";
 
                             }
-                            
+
                         }
                         else
                         {
@@ -1968,7 +2005,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         if (ulbObj != null)
                         {
-                            if(await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
+                            if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
                                 if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
                                 {
@@ -1990,7 +2027,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 result.messageMar = "ULB डॉक सब नाव अस्तित्वात नाही";
 
                             }
-                            
+
                             await dbMain.SaveChangesAsync();
 
                         }
@@ -2007,7 +2044,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObjData.DocCreateDate = DateTime.Now;
                                 ulbObjData.DocCreateUserId = obj.userId;
                                 ulbObjData.Note = obj.Note;
-                                
+
                                 dbMain.ULB_Doc_Sends.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
 
