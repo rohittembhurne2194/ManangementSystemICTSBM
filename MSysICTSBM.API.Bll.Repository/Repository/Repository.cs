@@ -1133,7 +1133,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate=a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
@@ -1150,7 +1151,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
@@ -1167,7 +1169,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1181,7 +1184,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1194,7 +1198,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1207,7 +1212,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1220,7 +1226,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1232,7 +1239,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1244,7 +1252,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1257,7 +1266,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1269,7 +1279,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1281,7 +1292,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
                     }).ToListAsync();
@@ -1294,7 +1306,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
@@ -1307,7 +1320,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
@@ -1321,7 +1335,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        Note = a.Note,
+                        CreationDate = a.CreationDate,
+                        Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
 
@@ -1638,6 +1653,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         public async Task<ULB_App_StatusVM> GetULBAppDetailsAsync(int ulbId)
         {
             ULB_App_StatusVM result = new ULB_App_StatusVM();
+            ULB_App_StatusVM result1 = new ULB_App_StatusVM();
 
             try
             {
@@ -1656,6 +1672,21 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CMSUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.CMSUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
                         AppUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AppUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
                     }).FirstOrDefaultAsync();
+
+                    if (result == null && ulbId!=null)
+                    {
+                        result1.Id = 0;
+                        result1.ULBId = ulbId;
+                        result1.CMSStatus = false;
+                        result1.AppStatus = false;
+                        result1.CMSUserId = 0;
+                        result1.AppUserId = 0;
+                        result1.CMSDate = null;
+                        result1.AppDate = null;
+                        result1.CMSUserName = null;
+                        result1.AppUserName = null;
+                        result = result1;
+                    }
                 }
 
                 return result;

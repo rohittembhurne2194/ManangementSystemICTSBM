@@ -24,23 +24,23 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public bool DocHardCopyRecStatus { get; set; }
 
         public string DocNameNew { get; set; }
-        public object DocSentCreateUserName { get; set; }
-        public object DocSentUpdateUserName { get; set; }
-        public object DocSentCreateDate { get; set; }
-        public object DocSentUpdateDate { get; set; }
-        public object DocSentNote { get; set; }
+        //public object DocSentCreateUserName { get; set; }
+        //public object DocSentUpdateUserName { get; set; }
+        //public object DocSentCreateDate { get; set; }
+        //public object DocSentUpdateDate { get; set; }
+        //public object DocSentNote { get; set; }
        
-        public object DocDigCopyRecCreateUserName { get; set; }
-        public object DocDigCopyRecUpdateUserName { get; set; }
-        public object DocDigCopyRecCreateDate { get; set; }
-        public object DocDigCopyRecUpdateDate { get; set; }
-        public object DocDigCopyNote { get; set; }
+        //public object DocDigCopyRecCreateUserName { get; set; }
+        //public object DocDigCopyRecUpdateUserName { get; set; }
+        //public object DocDigCopyRecCreateDate { get; set; }
+        //public object DocDigCopyRecUpdateDate { get; set; }
+        //public object DocDigCopyNote { get; set; }
 
-        public object DocHardCopyRecCreateUserName { get; set; }
-        public object DocHardCopyRecUpdateUserName { get; set; }
-        public object DocHardCopyRecCreateDate { get; set; }
-        public object DocHardCopyRecUpdateDate { get; set; }
-        public object DocHardCopyNote { get; set; }
+        //public object DocHardCopyRecCreateUserName { get; set; }
+        //public object DocHardCopyRecUpdateUserName { get; set; }
+        //public object DocHardCopyRecCreateDate { get; set; }
+        //public object DocHardCopyRecUpdateDate { get; set; }
+        //public object DocHardCopyNote { get; set; }
 
 
     }
