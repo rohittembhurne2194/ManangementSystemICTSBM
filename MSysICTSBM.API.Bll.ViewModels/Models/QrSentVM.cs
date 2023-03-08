@@ -8,7 +8,8 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     {
         public int SentId { get; set; }
         public int? ULBId { get; set; }
-        public DateTime? SentDate { get; set; }
+        // public DateTime? SentDate { get; set; }
+        public DateTime? Date { get; set; }
         public DateTime? CreationDate { get; set; }
         public int? HouseQty { get; set; }
         public int? HouseGreen { get; set; }

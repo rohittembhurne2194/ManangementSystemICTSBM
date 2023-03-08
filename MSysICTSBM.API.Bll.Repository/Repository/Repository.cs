@@ -535,7 +535,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             var printObjData = new QrPrinted();
                             printObjData.ULBId = obj.ULBId;
-                            printObjData.PrintDate = obj.PrintDate;
+                            printObjData.PrintDate = obj.Date;
                             printObjData.CreationDate = DateTime.Now;
                             printObjData.UpdationDate = DateTime.Now;
                             printObjData.HouseQty = obj.HouseQty;
@@ -599,7 +599,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         PrintId = a.PrintId,
                         ULBId = a.ULBId,
-                        PrintDate = a.PrintDate,
+                        Date = a.PrintDate,
                         CreationDate = a.CreationDate,
                         HouseQty = a.HouseQty,
                         HouseGreen = a.HouseGreen,
@@ -651,7 +651,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         PrintId = a.PrintId,
                         ULBId = a.ULBId,
-                        PrintDate = a.PrintDate,
+                        Date = a.PrintDate,
                         CreationDate = a.CreationDate,
                         HouseQty = a.HouseQty,
                         HouseGreen = a.HouseGreen,
@@ -727,7 +727,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             var sentObjData = new QrSent();
                             sentObjData.ULBId = obj.ULBId;
-                            sentObjData.SentDate = obj.SentDate;
+                            sentObjData.SentDate = obj.Date;
                             sentObjData.CreationDate = DateTime.Now;
                             sentObjData.UpdationDate = DateTime.Now;
                             sentObjData.HouseQty = obj.HouseQty;
@@ -790,7 +790,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         SentId = a.SentId,
                         ULBId = a.ULBId,
-                        SentDate = a.SentDate,
+                        Date = a.SentDate,
                         CreationDate = a.CreationDate,
                         HouseQty = a.HouseQty,
                         HouseGreen = a.HouseGreen,
@@ -835,7 +835,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         SentId = a.SentId,
                         ULBId = a.ULBId,
-                        SentDate = a.SentDate,
+                        Date = a.SentDate,
                         CreationDate = a.CreationDate,
                         HouseQty = a.HouseQty,
                         HouseGreen = a.HouseGreen,
@@ -959,10 +959,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
 
-        public async Task<List<ULBDocStatusVM>> GetULBDocStatusAsync(int ulbId, int docId)
+        public async Task<List<ULBDocStatusVMDocData>> GetULBDocStatusAsync(int ulbId, int docId)
         {
-            List<ULBDocStatusVM> result = new List<ULBDocStatusVM>();
-
+            List<ULBDocStatusVMDocData> result = new List<ULBDocStatusVMDocData>();
+            List<DataAll> da = new List<DataAll>();
+            List<Send> ss = new List<Send>();
+            List<DigCopy> dc = new List<DigCopy>();
+            List<HardCopy> hc = new List<HardCopy>();
 
             try
             {
@@ -975,38 +978,113 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                     new SqlParameter { ParameterName = "@DocId", Value = docId }
                                                 };
                     var data = await dbMain.sp_getULB_DocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_DocStatus @ulbId,@DocId", parms.ToArray()).ToListAsync();
+                    var docData = await dbMain.DocMasters.ToListAsync();
+                    var docSubData = await dbMain.DocSubMasters.ToListAsync();
 
-                    if (data != null && data.Count > 0)
+                    if (docData != null && docSubData != null)
                     {
-                        result = data.Select(a => new ULBDocStatusVM
+                        foreach (var a in docSubData)
                         {
-                            AppName = a.AppName,
-                            DocName = a.DocName,
-                            DocSubName = a.DocSubName,
-                            DocSentStatus = a.DocSentStatus,
-                            DocSentCreateUserName = a.DocSentCreateUserName,
-                            DocSentUpdateUserName = a.DocSentUpdateUserName,
-                            DocSentCreateDate = a.DocSentCreateDate,
-                            DocSentUpdateDate = a.DocSentUpdateDate,
-                            DocSentNote = a.DocSentNote,
+                            var data2 = data.Where(c => c.DocSentStatus == true && c.DocSubName == a.DocSubName).ToList();
+                            foreach (var c in data2)
+                            {
+                                ss.Add(new Send()
+                                {
+                                    DocSentNote = c.DocSentNote,
+                                    DocSentCreateUserName = c.DocSentCreateUserName,
+                                    DocSubName = a.DocSubName,
+                                    CreationDate=c.DocSentCreateDate,
+                                    
+                                });
+                            }
 
-                            DocDigCopyRecStatus = a.DocDigCopyRecStatus,
-                            DocDigCopyRecCreateUserName = a.DocDigCopyRecCreateUserName,
-                            DocDigCopyRecUpdateUserName = a.DocDigCopyRecUpdateUserName,
-                            DocDigCopyRecCreateDate = a.DocDigCopyRecCreateDate,
-                            DocDigCopyRecUpdateDate = a.DocDigCopyRecUpdateDate,
-                            DocDigCopyNote = a.DocDigCopyNote,
 
-                            DocHardCopyRecStatus = a.DocHardCopyRecStatus,
-                            DocHardCopyRecCreateUserName = a.DocHardCopyRecCreateUserName,
-                            DocHardCopyRecUpdateUserName = a.DocHardCopyRecUpdateUserName,
-                            DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
-                            DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate,
-                            DocHardCopyNote = a.DocHardCopyNote
+                            var data3 = data.Where(c => c.DocDigCopyRecStatus == true && c.DocSubName == a.DocSubName).ToList();
+                            foreach (var d in data3)
+                            {
+                                dc.Add(new DigCopy()
+                                {
+                                    DocSentNote = d.DocSentNote,
+                                    DocSentCreateUserName = d.DocSentCreateUserName,
+                                    DocSubName = a.DocSubName,
+                                    CreationDate = d.DocSentCreateDate,
 
-                        }).ToList();
+                                });
+                            }
 
+                            var data4 = data.Where(c => c.DocHardCopyRecStatus == true && c.DocSubName == a.DocSubName).ToList();
+                            foreach (var e in data4)
+                            {
+                                hc.Add(new HardCopy()
+                                {
+                                    DocSentNote = e.DocSentNote,
+                                    DocSentCreateUserName = e.DocSentCreateUserName,
+                                    DocSubName = a.DocSubName,
+                                    CreationDate = e.DocSentCreateDate,
+                                });
+                            }
+
+
+                            //var data1 = data.Where(c => c.DocSubName == a.DocSubName).ToList();
+                            //foreach (var b in data1)
+                            //{
+                            da.Add(new DataAll()
+                            {
+                                DocSubNameNew = a.DocSubName,
+
+                                SendData = ss.Where(s => s.DocSubName == a.DocSubName).ToList(),
+                                DCData = dc.Where(p => p.DocSubName == a.DocSubName).ToList(),
+                                HCData=hc.Where(p => p.DocSubName == a.DocSubName).ToList(),
+
+                                DocSentStatus = data2.Count > 0 ? true : false,
+                                DocDigCopyRecStatus = data3.Count > 0 ? true : false,
+                                DocHardCopyRecStatus = data4.Count > 0 ? true : false,
+                            }) ;
+                            //}
+
+                            result.Add(new ULBDocStatusVMDocData()
+                            {
+                                DocName = dbMain.DocMasters.Where(s => s.Id == a.DocId).Select(s => s.DocName).FirstOrDefault(),
+                                DocSubName = a.DocSubName,
+                                DataAll = da.Where(s => s.DocSubNameNew == a.DocSubName).ToList(),
+
+                            });
+                        }
                     }
+
+
+                    //// Milind
+                    //if (data != null && data.Count > 0)
+                    //{
+                    //    result = data.Select(a => new ULBDocStatusVM
+                    //    {
+                    //        AppName = a.AppName,
+                    //        DocName = a.DocName,
+                    //        DocSubName = a.DocSubName,
+                    //        DocSentStatus = a.DocSentStatus,
+                    //        DocSentCreateUserName = a.DocSentCreateUserName,
+                    //        DocSentUpdateUserName = a.DocSentUpdateUserName,
+                    //        DocSentCreateDate = a.DocSentCreateDate,
+                    //        DocSentUpdateDate = a.DocSentUpdateDate,
+                    //        DocSentNote = a.DocSentNote,
+
+                    //        DocDigCopyRecStatus = a.DocDigCopyRecStatus,
+                    //        DocDigCopyRecCreateUserName = a.DocDigCopyRecCreateUserName,
+                    //        DocDigCopyRecUpdateUserName = a.DocDigCopyRecUpdateUserName,
+                    //        DocDigCopyRecCreateDate = a.DocDigCopyRecCreateDate,
+                    //        DocDigCopyRecUpdateDate = a.DocDigCopyRecUpdateDate,
+                    //        DocDigCopyNote = a.DocDigCopyNote,
+
+                    //        DocHardCopyRecStatus = a.DocHardCopyRecStatus,
+                    //        DocHardCopyRecCreateUserName = a.DocHardCopyRecCreateUserName,
+                    //        DocHardCopyRecUpdateUserName = a.DocHardCopyRecUpdateUserName,
+                    //        DocHardCopyRecCreateDate = a.DocHardCopyRecCreateDate,
+                    //        DocHardCopyRecUpdateDate = a.DocHardCopyRecUpdateDate,
+                    //        DocHardCopyNote = a.DocHardCopyNote
+
+                    //    }).ToList();
+
+                    //}
 
                 }
 
@@ -1048,9 +1126,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 sd.Add(new SubDatum()
                                 {
-                                    DocNameNew= a.DocName,
+                                    DocNameNew = a.DocName,
                                     DocSubName = b.DocSubName,
-                                    DocSentStatus =Convert.ToBoolean( b.DocSentStatus),
+                                    DocSentStatus = Convert.ToBoolean(b.DocSentStatus),
                                     DocDigCopyRecStatus = Convert.ToBoolean(b.DocDigCopyRecStatus),
                                     DocHardCopyRecStatus = Convert.ToBoolean(b.DocHardCopyRecStatus),
 
@@ -1062,7 +1140,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 AppName = dbMain.ULB_Details.Where(s => s.Id == ulbId).Select(s => s.AppName).FirstOrDefault(),
                                 DocName = a.DocName,
                                 SubData = sd.Where(s => s.DocNameNew == a.DocName).ToList()
-                            }) ;
+                            });
                         }
                     }
 
@@ -1133,7 +1211,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         CreateUserId = a.CreateUserId,
                         CreateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.CreateUserId).Select(s => s.Name).FirstOrDefault(),
                         UpdationDate = a.UpdationDate,
-                        CreationDate=a.CreationDate,
+                        CreationDate = a.CreationDate,
                         Note = a.Note.Trim(),
                         // UpdateUserId=a.UpdateUserId,
                         // UpdateUserName = dbMain.EmployeeMasters.Where(s => s.Id == a.UpdateUserId).Select(s => s.Name).FirstOrDefault(),
@@ -1397,7 +1475,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             var receiveObjData = new QrReceive();
                             receiveObjData.ULBId = obj.ULBId;
-                            receiveObjData.ReceiveDate = obj.ReceiveDate;
+                            receiveObjData.ReceiveDate = obj.Date;
                             receiveObjData.CreationDate = DateTime.Now;
                             receiveObjData.UpdationDate = DateTime.Now;
                             receiveObjData.HouseQty = obj.HouseQty;
@@ -1458,7 +1536,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         ReceiveId = a.ReceiveId,
                         ULBId = a.ULBId,
-                        ReceiveDate = a.ReceiveDate,
+                        Date = a.ReceiveDate,
                         CreationDate = a.CreationDate,
                         HouseQty = a.HouseQty,
                         HouseGreen = a.HouseGreen,
@@ -1503,7 +1581,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         ReceiveId = a.ReceiveId,
                         ULBId = a.ULBId,
-                        ReceiveDate = a.ReceiveDate,
+                        Date = a.ReceiveDate,
                         CreationDate = a.CreationDate,
                         HouseQty = a.HouseQty,
                         HouseGreen = a.HouseGreen,
@@ -1673,7 +1751,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         AppUserName = dbMain.EmployeeMasters.Where(e => e.Id == (a.AppUserId ?? 0)).Select(e => e.Username).FirstOrDefault(),
                     }).FirstOrDefaultAsync();
 
-                    if (result == null && ulbId!=null)
+                    if (result == null && ulbId != null)
                     {
                         result1.Id = 0;
                         result1.ULBId = ulbId;
