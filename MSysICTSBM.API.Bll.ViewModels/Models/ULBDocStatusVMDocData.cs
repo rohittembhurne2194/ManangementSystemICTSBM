@@ -10,6 +10,7 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     {
         public string DocName { get; set; }
         public string DocSubName { get; set; }
+        public int DocSubId { get; set; }
         public List<DataAll> DataAll { get; set; }
     }
 

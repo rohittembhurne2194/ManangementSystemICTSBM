@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\DB\MainSPModels\" />
     <Folder Include="Models\DB\MainContext\" />
   </ItemGroup>
 

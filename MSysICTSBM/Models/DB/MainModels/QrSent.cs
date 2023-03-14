@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
+namespace MSysICTSBM.Models.DB.MainModels
 {
     public partial class QrSent
     {

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
+namespace MSysICTSBM.Models.DB.MainModels
 {
-    public partial class QrSent
+    public partial class QrPrinted
     {
-        public int SentId { get; set; }
+        public int PrintId { get; set; }
         public int? ULBId { get; set; }
-        public DateTime? SentDate { get; set; }
+        public DateTime? PrintDate { get; set; }
         public DateTime? CreationDate { get; set; }
         public int? HouseQty { get; set; }
         public int? HouseGreen { get; set; }

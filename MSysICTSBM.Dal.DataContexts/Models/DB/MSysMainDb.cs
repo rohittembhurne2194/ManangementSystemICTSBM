@@ -28,6 +28,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB
 
         public DbSet<sp_getULB_DocStatus_Result> sp_getULB_AllDocStatus_Results { get; set; }
 
+        public DbSet<sp_getULB_FormStatus_Result> sp_getULB_FormStatus_Result { get; set; }
+
 
 
 
@@ -37,6 +39,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB
             modelBuilder.Entity<sp_Get_ActiveULB_result>().HasNoKey();
             modelBuilder.Entity<sp_getULB_statusById_Result>().HasNoKey();
             modelBuilder.Entity<sp_getULB_DocStatus_Result>().HasNoKey();
+            modelBuilder.Entity<sp_getULB_FormStatus_Result>().HasNoKey();
 
         }
 

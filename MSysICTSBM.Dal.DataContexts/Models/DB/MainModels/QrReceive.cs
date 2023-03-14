@@ -26,5 +26,6 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public DateTime? UpdationDate { get; set; }
         public int? CreateUserId { get; set; }
         public int? UpdateUserId { get; set; }
+        public int? QrMId { get; set; }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using MSysICTSBM.Dal.DataContexts.Models.DB.MainModels;
+using MSysICTSBM.Models.DB.MainModels;
 
 #nullable disable
 
-namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainContext
+namespace MSysICTSBM.Models.DB.MainContext
 {
     public partial class MSysMainEntities : DbContext
     {
