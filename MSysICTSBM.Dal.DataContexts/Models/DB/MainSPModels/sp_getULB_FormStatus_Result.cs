@@ -17,6 +17,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainSPModels
         public Nullable<bool> SendStatus { get; set; }
         public Nullable<bool> ReceiveStatus { get; set; }
 
+        public Nullable<int> Id { get; set; }
         public Nullable<int> HouseQty { get; set; }
         public Nullable<int> HouseBlue { get; set; }
         public Nullable<int> HouseGreen { get; set; }

@@ -8,7 +8,9 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     {
         public int PrintId { get; set; }
         public int? ULBId { get; set; }
-       // public DateTime? PrintDate { get; set; }
+        // public DateTime? PrintDate { get; set; }
+
+        public int QrMId { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? CreationDate { get; set; }
         public int? HouseQty { get; set; }

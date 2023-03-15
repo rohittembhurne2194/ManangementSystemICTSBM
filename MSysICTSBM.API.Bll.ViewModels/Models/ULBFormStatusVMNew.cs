@@ -30,9 +30,21 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
 
     public class Print
     {
-
+        public Nullable<int> Id { get; set; }
         public string UserName { get; set; }
-        public string HouseQty { get; set; }
+        public Nullable<int> HouseQty { get; set; }
+        public Nullable<int> HouseBlue { get; set; }
+        public Nullable<int> HouseGreen { get; set; }
+        public Nullable<int> DumpQty { get; set; }
+        public Nullable<int> StreetQty { get; set; }
+        public Nullable<int> LiquidQty { get; set; }
+
+        public Nullable<int> BannerAcrylic { get; set; }
+        public Nullable<int> DumpAcrylic { get; set; }
+
+        public Nullable<int> AbhiprayForm { get; set; }
+        public Nullable<int> DisclaimerForm { get; set; }
+        public Nullable<int> DataEntryBook { get; set; }
 
         public DateTime? CreationDate { get; set; }
         public string FormName { get; set; }
@@ -40,18 +52,42 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     }
     public class Sent
     {
-
+        public Nullable<int> Id { get; set; }
         public string UserName { get; set; }
-        public string HouseQty { get; set; }
+        public Nullable<int> HouseQty { get; set; }
+        public Nullable<int> HouseBlue { get; set; }
+        public Nullable<int> HouseGreen { get; set; }
+        public Nullable<int> DumpQty { get; set; }
+        public Nullable<int> StreetQty { get; set; }
+        public Nullable<int> LiquidQty { get; set; }
+
+        public Nullable<int> BannerAcrylic { get; set; }
+        public Nullable<int> DumpAcrylic { get; set; }
+
+        public Nullable<int> AbhiprayForm { get; set; }
+        public Nullable<int> DisclaimerForm { get; set; }
+        public Nullable<int> DataEntryBook { get; set; }
         public DateTime? CreationDate { get; set; }
         public string FormName { get; set; }
     }
 
     public class Receive
     {
-
+        public Nullable<int> Id { get; set; }
         public string UserName { get; set; }
-        public string HouseQty { get; set; }
+        public Nullable<int> HouseQty { get; set; }
+        public Nullable<int> HouseBlue { get; set; }
+        public Nullable<int> HouseGreen { get; set; }
+        public Nullable<int> DumpQty { get; set; }
+        public Nullable<int> StreetQty { get; set; }
+        public Nullable<int> LiquidQty { get; set; }
+
+        public Nullable<int> BannerAcrylic { get; set; }
+        public Nullable<int> DumpAcrylic { get; set; }
+
+        public Nullable<int> AbhiprayForm { get; set; }
+        public Nullable<int> DisclaimerForm { get; set; }
+        public Nullable<int> DataEntryBook { get; set; }
         public DateTime? CreationDate { get; set; }
         public string FormName { get; set; }
     }

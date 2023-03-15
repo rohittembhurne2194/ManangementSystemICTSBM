@@ -528,7 +528,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                             result.status = "success";
                             // result.message = "QR Print Details Updated Successfully";
-                           // result.messageMar = "QR प्रिंट तपशील यशस्वीरित्या बदलले";
+                            // result.messageMar = "QR प्रिंट तपशील यशस्वीरित्या बदलले";
                             result.message = "Data Updated Successfully";
                             result.messageMar = "डेटा यशस्वीरित्या अपडेट केला";
 
@@ -554,6 +554,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             printObjData.LiquidQty = obj.LiquidQty;
                             printObjData.Note = obj.Note;
                             printObjData.CreateUserId = obj.UserId;
+                            printObjData.QrMId = obj.QrMId;
 
                             dbMain.QrPrinteds.Add(printObjData);
 
@@ -749,6 +750,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             sentObjData.CreateUserId = obj.UserId;
                             sentObjData.DisclaimerForm = obj.DisclaimerForm;
                             sentObjData.DataEntryBook = obj.DataEntryBook;
+                            sentObjData.QrMId = obj.QrMId;
 
                             dbMain.QrSents.Add(sentObjData);
 
@@ -999,8 +1001,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     DocSentNote = c.DocSentNote,
                                     DocSentCreateUserName = c.DocSentCreateUserName,
                                     DocSubName = a.DocSubName,
-                                    CreationDate=c.DocSentCreateDate,
-                                    
+                                    CreationDate = c.DocSentCreateDate,
+
                                 });
                             }
 
@@ -1040,19 +1042,19 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                                 SendData = ss.Where(s => s.DocSubName == a.DocSubName).ToList(),
                                 DCData = dc.Where(p => p.DocSubName == a.DocSubName).ToList(),
-                                HCData=hc.Where(p => p.DocSubName == a.DocSubName).ToList(),
+                                HCData = hc.Where(p => p.DocSubName == a.DocSubName).ToList(),
 
                                 DocSentStatus = data2.Count > 0 ? true : false,
                                 DocDigCopyRecStatus = data3.Count > 0 ? true : false,
                                 DocHardCopyRecStatus = data4.Count > 0 ? true : false,
-                            }) ;
+                            });
                             //}
 
                             result.Add(new ULBDocStatusVMDocData()
                             {
                                 DocName = dbMain.DocMasters.Where(s => s.Id == a.DocId).Select(s => s.DocName).FirstOrDefault(),
                                 DocSubName = a.DocSubName,
-                                DocSubId=dbMain.DocSubMasters.Where(c=>c.DocSubName==a.DocSubName).Select(s => s.Id).FirstOrDefault(),
+                                DocSubId = dbMain.DocSubMasters.Where(c => c.DocSubName == a.DocSubName).Select(s => s.Id).FirstOrDefault(),
                                 DataAll = da.Where(s => s.DocSubNameNew == a.DocSubName).ToList(),
 
                             });
@@ -1231,7 +1233,18 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 ss.Add(new Print()
                                 {
-                                    HouseQty = c.HouseQty.ToString(),
+                                    Id=c.Id,
+                                    HouseQty = c.HouseQty,
+                                    HouseGreen = c.HouseGreen,
+                                    HouseBlue = c.HouseBlue,
+                                    BannerAcrylic = c.BannerAcrylic,
+                                    DumpAcrylic = c.DumpAcrylic,
+                                    AbhiprayForm = c.AbhiprayForm,
+                                    DisclaimerForm = c.DisclaimerForm,
+                                    DataEntryBook = c.DataEntryBook,
+                                    DumpQty = c.DumpQty,
+                                    StreetQty = c.StreetQty,
+                                    LiquidQty = c.LiquidQty,
                                     UserName = c.Name,
                                     FormName = a.FormName,
                                     CreationDate = c.CreationDate,
@@ -1245,7 +1258,19 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 dc.Add(new Sent()
                                 {
-                                    HouseQty = d.HouseQty.ToString(),
+                                    Id = d.Id,
+                                    HouseQty = d.HouseQty,
+                                    HouseGreen = d.HouseGreen,
+                                    HouseBlue = d.HouseBlue,
+                                    BannerAcrylic = d.BannerAcrylic,
+                                    DumpAcrylic = d.DumpAcrylic,
+                                    AbhiprayForm = d.AbhiprayForm,
+                                    DisclaimerForm = d.DisclaimerForm,
+                                    DataEntryBook = d.DataEntryBook,
+                                    DumpQty = d.DumpQty,
+                                    StreetQty = d.StreetQty,
+                                    LiquidQty = d.LiquidQty,
+
                                     UserName = d.Name,
                                     FormName = a.FormName,
                                     CreationDate = d.CreationDate,
@@ -1257,7 +1282,19 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 hc.Add(new Receive()
                                 {
-                                    HouseQty = e.HouseQty.ToString(),
+                                    Id = e.Id,
+                                    HouseQty = e.HouseQty,
+                                    HouseGreen = e.HouseGreen,
+                                    HouseBlue = e.HouseBlue,
+                                    BannerAcrylic = e.BannerAcrylic,
+                                    DumpAcrylic = e.DumpAcrylic,
+                                    AbhiprayForm = e.AbhiprayForm,
+                                    DisclaimerForm = e.DisclaimerForm,
+                                    DataEntryBook = e.DataEntryBook,
+                                    DumpQty = e.DumpQty,
+                                    StreetQty = e.StreetQty,
+                                    LiquidQty = e.LiquidQty,
+
                                     UserName = e.Name,
                                     FormName = a.FormName,
                                     CreationDate = e.CreationDate,
@@ -1265,7 +1302,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             }
 
 
-                          
+
                             da.Add(new FormDataAll()
                             {
                                 FormNameNew = a.FormName,
@@ -1278,7 +1315,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 SendStatus = data3.Count > 0 ? true : false,
                                 ReceiveStatus = data4.Count > 0 ? true : false,
                             });
-                           
+
 
                             result.Add(new ULBFormStatusVMNew()
                             {
@@ -1606,6 +1643,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             receiveObjData.CreateUserId = obj.UserId;
                             receiveObjData.DisclaimerForm = obj.DisclaimerForm;
                             receiveObjData.DataEntryBook = obj.DataEntryBook;
+                            receiveObjData.QrMId = obj.QrMId;
                             dbMain.QrReceives.Add(receiveObjData);
 
 
