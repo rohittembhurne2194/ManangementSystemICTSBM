@@ -6,7 +6,9 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
 {
     public class QrSentVM
     {
-        public int SentId { get; set; }
+        //public int SentId { get; set; }
+
+        public int Id { get; set; }
         public int? ULBId { get; set; }
         // public DateTime? SentDate { get; set; }
         public int QrMId { get; set; }

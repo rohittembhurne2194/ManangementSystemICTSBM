@@ -10,7 +10,7 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     {
         public string AppName { get; set; }
         public string FormName { get; set; }
-        public int FormId { get; set; }
+        public int QrMId { get; set; }
         public List<FormDataAll> DataAll { get; set; }
     }
 

@@ -495,7 +495,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var printObj = await dbMain.QrPrinteds.Where(a => a.PrintId == obj.PrintId).FirstOrDefaultAsync();
+                    var printObj = await dbMain.QrPrinteds.Where(a => a.PrintId == obj.Id).FirstOrDefaultAsync();
 
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.UserId))
                     {
@@ -585,7 +585,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 _logger.LogError(ex.ToString(), ex);
                 result.status = "Error";
-                result.message = "Something is wrong,Try Again.. ";
+                //result.message = "Something is wrong,Try Again.. ";
+                result.message = ex.Message;
                 result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
                 return result;
             }
@@ -604,7 +605,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 {
                     result = await dbMain.QrPrinteds.Select(a => new QrPrintedVM
                     {
-                        PrintId = a.PrintId,
+                        Id = a.PrintId,
                         ULBId = a.ULBId,
                         Date = a.PrintDate,
                         CreationDate = a.CreationDate,
@@ -656,7 +657,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 {
                     result = await dbMain.QrPrinteds.Where(a => a.PrintId == Id).Select(a => new QrPrintedVM
                     {
-                        PrintId = a.PrintId,
+                        Id = a.PrintId,
                         ULBId = a.ULBId,
                         Date = a.PrintDate,
                         CreationDate = a.CreationDate,
@@ -701,7 +702,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var sentObj = await dbMain.QrSents.Where(a => a.SentId == obj.SentId).FirstOrDefaultAsync();
+                    var sentObj = await dbMain.QrSents.Where(a => a.SentId == obj.Id).FirstOrDefaultAsync();
 
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.UserId))
                     {
@@ -778,7 +779,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 _logger.LogError(ex.ToString(), ex);
                 result.status = "Error";
-                result.message = "Something is wrong,Try Again.. ";
+                //result.message = "Something is wrong,Try Again.. ";
+                result.message = ex.Message;
                 result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
                 return result;
             }
@@ -796,7 +798,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 {
                     result = await dbMain.QrSents.Select(a => new QrSentVM
                     {
-                        SentId = a.SentId,
+                        Id = a.SentId,
                         ULBId = a.ULBId,
                         Date = a.SentDate,
                         CreationDate = a.CreationDate,
@@ -841,7 +843,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 {
                     result = await dbMain.QrSents.Where(a => a.SentId == Id).Select(a => new QrSentVM
                     {
-                        SentId = a.SentId,
+                        Id = a.SentId,
                         ULBId = a.ULBId,
                         Date = a.SentDate,
                         CreationDate = a.CreationDate,
@@ -1222,13 +1224,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                     new SqlParameter { ParameterName = "@ulbId", Value = ulbId },
                                                 };
                     var data = await dbMain.sp_getULB_FormStatus_Result.FromSqlRaw<sp_getULB_FormStatus_Result>("EXEC sp_getULB_FormStatus @ulbId", parms.ToArray()).ToListAsync();
-                    var FormData = await dbMain.QrFormMasters.ToListAsync();
+                    var FormData = await dbMain.QrFormMasters.Where(c=>c.Status==true).ToListAsync();
 
                     if (FormData != null)
                     {
                         foreach (var a in FormData)
                         {
-                            var data2 = data.Where(c => c.PrintStatus == true && c.FormName == a.FormName).ToList();
+                            var data2 = data.Where(c => c.PrintStatus == true && c.FormName == a.FormName).OrderByDescending(a=>a.Id).ToList();
                             foreach (var c in data2)
                             {
                                 ss.Add(new Print()
@@ -1245,6 +1247,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     DumpQty = c.DumpQty,
                                     StreetQty = c.StreetQty,
                                     LiquidQty = c.LiquidQty,
+
                                     UserName = c.Name,
                                     FormName = a.FormName,
                                     CreationDate = c.CreationDate,
@@ -1253,7 +1256,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             }
 
 
-                            var data3 = data.Where(c => c.SendStatus == true && c.FormName == a.FormName).ToList();
+                            var data3 = data.Where(c => c.SendStatus == true && c.FormName == a.FormName).OrderByDescending(a => a.Id).ToList();
                             foreach (var d in data3)
                             {
                                 dc.Add(new Sent()
@@ -1277,7 +1280,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 });
                             }
 
-                            var data4 = data.Where(c => c.ReceiveStatus == true && c.FormName == a.FormName).ToList();
+                            var data4 = data.Where(c => c.ReceiveStatus == true && c.FormName == a.FormName).OrderByDescending(a => a.Id).ToList();
                             foreach (var e in data4)
                             {
                                 hc.Add(new Receive()
@@ -1321,7 +1324,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 AppName = dbMain.ULB_Details.Where(s => s.Id == ulbId).Select(s => s.AppName).FirstOrDefault(),
                                 FormName = a.FormName,
-                                FormId = dbMain.QrFormMasters.Where(c => c.FormName == a.FormName).Select(s => s.Id).FirstOrDefault(),
+                                QrMId = a.Id,
                                 DataAll = da.Where(s => s.FormNameNew == a.FormName).ToList(),
 
                             });
@@ -1593,7 +1596,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var receiveObj = await dbMain.QrReceives.Where(a => a.ReceiveId == obj.ReceiveId).FirstOrDefaultAsync();
+                    var receiveObj = await dbMain.QrReceives.Where(a => a.ReceiveId == obj.Id).FirstOrDefaultAsync();
 
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.UserId))
                     {
@@ -1670,7 +1673,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 _logger.LogError(ex.ToString(), ex);
                 result.status = "Error";
-                result.message = "Something is wrong,Try Again.. ";
+                //result.message = "Something is wrong,Try Again.. ";
+                result.message = ex.Message;
                 result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
                 return result;
             }
@@ -1687,7 +1691,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 {
                     result = await dbMain.QrReceives.Select(a => new QrReceiveVM
                     {
-                        ReceiveId = a.ReceiveId,
+                        Id = a.ReceiveId,
                         ULBId = a.ULBId,
                         Date = a.ReceiveDate,
                         CreationDate = a.CreationDate,
@@ -1732,7 +1736,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 {
                     result = await dbMain.QrReceives.Where(a => a.ReceiveId == Id).Select(a => new QrReceiveVM
                     {
-                        ReceiveId = a.ReceiveId,
+                        Id = a.ReceiveId,
                         ULBId = a.ULBId,
                         Date = a.ReceiveDate,
                         CreationDate = a.CreationDate,

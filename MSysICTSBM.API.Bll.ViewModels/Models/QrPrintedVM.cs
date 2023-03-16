@@ -6,7 +6,8 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
 {
     public class QrPrintedVM
     {
-        public int PrintId { get; set; }
+       // public int PrintId { get; set; }
+        public int Id { get; set; }
         public int? ULBId { get; set; }
         // public DateTime? PrintDate { get; set; }
 
