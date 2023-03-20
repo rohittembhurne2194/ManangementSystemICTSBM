@@ -989,7 +989,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                 };
                     var data = await dbMain.sp_getULB_DocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_DocStatus @ulbId,@DocId", parms.ToArray()).ToListAsync();
                     var docData = await dbMain.DocMasters.ToListAsync();
-                    var docSubData = await dbMain.DocSubMasters.ToListAsync();
+                    var docSubData = await dbMain.DocSubMasters.Where(s=>s.DocId== docId).ToListAsync();
 
                     if (docData != null && docSubData != null)
                     {
@@ -1149,6 +1149,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             result.Add(new ULBDocStatusVMNew()
                             {
                                 AppName = dbMain.ULB_Details.Where(s => s.Id == ulbId).Select(s => s.AppName).FirstOrDefault(),
+                                Id=a.Id,
                                 DocName = a.DocName,
                                 SubData = sd.Where(s => s.DocNameNew == a.DocName).ToList()
                             });
@@ -1210,9 +1211,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             List<ULBFormStatusVMNew> result = new List<ULBFormStatusVMNew>();
             List<FormDataAll> da = new List<FormDataAll>();
 
-            List<Print> ss = new List<Print>();
-            List<Sent> dc = new List<Sent>();
-            List<Receive> hc = new List<Receive>();
+            List<Print> print = new List<Print>();
+            List<Sent> sent = new List<Sent>();
+            List<Receive> receive = new List<Receive>();
 
             try
             {
@@ -1230,10 +1231,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         foreach (var a in FormData)
                         {
-                            var data2 = data.Where(c => c.PrintStatus == true && c.FormName == a.FormName).OrderByDescending(a=>a.Id).ToList();
-                            foreach (var c in data2)
+                            var dataPrint = data.Where(c => c.PrintStatus == true && c.FormName == a.FormName).OrderByDescending(a=>a.Id).ToList();
+                            foreach (var c in dataPrint)
                             {
-                                ss.Add(new Print()
+                                print.Add(new Print()
                                 {
                                     Id=c.Id,
                                     HouseQty = c.HouseQty,
@@ -1256,10 +1257,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             }
 
 
-                            var data3 = data.Where(c => c.SendStatus == true && c.FormName == a.FormName).OrderByDescending(a => a.Id).ToList();
-                            foreach (var d in data3)
+                            var dataSend = data.Where(c => c.SendStatus == true && c.FormName == a.FormName).OrderByDescending(a => a.Id).ToList();
+                            foreach (var d in dataSend)
                             {
-                                dc.Add(new Sent()
+                                sent.Add(new Sent()
                                 {
                                     Id = d.Id,
                                     HouseQty = d.HouseQty,
@@ -1280,10 +1281,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 });
                             }
 
-                            var data4 = data.Where(c => c.ReceiveStatus == true && c.FormName == a.FormName).OrderByDescending(a => a.Id).ToList();
-                            foreach (var e in data4)
+                            var dataReceive = data.Where(c => c.ReceiveStatus == true && c.FormName == a.FormName).OrderByDescending(a => a.Id).ToList();
+                            foreach (var e in dataReceive)
                             {
-                                hc.Add(new Receive()
+                                receive.Add(new Receive()
                                 {
                                     Id = e.Id,
                                     HouseQty = e.HouseQty,
@@ -1310,13 +1311,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 FormNameNew = a.FormName,
 
-                                PrintData = ss.Where(s => s.FormName == a.FormName).ToList(),
-                                SendData = dc.Where(p => p.FormName == a.FormName).ToList(),
-                                ReceiveData = hc.Where(p => p.FormName == a.FormName).ToList(),
+                                PrintData = print.Where(s => s.FormName == a.FormName).ToList(),
+                                SendData = sent.Where(p => p.FormName == a.FormName).ToList(),
+                                ReceiveData = receive.Where(p => p.FormName == a.FormName).ToList(),
 
-                                PrintStatus = data2.Count > 0 ? true : false,
-                                SendStatus = data3.Count > 0 ? true : false,
-                                ReceiveStatus = data4.Count > 0 ? true : false,
+                                PrintStatus = dataPrint.Count > 0 ? true : false,
+                                SendStatus = dataSend.Count > 0 ? true : false,
+                                ReceiveStatus = dataReceive.Count > 0 ? true : false,
                             });
 
 
