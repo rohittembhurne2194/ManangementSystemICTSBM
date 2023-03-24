@@ -31,8 +31,9 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     public class Send
     {
       
-        public string DocSentCreateUserName { get; set; }
-        public string DocSentNote { get; set; }
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public string Note { get; set; }
 
         public DateTime? CreationDate { get; set; }
         public string DocSubName { get; set; }
@@ -40,18 +41,18 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
     }
     public class DigCopy
     {
-       
-        public string DocSentCreateUserName { get; set; }
-        public string DocSentNote { get; set; }
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public string Note { get; set; }
         public DateTime? CreationDate { get; set; }
         public string DocSubName { get; set; }
     }
 
     public class HardCopy
     {
-       
-        public string DocSentCreateUserName { get; set; }
-        public string DocSentNote { get; set; }
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public string Note { get; set; }
         public DateTime? CreationDate { get; set; }
         public string DocSubName { get; set; }
     }

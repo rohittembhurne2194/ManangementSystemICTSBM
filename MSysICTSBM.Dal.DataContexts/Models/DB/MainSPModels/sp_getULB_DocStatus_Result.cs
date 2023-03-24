@@ -35,5 +35,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainSPModels
         public Nullable<DateTime> DocHardCopyRecUpdateDate { get; set; }
 
         public string DocHardCopyNote { get; set; }
+
+        public int Id { get; set; }
     }
 }

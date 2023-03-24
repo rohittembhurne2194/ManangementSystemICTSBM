@@ -271,7 +271,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 _logger.LogError(ex.ToString(), ex);
                 result.status = "Error";
-                result.message = "Something is wrong,Try Again.. ";
+                // result.message = "Something is wrong,Try Again.. ";
+                result.message = ex.Message;
                 result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
                 return result;
             }
@@ -1000,8 +1001,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 ss.Add(new Send()
                                 {
-                                    DocSentNote = c.DocSentNote,
-                                    DocSentCreateUserName = c.DocSentCreateUserName,
+                                    Id=c.Id,
+                                    Note = c.DocSentNote,
+                                    UserName = c.DocSentCreateUserName,
                                     DocSubName = a.DocSubName,
                                     CreationDate = c.DocSentCreateDate,
 
@@ -1014,8 +1016,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 dc.Add(new DigCopy()
                                 {
-                                    DocSentNote = d.DocSentNote,
-                                    DocSentCreateUserName = d.DocSentCreateUserName,
+                                    Id = d.Id,
+                                    Note = d.DocSentNote,
+                                    UserName = d.DocSentCreateUserName,
                                     DocSubName = a.DocSubName,
                                     CreationDate = d.DocSentCreateDate,
 
@@ -1027,8 +1030,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 hc.Add(new HardCopy()
                                 {
-                                    DocSentNote = e.DocSentNote,
-                                    DocSentCreateUserName = e.DocSentCreateUserName,
+                                    Id = e.Id,
+                                    Note = e.DocSentNote,
+                                    UserName = e.DocSentCreateUserName,
                                     DocSubName = a.DocSubName,
                                     CreationDate = e.DocSentCreateDate,
                                 });
