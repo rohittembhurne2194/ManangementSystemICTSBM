@@ -11,5 +11,6 @@ namespace MSysICTSBM.Models.DB.MainModels
         public int? DocId { get; set; }
         public string DocSubName { get; set; }
         public DateTime? DocSubDate { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

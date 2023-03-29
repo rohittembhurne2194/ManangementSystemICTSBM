@@ -10,5 +10,6 @@ namespace MSysICTSBM.Models.DB.MainModels
         public int Id { get; set; }
         public string FormName { get; set; }
         public DateTime? CreationDate { get; set; }
+        public bool? Status { get; set; }
     }
 }

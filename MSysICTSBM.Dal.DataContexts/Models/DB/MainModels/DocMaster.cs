@@ -10,5 +10,6 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public int Id { get; set; }
         public string DocName { get; set; }
         public DateTime? DocDate { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

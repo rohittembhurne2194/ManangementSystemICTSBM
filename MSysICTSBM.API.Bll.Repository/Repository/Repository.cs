@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace MSysICTSBM.API.Bll.Repository.Repository
 {
@@ -990,7 +992,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                 };
                     var data = await dbMain.sp_getULB_DocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_DocStatus @ulbId,@DocId", parms.ToArray()).ToListAsync();
                     var docData = await dbMain.DocMasters.ToListAsync();
-                    var docSubData = await dbMain.DocSubMasters.Where(s=>s.DocId== docId).ToListAsync();
+                    var docSubData = await dbMain.DocSubMasters.Where(s=>s.DocId== docId && s.IsActive==true).ToListAsync();
 
                     if (docData != null && docSubData != null)
                     {
@@ -1130,7 +1132,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                     new SqlParameter { ParameterName = "@ulbId", Value = ulbId }
                                                 };
                     var data = await dbMain.sp_getULB_AllDocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_All_DocStatus @ulbId", parms.ToArray()).ToListAsync();
-                    var docData = await dbMain.DocMasters.ToListAsync();
+                    var docData = await dbMain.DocMasters.Where(s=>s.IsActive==true).ToListAsync();
 
                     if (docData != null)
                     {
@@ -1941,7 +1943,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
         public async Task<Result> SaveULBDocMasterAsync(DocMasterVM obj)
-        {
+            {
             Result result = new Result();
             try
             {
@@ -1954,17 +1956,17 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             docObj.DocName = obj.DocName;
                             docObj.DocDate = DateTime.Now;
-
+                            docObj.IsActive = obj.IsActive;
                             await dbMain.SaveChangesAsync();
 
                             result.status = "success";
-                            result.message = "ULB Doc Master Details Updated Successfully";
+                            result.message = "Document Updated Successfully";
                             result.messageMar = "ULB डॉक मास्टर तपशील यशस्वीरित्या बदलले";
                         }
                         else
                         {
                             result.status = "Error";
-                            result.message = "ULB Doc Name already Exist";
+                            result.message = "Document Name Already Exist";
                             result.messageMar = "ULB डॉक नाव आधीपासून अस्तित्वात आहे";
 
                         }
@@ -1978,17 +1980,19 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             docObjData.DocName = obj.DocName;
                             docObjData.DocDate = DateTime.Now;
 
+                            docObjData.IsActive = obj.IsActive;
+
                             dbMain.DocMasters.Add(docObjData);
                             await dbMain.SaveChangesAsync();
 
                             result.status = "success";
-                            result.message = "ULB Doc Master Details Added Successfully";
+                            result.message = "Document Added Successfully";
                             result.messageMar = "ULB डॉक मास्टर तपशील यशस्वीरित्या समाविष्ट केले";
                         }
                         else
                         {
                             result.status = "Error";
-                            result.message = "ULB Doc Name already Exist";
+                            result.message = "Document Name Already Exist";
                             result.messageMar = "ULB डॉक नाव आधीपासून अस्तित्वात आहे";
 
                         }
@@ -2020,7 +2024,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         Id = a.Id,
                         DocName = a.DocName,
-                        DocDate = a.DocDate
+                        DocDate = a.DocDate,
+                        IsActive=a.IsActive
 
                     }).FirstOrDefaultAsync();
 
@@ -2051,7 +2056,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         Id = a.Id,
                         DocName = a.DocName,
-                        DocDate = a.DocDate
+                        DocDate = a.DocDate,
+                        IsActive=a.IsActive
 
                     }).ToListAsync();
 
@@ -2090,6 +2096,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 docObj.DocSubName = obj.DocSubName;
                                 docObj.DocSubDate = DateTime.Now;
 
+                                docObj.IsActive = obj.IsActive;
                                 await dbMain.SaveChangesAsync();
 
                                 result.status = "success";
@@ -2127,6 +2134,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 docObjData.DocSubName = obj.DocSubName;
                                 docObjData.DocSubDate = DateTime.Now;
 
+                                docObjData.IsActive = obj.IsActive;
                                 dbMain.DocSubMasters.Add(docObjData);
                                 await dbMain.SaveChangesAsync();
 
@@ -2180,7 +2188,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         Id = a.Id,
                         DocId = a.DocId,
                         DocSubName = a.DocSubName,
-                        DocSubDate = a.DocSubDate
+                        DocSubDate = a.DocSubDate,
+                        IsActive=a.IsActive
 
                     }).FirstOrDefaultAsync();
 
@@ -2212,7 +2221,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         Id = a.Id,
                         DocId = a.DocId,
                         DocSubName = a.DocSubName,
-                        DocSubDate = a.DocSubDate
+                        DocSubDate = a.DocSubDate,
+                        IsActive = a.IsActive
 
                     }).ToListAsync();
 
@@ -2244,7 +2254,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         Id = a.Id,
                         DocId = a.DocId,
                         DocSubName = a.DocSubName,
-                        DocSubDate = a.DocSubDate
+                        DocSubDate = a.DocSubDate,
+                        IsActive=a.IsActive,
 
                     }).ToListAsync();
 
@@ -2315,6 +2326,27 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObjData.DocCreateDate = DateTime.Now;
                                 ulbObjData.DocCreateUserId = obj.userId;
                                 ulbObjData.Note = obj.Note;
+
+                                //string filename = "";
+                                //try
+                                //{
+                                //    var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length-1];
+                                //    filename = DateTime.Now.Ticks + extension;
+                                //    var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files");
+                                //    if (!Directory.Exists(pathBuilt))
+                                //    {
+                                //        Directory.CreateDirectory(pathBuilt);
+                                //    }
+                                //    var path= Path.Combine(Directory.GetCurrentDirectory(), "upload\\files",filename);
+                                //    using (var stream = new FileStream(path, FileMode.Create))
+                                //    {
+                                //        await file.CopyToAsync(stream);
+                                //    }
+                                //}
+                                //catch (Exception ex)
+                                //{
+
+                                //}
 
                                 dbMain.ULB_Doc_Sends.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
