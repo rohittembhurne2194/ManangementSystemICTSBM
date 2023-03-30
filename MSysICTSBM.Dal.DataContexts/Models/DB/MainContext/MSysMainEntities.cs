@@ -171,6 +171,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainContext
             {
                 entity.ToTable("ULB_DigCopy_Rec");
 
+                entity.Property(e => e.AllFileName).HasMaxLength(500);
+
                 entity.Property(e => e.DocCreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.DocUpdateDate).HasColumnType("datetime");
@@ -182,6 +184,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainContext
             {
                 entity.ToTable("ULB_Doc_Send");
 
+                entity.Property(e => e.AllFileName).HasMaxLength(500);
+
                 entity.Property(e => e.DocCreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.DocUpdateDate).HasColumnType("datetime");
@@ -192,6 +196,8 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainContext
             modelBuilder.Entity<ULB_HardCopy_Rec>(entity =>
             {
                 entity.ToTable("ULB_HardCopy_Rec");
+
+                entity.Property(e => e.AllFileName).HasMaxLength(500);
 
                 entity.Property(e => e.DocCreateDate).HasColumnType("datetime");
 

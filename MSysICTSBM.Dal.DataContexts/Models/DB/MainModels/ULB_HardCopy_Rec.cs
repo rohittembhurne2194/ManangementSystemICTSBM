@@ -16,5 +16,6 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public int? DocUpdateUserId { get; set; }
         public DateTime? DocUpdateDate { get; set; }
         public string Note { get; set; }
+        public string AllFileName { get; set; }
     }
 }

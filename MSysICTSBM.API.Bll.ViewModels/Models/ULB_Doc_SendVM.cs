@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,5 +20,7 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public DateTime? DocUpdateDate { get; set; }
         public string Note { get; set; }
 
+        public List<IFormFile> file { get; set; }
+        public string AllFileName { get; set; }
     }
 }

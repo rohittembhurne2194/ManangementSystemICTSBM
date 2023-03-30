@@ -604,8 +604,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-
-
         public async Task<List<QrPrintedVM>> GetAllQrPrintDetailsAsync()
         {
             List<QrPrintedVM> result = new List<QrPrintedVM>();
@@ -798,7 +796,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-
         public async Task<List<QrSentVM>> GetAllQrSentDetailsAsync()
         {
             List<QrSentVM> result = new List<QrSentVM>();
@@ -932,8 +929,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
 
         }
-
-
 
         public async Task<List<ULBStatusVM>> GetULBStatusAsync(int ulbId)
         {
@@ -1261,7 +1256,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-
         public async Task<List<ULBFormStatusVMNew>> GetULBFormStatusNewAsync(int ulbId)
         {
             List<ULBFormStatusVMNew> result = new List<ULBFormStatusVMNew>();
@@ -1404,7 +1398,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
 
         }
-
 
         public async Task<ULBFormStatusVM> GetULBFormStatusAsync(int ulbId)
         {
@@ -1829,7 +1822,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-
         public async Task<Result> SaveULBAppDetailsAsync(ULB_App_StatusVM obj)
         {
             Result result = new Result();
@@ -2126,8 +2118,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
-
-
         public async Task<Result> SaveULBDocSubMasterAsync(DocSubMasterVM obj)
         {
             Result result = new Result();
@@ -2223,7 +2213,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             }
 
         }
-
 
         public async Task<DocSubMasterVM> GetULBDocSubMasterAsync(int docId)
         {
@@ -2332,7 +2321,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var ulbObj = await dbMain.ULB_Doc_Sends.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID).FirstOrDefaultAsync();
+                    var ulbObj = await dbMain.ULB_Doc_Sends.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID && a.Id == obj.Id).FirstOrDefaultAsync();
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
                     {
                         if (ulbObj != null)
@@ -2377,27 +2366,47 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 ulbObjData.DocCreateUserId = obj.userId;
                                 ulbObjData.Note = obj.Note;
 
-                                //string filename = "";
-                                //try
-                                //{
-                                //    var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length-1];
-                                //    filename = DateTime.Now.Ticks + extension;
-                                //    var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files");
-                                //    if (!Directory.Exists(pathBuilt))
-                                //    {
-                                //        Directory.CreateDirectory(pathBuilt);
-                                //    }
-                                //    var path= Path.Combine(Directory.GetCurrentDirectory(), "upload\\files",filename);
-                                //    using (var stream = new FileStream(path, FileMode.Create))
-                                //    {
-                                //        await file.CopyToAsync(stream);
-                                //    }
-                                //}
-                                //catch (Exception ex)
-                                //{
+                                string filename = "";
+                                string AllFileName = null;
+                                try
+                                {
+                                    foreach (var NewFile in obj.file)
+                                    {
+                                        // var extension = "." + obj.file.FileName.Split('.')[obj.file.FileName.Split('.').Length - 1];
+                                        //filename = DateTime.Now.Ticks + extension;
+                                        filename = NewFile.FileName;
+                                        var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files");
+                                        if (!Directory.Exists(pathBuilt))
+                                        {
+                                            Directory.CreateDirectory(pathBuilt);
+                                        }
+                                        var path = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files", filename);
+                                        using (var stream = new FileStream(path, FileMode.Create))
+                                        {
+                                            await NewFile.CopyToAsync(stream);
+                                            if (AllFileName == null)
+                                            {
+                                                AllFileName = filename;
+                                            }
+                                            else
+                                            {
+                                                AllFileName = AllFileName+"," + filename;
+                                            }
+                                        }
+                                    }
 
-                                //}
 
+                                }
+                                catch (Exception ex)
+                                {
+                                    result.status = "error";
+                                    result.message = "File Not Upload";
+                                    result.messageMar = "";
+                                    return result;
+                                }
+
+
+                                ulbObjData.AllFileName = AllFileName;
                                 dbMain.ULB_Doc_Sends.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
 
@@ -2776,19 +2785,19 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                     var subCount = await dbMain.DocSubMasters.Where(a => a.DocId == docId).ToListAsync();
 
-                    if (ulbObj != null && docId==3)
+                    if (ulbObj != null && docId == 3)
                     {
-                        if(ulbObj.AhwalCount==null || ulbObj.AhwalCount == 0)
+                        if (ulbObj.AhwalCount == null || ulbObj.AhwalCount == 0)
                         {
                             ulbObj.AhwalCount = 1;
                         }
-                        int NewAhwalCount =Convert.ToInt32(ulbObj.AhwalCount)+1;
+                        int NewAhwalCount = Convert.ToInt32(ulbObj.AhwalCount) + 1;
                         if (NewAhwalCount <= Convert.ToInt32(subCount.Count))
                         {
                             ulbObj.AhwalCount = NewAhwalCount;
                             await dbMain.SaveChangesAsync();
                             result.status = "success";
-                            result.message = "Ahwal-"+ NewAhwalCount + " Added Successfully";
+                            result.message = "Ahwal-" + NewAhwalCount + " Added Successfully";
                             result.messageMar = "Ahwal-" + NewAhwalCount + " तपशील यशस्वीरित्या बदलले";
                         }
                         else

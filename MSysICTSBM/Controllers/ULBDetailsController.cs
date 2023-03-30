@@ -35,9 +35,6 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
-        
-
-
 
         [HttpGet("GetAll/ULBDetails")]
         public async Task<List<ULB_DetailVM>> GetAllULBDetails()
@@ -126,17 +123,6 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
-
-
-        [HttpPost("Save/AddAhwal")]
-        public async Task<Result> SaveAddAhwal([FromHeader] int ulbId, [FromHeader] int docId)
-        {
-
-            Result objResult = new Result();
-            objResult = await objRep.SaveAddAhwalAsync(ulbId, docId);
-            return objResult;
-        }
-
         [HttpPost("Save/ULBDocMasters")]
         public async Task<Result> SaveULBDocMaster([FromBody] DocMasterVM obj)
         {
@@ -202,7 +188,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpPost("Save/ULBDocSendDetails")]
-        public async Task<Result> SaveULBDocDetails([FromBody] ULB_Doc_SendVM obj)
+        public async Task<Result> SaveULBDocDetails([FromForm] ULB_Doc_SendVM obj)
         {
 
             Result objResult = new Result();
@@ -258,6 +244,14 @@ namespace MSysICTSBM.Controllers
         //    return objResult;
         //}
 
+        [HttpPost("Save/AddAhwal")]
+        public async Task<Result> SaveAddAhwal([FromHeader] int ulbId, [FromHeader] int docId)
+        {
+
+            Result objResult = new Result();
+            objResult = await objRep.SaveAddAhwalAsync(ulbId, docId);
+            return objResult;
+        }
 
     }
 }
