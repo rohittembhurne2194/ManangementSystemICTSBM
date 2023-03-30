@@ -22,5 +22,9 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
 
         public string UpdateUserName { get; set; }
         public bool? IsOldULB { get; set; }
+
+        public int? AhwalCount { get; set; }
+
+        public int? TrainingCount { get; set; }
     }
 }

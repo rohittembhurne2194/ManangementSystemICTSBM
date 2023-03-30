@@ -19,5 +19,7 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainModels
         public DateTime? CreateDate { get; set; }
         public long? UpdateUserid { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public int? AhwalCount { get; set; }
+        public int? TrainingCount { get; set; }
     }
 }

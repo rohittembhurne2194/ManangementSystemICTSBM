@@ -35,6 +35,10 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
+        
+
+
+
         [HttpGet("GetAll/ULBDetails")]
         public async Task<List<ULB_DetailVM>> GetAllULBDetails()
         //public async Task<List<ULB_DetailVM>> GetAllULBDetails([FromHeader] int userId)
@@ -119,6 +123,17 @@ namespace MSysICTSBM.Controllers
 
             ULB_App_StatusVM objResult = new ULB_App_StatusVM();
             objResult = await objRep.GetULBAppDetailsAsync(ulbId);
+            return objResult;
+        }
+
+
+
+        [HttpPost("Save/AddAhwal")]
+        public async Task<Result> SaveAddAhwal([FromHeader] int ulbId, [FromHeader] int docId)
+        {
+
+            Result objResult = new Result();
+            objResult = await objRep.SaveAddAhwalAsync(ulbId, docId);
             return objResult;
         }
 

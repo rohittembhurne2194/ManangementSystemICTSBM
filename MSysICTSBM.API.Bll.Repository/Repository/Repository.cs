@@ -228,6 +228,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             ulbObj.IsActive = obj.IsActive;
                             ulbObj.UpdateUserid = obj.CreateUserid;
                             ulbObj.UpdateDate = DateTime.Now;
+
+                            ulbObj.AhwalCount = obj.AhwalCount;
+                            ulbObj.TrainingCount = obj.TrainingCount;
+
                             await dbMain.SaveChangesAsync();
 
                             result.status = "success";
@@ -247,7 +251,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             ulbObjData.IsActive = obj.IsActive;
                             ulbObjData.CreateUserid = obj.CreateUserid;
                             ulbObjData.CreateDate = DateTime.Now;
-                            ulbObjData.UpdateDate = DateTime.Now;  // In 15 days ULB working or not that's why Update date insert on save time. 
+                            ulbObjData.UpdateDate = DateTime.Now;  // In 15 days ULB working or not that's why Update date insert on save time.
+
+                            ulbObjData.AhwalCount = obj.AhwalCount;
+                            ulbObjData.TrainingCount = obj.TrainingCount;
 
                             dbMain.ULB_Details.Add(ulbObjData);
                             await dbMain.SaveChangesAsync();
@@ -992,7 +999,28 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                 };
                     var data = await dbMain.sp_getULB_DocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_DocStatus @ulbId,@DocId", parms.ToArray()).ToListAsync();
                     var docData = await dbMain.DocMasters.ToListAsync();
-                    var docSubData = await dbMain.DocSubMasters.Where(s=>s.DocId== docId && s.IsActive==true).ToListAsync();
+                    var docSubData = await dbMain.DocSubMasters.Where(s => s.DocId == docId && s.IsActive == true).ToListAsync();
+
+
+                    var count = await dbMain.ULB_Details.Where(m => m.Id == ulbId).FirstOrDefaultAsync();
+                    if (docId == 3)
+                    {
+                        if (count.AhwalCount == null || count.AhwalCount == 0)
+                        {
+                            count.AhwalCount = 1;
+                        }
+                        docSubData = await dbMain.DocSubMasters.Where(s => s.DocId == docId && s.IsActive == true).Take(Convert.ToInt32(count.AhwalCount)).ToListAsync();
+                    }
+
+                    if (docId == 4)
+                    {
+                        if (count.TrainingCount == null || count.TrainingCount == 0)
+                        {
+                            count.TrainingCount = 6;
+                        }
+                        docSubData = await dbMain.DocSubMasters.Where(s => s.DocId == docId && s.IsActive == true).Take(Convert.ToInt32(count.TrainingCount)).ToListAsync();
+                    }
+
 
                     if (docData != null && docSubData != null)
                     {
@@ -1003,7 +1031,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 ss.Add(new Send()
                                 {
-                                    Id=c.Id,
+                                    Id = c.Id,
                                     Note = c.DocSentNote,
                                     UserName = c.DocSentCreateUserName,
                                     DocSubName = a.DocSubName,
@@ -1132,13 +1160,35 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                     new SqlParameter { ParameterName = "@ulbId", Value = ulbId }
                                                 };
                     var data = await dbMain.sp_getULB_AllDocStatus_Results.FromSqlRaw<sp_getULB_DocStatus_Result>("EXEC sp_getULB_All_DocStatus @ulbId", parms.ToArray()).ToListAsync();
-                    var docData = await dbMain.DocMasters.Where(s=>s.IsActive==true).ToListAsync();
+                    var docData = await dbMain.DocMasters.Where(s => s.IsActive == true).ToListAsync();
 
                     if (docData != null)
                     {
                         foreach (var a in docData)
                         {
                             var data1 = data.Where(c => c.DocName == a.DocName).ToList();
+
+                            // a.Id=3  that Condition For Awhal 
+                            var count = await dbMain.ULB_Details.Where(m => m.Id == ulbId).FirstOrDefaultAsync();
+                            if (a.Id == 3 && count != null)
+                            {
+                                if (count.AhwalCount == null || count.AhwalCount == 0)
+                                {
+                                    count.AhwalCount = 1;
+                                }
+                                data1 = data.Where(c => c.DocName == a.DocName).Take(Convert.ToInt32(count.AhwalCount)).ToList();
+
+                            }
+                            // a.Id=4  that Condition For Training 
+                            if (a.Id == 4 && count != null)
+                            {
+                                if (count.TrainingCount == null || count.TrainingCount == 0)
+                                {
+                                    count.TrainingCount = 6;
+                                }
+                                data1 = data.Where(c => c.DocName == a.DocName).Take(Convert.ToInt32(count.TrainingCount)).ToList();
+                            }
+
                             foreach (var b in data1)
                             {
                                 sd.Add(new SubDatum()
@@ -1155,7 +1205,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             result.Add(new ULBDocStatusVMNew()
                             {
                                 AppName = dbMain.ULB_Details.Where(s => s.Id == ulbId).Select(s => s.AppName).FirstOrDefault(),
-                                Id=a.Id,
+                                Id = a.Id,
                                 DocName = a.DocName,
                                 SubData = sd.Where(s => s.DocNameNew == a.DocName).ToList()
                             });
@@ -1231,18 +1281,18 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                                     new SqlParameter { ParameterName = "@ulbId", Value = ulbId },
                                                 };
                     var data = await dbMain.sp_getULB_FormStatus_Result.FromSqlRaw<sp_getULB_FormStatus_Result>("EXEC sp_getULB_FormStatus @ulbId", parms.ToArray()).ToListAsync();
-                    var FormData = await dbMain.QrFormMasters.Where(c=>c.Status==true).ToListAsync();
+                    var FormData = await dbMain.QrFormMasters.Where(c => c.Status == true).ToListAsync();
 
                     if (FormData != null)
                     {
                         foreach (var a in FormData)
                         {
-                            var dataPrint = data.Where(c => c.PrintStatus == true && c.FormName == a.FormName).OrderByDescending(a=>a.Id).ToList();
+                            var dataPrint = data.Where(c => c.PrintStatus == true && c.FormName == a.FormName).OrderByDescending(a => a.Id).ToList();
                             foreach (var c in dataPrint)
                             {
                                 print.Add(new Print()
                                 {
-                                    Id=c.Id,
+                                    Id = c.Id,
                                     HouseQty = c.HouseQty,
                                     HouseGreen = c.HouseGreen,
                                     HouseBlue = c.HouseBlue,
@@ -1943,7 +1993,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
         public async Task<Result> SaveULBDocMasterAsync(DocMasterVM obj)
-            {
+        {
             Result result = new Result();
             try
             {
@@ -2025,7 +2075,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         Id = a.Id,
                         DocName = a.DocName,
                         DocDate = a.DocDate,
-                        IsActive=a.IsActive
+                        IsActive = a.IsActive
 
                     }).FirstOrDefaultAsync();
 
@@ -2057,7 +2107,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         Id = a.Id,
                         DocName = a.DocName,
                         DocDate = a.DocDate,
-                        IsActive=a.IsActive
+                        IsActive = a.IsActive
 
                     }).ToListAsync();
 
@@ -2189,7 +2239,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         DocId = a.DocId,
                         DocSubName = a.DocSubName,
                         DocSubDate = a.DocSubDate,
-                        IsActive=a.IsActive
+                        IsActive = a.IsActive
 
                     }).FirstOrDefaultAsync();
 
@@ -2255,7 +2305,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         DocId = a.DocId,
                         DocSubName = a.DocSubName,
                         DocSubDate = a.DocSubDate,
-                        IsActive=a.IsActive,
+                        IsActive = a.IsActive,
 
                     }).ToListAsync();
 
@@ -2713,6 +2763,65 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         //    }
 
         //}
+
+
+        public async Task<Result> SaveAddAhwalAsync(int ulbId, int docId)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var ulbObj = await dbMain.ULB_Details.Where(a => a.Id == ulbId).FirstOrDefaultAsync();
+
+                    var subCount = await dbMain.DocSubMasters.Where(a => a.DocId == docId).ToListAsync();
+
+                    if (ulbObj != null && docId==3)
+                    {
+                        if(ulbObj.AhwalCount==null || ulbObj.AhwalCount == 0)
+                        {
+                            ulbObj.AhwalCount = 1;
+                        }
+                        int NewAhwalCount =Convert.ToInt32(ulbObj.AhwalCount)+1;
+                        if (NewAhwalCount <= Convert.ToInt32(subCount.Count))
+                        {
+                            ulbObj.AhwalCount = NewAhwalCount;
+                            await dbMain.SaveChangesAsync();
+                            result.status = "success";
+                            result.message = "Ahwal-"+ NewAhwalCount + " Added Successfully";
+                            result.messageMar = "Ahwal-" + NewAhwalCount + " तपशील यशस्वीरित्या बदलले";
+                        }
+                        else
+                        {
+                            result.status = "Error";
+                            result.message = "Not Permissison";
+                            result.messageMar = "परवानगी नाही";
+                        }
+
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "Not Permissison";
+                        result.messageMar = "परवानगी नाही";
+
+                    }
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
+                // result.message = "Something is wrong,Try Again.. ";
+                result.message = ex.Message;
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
 
 
     }
