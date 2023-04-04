@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.IO;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace MSysICTSBM.Controllers
 {
@@ -29,7 +31,7 @@ namespace MSysICTSBM.Controllers
         [HttpPost("Save/ULBDetails")]
         public async Task<Result> SaveULBDetails([FromBody] ULB_DetailVM obj)
         {
-            
+
             Result objResult = new Result();
             objResult = await objRep.SaveULBDetailsAsync(obj);
             return objResult;
@@ -48,7 +50,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBDetails")]
-        public async Task<ActionResult<ULB_DetailVM>> GetULBDetails([FromHeader]int Id)
+        public async Task<ActionResult<ULB_DetailVM>> GetULBDetails([FromHeader] int Id)
         {
             ULB_DetailVM objResult = new ULB_DetailVM();
             objResult = await objRep.GetULBDetailsAsync(Id);
@@ -65,7 +67,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBStatus")]
-        public async Task<List<ULBStatusVM>> GetULBStatus( [FromHeader]  int ulbId)
+        public async Task<List<ULBStatusVM>> GetULBStatus([FromHeader] int ulbId)
         {
             List<ULBStatusVM> objResult = new List<ULBStatusVM>();
             objResult = await objRep.GetULBStatusAsync(ulbId);
@@ -73,10 +75,10 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBDocStatus")]
-        public async Task<List<ULBDocStatusVMDocData>> GetULBDocStatus([FromHeader]  int ulbId, [FromHeader]  int docId)
+        public async Task<List<ULBDocStatusVMDocData>> GetULBDocStatus([FromHeader] int ulbId, [FromHeader] int docId)
         {
             List<ULBDocStatusVMDocData> objResult = new List<ULBDocStatusVMDocData>();
-            objResult = await objRep.GetULBDocStatusAsync(ulbId,docId);
+            objResult = await objRep.GetULBDocStatusAsync(ulbId, docId);
             return objResult;
         }
 
@@ -98,7 +100,7 @@ namespace MSysICTSBM.Controllers
 
 
         [HttpGet("Get/ULBFormStatus")]  //Not In Use
-        public async Task<ULBFormStatusVM> GetULBFormStatus([FromHeader]int ulbId)
+        public async Task<ULBFormStatusVM> GetULBFormStatus([FromHeader] int ulbId)
         {
             ULBFormStatusVM objResult = new ULBFormStatusVM();
             objResult = await objRep.GetULBFormStatusAsync(ulbId);
@@ -161,7 +163,7 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpGet("Get/ULBDocSubMasters")]
-        public async Task<DocSubMasterVM> GetULBDocSubMaster([FromHeader]  int Id)
+        public async Task<DocSubMasterVM> GetULBDocSubMaster([FromHeader] int Id)
         {
 
             DocSubMasterVM objResult = new DocSubMasterVM();
@@ -250,6 +252,28 @@ namespace MSysICTSBM.Controllers
 
             Result objResult = new Result();
             objResult = await objRep.SaveAddAhwalAsync(ulbId, docId);
+            return objResult;
+        }
+
+        [HttpGet("File/Download")]
+        public async Task<IActionResult> DownloadFile([FromHeader] string filename)
+        {
+
+            var filepath = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files", filename);
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(filepath, out var contenttype))
+            {
+                contenttype = "application/octet-stream";
+            }
+            var bytes = await System.IO.File.ReadAllBytesAsync(filepath);
+            return File(bytes, contenttype, Path.GetFileName(filepath));
+        }
+
+        [HttpPost("File/Delete")]
+        public async Task<Result> DeleteFile([FromHeader] string filename)
+        {
+            Result objResult = new Result();
+            objResult = await objRep.DeleteFileAsync(filename);
             return objResult;
         }
 

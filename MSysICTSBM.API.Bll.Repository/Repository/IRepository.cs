@@ -53,5 +53,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         Task<List<ULBFormStatusVMNew>> GetULBFormStatusNewAsync(int ulbId);
 
         Task<Result> SaveAddAhwalAsync(int ulbId, int docId);
+
+        Task<Result> DeleteFileAsync(string filename);
     }
 }

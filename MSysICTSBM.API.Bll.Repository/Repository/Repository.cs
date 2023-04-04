@@ -482,7 +482,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         UpdateUserid = a.UpdateUserid,
                         UpdateDate = a.UpdateDate,
                         CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
-                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault()
+                        UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault(),
+                        AhwalCount=a.AhwalCount,
+                        TrainingCount=a.TrainingCount
                     }).FirstOrDefaultAsync();
                 }
 
@@ -2356,16 +2358,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
-
                                 var ulbObjData = new ULB_Doc_Send();
 
-                                ulbObjData.ULBId = obj.ULBId;
-                                ulbObjData.DocSubID = obj.DocSubID;
-                                ulbObjData.DocStatus = obj.DocStatus;
-                                ulbObjData.DocCreateDate = DateTime.Now;
-                                ulbObjData.DocCreateUserId = obj.userId;
-                                ulbObjData.Note = obj.Note;
-
+                                //// File Upload Code Start
                                 string filename = "";
                                 string AllFileName = null;
                                 try
@@ -2390,7 +2385,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                             }
                                             else
                                             {
-                                                AllFileName = AllFileName+"," + filename;
+                                                AllFileName = AllFileName + "," + filename;
                                             }
                                         }
                                     }
@@ -2404,8 +2399,14 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     result.messageMar = "";
                                     return result;
                                 }
+                                //// File Upload Code End
 
-
+                                ulbObjData.ULBId = obj.ULBId;
+                                ulbObjData.DocSubID = obj.DocSubID;
+                                ulbObjData.DocStatus = obj.DocStatus;
+                                ulbObjData.DocCreateDate = DateTime.Now;
+                                ulbObjData.DocCreateUserId = obj.userId;
+                                ulbObjData.Note = obj.Note;
                                 ulbObjData.AllFileName = AllFileName;
                                 dbMain.ULB_Doc_Sends.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
@@ -2824,6 +2825,67 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 _logger.LogError(ex.ToString(), ex);
                 result.status = "Error";
                 // result.message = "Something is wrong,Try Again.. ";
+                result.message = ex.Message;
+                result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
+                return result;
+            }
+
+
+        }
+
+
+        public async Task<Result> DeleteFileAsync(string filename)
+        {
+            Result result = new Result();
+            try
+            {
+                using (dbMain)
+                {
+                    var filepath = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files", filename);
+                    if (File.Exists(filepath))
+                    {
+                        File.Delete(filepath);
+                        string NewAllFileName = null;
+                        var getfilename = await dbMain.ULB_Doc_Sends.Where(c => c.Id == 12).FirstOrDefaultAsync();
+                        string[] fileList = getfilename.AllFileName.Split(',');
+
+                        foreach (var item in fileList)
+                        {
+                            if(item != filename)
+                            {
+                                if (NewAllFileName == null || NewAllFileName == "")
+                                {
+                                    NewAllFileName = item;
+                                }
+                                else
+                                {
+                                    NewAllFileName = NewAllFileName + "," + item + ",";
+                                }
+                            }
+                        }
+
+                        getfilename.AllFileName = NewAllFileName;
+                        dbMain.SaveChanges();
+
+                        result.status = "Success";
+                        result.message = "File Delete Successfully";
+                        result.messageMar = "";
+                    }
+                    else
+                    {
+                        result.status = "Error";
+                        result.message = "File Not Found";
+                        result.messageMar = "";
+                    }
+
+                    return result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                result.status = "Error";
                 result.message = ex.Message;
                 result.messageMar = "काहीतरी चुकीचे आहे, पुन्हा प्रयत्न करा..";
                 return result;
