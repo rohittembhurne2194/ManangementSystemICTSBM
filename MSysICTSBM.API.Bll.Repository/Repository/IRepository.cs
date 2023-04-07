@@ -18,6 +18,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         Task<QrPrintedVM> GetQrPrintDetailsAsync(int Id);
         Task<QrSentVM> GetQrSentDetailsAsync(int Id);
         Task<List<ULB_DetailVM>> GetAllULBDetailsAsync(int userId);
+
+        Task<List<ULB_DetailVM>> GetAllULBDetailsListAsync(int userId);
+
         Task<string> LoginAsync(int AppId);
         Task<Result> SaveQrPrintAsync(QrPrintedVM obj);
         Task<Result> SaveQrSentAsync(QrSentVM obj);
@@ -54,6 +57,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         Task<Result> SaveAddAhwalAsync(int ulbId, int docId);
 
-        Task<Result> DeleteFileAsync(string filename);
+        Task<Result> DeleteFileAsync(string filename, string type, int id);
     }
 }

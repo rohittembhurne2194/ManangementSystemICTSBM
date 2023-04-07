@@ -408,7 +408,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     UpdateUserid = a.UpdateUserid,
                                     UpdateDate = a.UpdateDate,
                                     CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
-                                    UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault()
+                                    UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault(),
+                                    AhwalCount = a.AhwalCount ?? 0,
+                                    TrainingCount = a.TrainingCount ?? 0
 
                                 }).ToListAsync();
                             }
@@ -432,7 +434,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                 UpdateUserid = a.UpdateUserid,
                                 UpdateDate = a.UpdateDate,
                                 CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
-                                UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault()
+                                UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault(),
+                                AhwalCount = a.AhwalCount ?? 0,
+                                TrainingCount = a.TrainingCount ?? 0
 
                             }).ToListAsync();
                         }
@@ -460,6 +464,63 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
+        public async Task<List<ULB_DetailVM>> GetAllULBDetailsListAsync(int userId)
+        {
+            List<ULB_DetailVM> result = new List<ULB_DetailVM>();
+            try
+            {
+                using (dbMain)
+                {
+                    var userobj = await dbMain.EmployeeMasters.Where(a => a.Id == userId && a.IsActive == true).FirstOrDefaultAsync();
+                    if (userobj != null)
+                    {
+                        result = await dbMain.ULB_Details.Select(a => new ULB_DetailVM
+                        {
+                            Id = a.Id,
+                            AppID = a.AppID,
+                            AppName = a.AppName,
+                            House_property = a.House_property,
+                            Dump_property = a.Dump_property,
+                            Liquid_property = a.Liquid_property,
+                            Street_property = a.Street_property,
+                            IsActive = a.IsActive,
+                            CreateUserid = a.CreateUserid,
+                            CreateDate = a.CreateDate,
+                            UpdateUserid = a.UpdateUserid,
+                            UpdateDate = a.UpdateDate,
+                            CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
+                            UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault(),
+                            AhwalCount = a.AhwalCount ?? 0,
+                            TrainingCount = a.TrainingCount ?? 0
+
+                        }).ToListAsync();
+
+                        if (result != null && result.Count > 0)
+                        {
+                            foreach (var item in result)
+                            {
+                                item.IsOldULB = IsOldUlb(item.CreateDate);
+                            }
+
+                        }
+                    }
+
+                }
+
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+
+                return result;
+
+            }
+
+        }
+
+
         public async Task<ULB_DetailVM> GetULBDetailsAsync(int Id)
         {
             ULB_DetailVM result = new ULB_DetailVM();
@@ -483,8 +544,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         UpdateDate = a.UpdateDate,
                         CreateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.CreateUserid).Select(e => e.Username).FirstOrDefault(),
                         UpdateUserName = dbMain.EmployeeMasters.Where(e => e.Id == a.UpdateUserid).Select(e => e.Username).FirstOrDefault(),
-                        AhwalCount=a.AhwalCount,
-                        TrainingCount=a.TrainingCount
+                        AhwalCount = a.AhwalCount ?? 0,
+                        TrainingCount = a.TrainingCount ?? 0
                     }).FirstOrDefaultAsync();
                 }
 
@@ -2783,7 +2844,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                 using (dbMain)
                 {
                     var ulbObj = await dbMain.ULB_Details.Where(a => a.Id == ulbId).FirstOrDefaultAsync();
-
                     var subCount = await dbMain.DocSubMasters.Where(a => a.DocId == docId).ToListAsync();
 
                     if (ulbObj != null && docId == 3)
@@ -2804,16 +2864,16 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         else
                         {
                             result.status = "Error";
-                            result.message = "Not Permissison";
-                            result.messageMar = "परवानगी नाही";
+                            result.message = "Please Contact To Administrator";
+                            //result.messageMar = "परवानगी नाही";
                         }
 
                     }
                     else
                     {
                         result.status = "Error";
-                        result.message = "Not Permissison";
-                        result.messageMar = "परवानगी नाही";
+                        result.message = "Please Contact To Administrator";
+                        //result.messageMar = "परवानगी नाही";
 
                     }
 
@@ -2834,7 +2894,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
 
-        public async Task<Result> DeleteFileAsync(string filename)
+        public async Task<Result> DeleteFileAsync(string filename, string type, int id)
         {
             Result result = new Result();
             try
@@ -2846,12 +2906,12 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         File.Delete(filepath);
                         string NewAllFileName = null;
-                        var getfilename = await dbMain.ULB_Doc_Sends.Where(c => c.Id == 12).FirstOrDefaultAsync();
+                        var getfilename = await dbMain.ULB_Doc_Sends.Where(c => c.Id == id).FirstOrDefaultAsync();
                         string[] fileList = getfilename.AllFileName.Split(',');
 
                         foreach (var item in fileList)
                         {
-                            if(item != filename)
+                            if (item != filename && item !="")
                             {
                                 if (NewAllFileName == null || NewAllFileName == "")
                                 {
@@ -2864,7 +2924,15 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             }
                         }
 
-                        getfilename.AllFileName = NewAllFileName;
+                        if (NewAllFileName == null)
+                        {
+                            getfilename.AllFileName = NewAllFileName;
+                        }
+                        else
+                        {
+                            getfilename.AllFileName = NewAllFileName.TrimEnd(',');
+                        }
+                       
                         dbMain.SaveChanges();
 
                         result.status = "Success";

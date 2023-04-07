@@ -49,6 +49,17 @@ namespace MSysICTSBM.Controllers
             return objResult;
         }
 
+
+        [HttpGet("GetAll/ULBDetailsList")]
+        public async Task<List<ULB_DetailVM>> GetAllULBDetailsList()
+        {
+            int userId = Convert.ToInt32(HttpContext.User.Claims.ToList().First(claim => claim.Type == "UserId").Value);
+            List<ULB_DetailVM> objResult = new List<ULB_DetailVM>();
+            objResult = await objRep.GetAllULBDetailsListAsync(userId);
+            return objResult;
+        }
+
+
         [HttpGet("Get/ULBDetails")]
         public async Task<ActionResult<ULB_DetailVM>> GetULBDetails([FromHeader] int Id)
         {
@@ -270,10 +281,10 @@ namespace MSysICTSBM.Controllers
         }
 
         [HttpPost("File/Delete")]
-        public async Task<Result> DeleteFile([FromHeader] string filename)
+        public async Task<Result> DeleteFile([FromHeader] string filename, [FromHeader] string type, [FromHeader] int id)
         {
             Result objResult = new Result();
-            objResult = await objRep.DeleteFileAsync(filename);
+            objResult = await objRep.DeleteFileAsync(filename,type, id);
             return objResult;
         }
 
