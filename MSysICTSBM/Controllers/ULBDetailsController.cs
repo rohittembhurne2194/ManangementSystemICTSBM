@@ -220,7 +220,7 @@ namespace MSysICTSBM.Controllers
 
 
         [HttpPost("Save/ULBDigCopyDetails")]
-        public async Task<Result> SaveULBDigCopyDetails([FromBody] ULB_DigCopy_RecVM obj)
+        public async Task<Result> SaveULBDigCopyDetails([FromForm] ULB_DigCopy_RecVM obj)
         {
 
             Result objResult = new Result();
@@ -240,7 +240,7 @@ namespace MSysICTSBM.Controllers
 
 
         [HttpPost("Save/ULBHardCopyDetails")]
-        public async Task<Result> SaveULBHardCopyDetails([FromBody] ULB_HardCopy_RecVM obj)
+        public async Task<Result> SaveULBHardCopyDetails([FromForm] ULB_HardCopy_RecVM obj)
         {
 
             Result objResult = new Result();

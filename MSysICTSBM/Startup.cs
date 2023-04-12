@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +17,7 @@ using MSysICTSBM.Dal.DataContexts.Models.DB.MainContext;
 using MSysICTSBM.Dal.DataContexts.Models.DB.MainModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -37,6 +39,7 @@ namespace MSysICTSBM
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddDbContext<MSysMainEntities>(ServiceLifetime.Transient);
+           
             services.AddDbContext<MSysMainEntities>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("mainDbCon"),
@@ -44,9 +47,11 @@ namespace MSysICTSBM
 
             }, ServiceLifetime.Transient);
             services.AddDbContext<MSysMainDb>(ServiceLifetime.Transient);
+           // services.AddDirectoryBrowser();
             services.AddControllers().AddJsonOptions(options =>
                 options.JsonSerializerOptions.PropertyNamingPolicy = null);
             services.AddTransient<IRepository, Repository>();
+           
             services.AddSwaggerGen(s =>
             {
                 s.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -124,6 +129,7 @@ namespace MSysICTSBM
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -137,9 +143,31 @@ namespace MSysICTSBM
 
             app.UseHttpsRedirection();
 
+            //app.UseStaticFiles();
+            //app.UseDefaultFiles();
+            //app.UseDirectoryBrowser();
+
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //  Path.Combine(Directory.GetCurrentDirectory(), "upload")),
+            //    RequestPath = "/upload"
+            //});
+            ////Enable directory browsing
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //                Path.Combine(Directory.GetCurrentDirectory(), "upload")),
+            //    RequestPath = "/upload"
+            //});
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+           
+
+          
+
 
             app.UseEndpoints(endpoints =>
             {

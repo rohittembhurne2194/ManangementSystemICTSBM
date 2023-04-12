@@ -2391,13 +2391,13 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
-                                if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
-                                {
+                                //if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
+                                //{
                                     ulbObj.DocStatus = obj.DocStatus;
                                     ulbObj.DocUpdateUserId = obj.userId;
                                     ulbObj.DocUpdateDate = DateTime.Now;
                                     ulbObj.Note = obj.Note;
-                                }
+                                //}
                                 await dbMain.SaveChangesAsync();
 
                                 result.status = "success";
@@ -2431,12 +2431,12 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                         // var extension = "." + obj.file.FileName.Split('.')[obj.file.FileName.Split('.').Length - 1];
                                         //filename = DateTime.Now.Ticks + extension;
                                         filename = NewFile.FileName;
-                                        var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files");
+                                        var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "upload");
                                         if (!Directory.Exists(pathBuilt))
                                         {
                                             Directory.CreateDirectory(pathBuilt);
                                         }
-                                        var path = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files", filename);
+                                        var path = Path.Combine(Directory.GetCurrentDirectory(), "upload", filename);
                                         using (var stream = new FileStream(path, FileMode.Create))
                                         {
                                             await NewFile.CopyToAsync(stream);
@@ -2564,20 +2564,20 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var ulbObj = await dbMain.ULB_DigCopy_Recs.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID).FirstOrDefaultAsync();
+                    var ulbObj = await dbMain.ULB_DigCopy_Recs.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID && a.Id == obj.Id).FirstOrDefaultAsync();
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
                     {
                         if (ulbObj != null)
                         {
                             if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
-                                if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
-                                {
+                                //if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
+                                //{
                                     ulbObj.DocStatus = obj.DocStatus;
                                     ulbObj.DocUpdateUserId = obj.userId;
                                     ulbObj.DocUpdateDate = DateTime.Now;
                                     ulbObj.Note = obj.Note;
-                                }
+                               // }
                                 await dbMain.SaveChangesAsync();
 
                                 result.status = "success";
@@ -2602,13 +2602,54 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                                 var ulbObjData = new ULB_DigCopy_Rec();
 
+                                //// File Upload Code Start
+                                string filename = "";
+                                string AllFileName = null;
+                                try
+                                {
+                                    foreach (var NewFile in obj.file)
+                                    {
+                                        // var extension = "." + obj.file.FileName.Split('.')[obj.file.FileName.Split('.').Length - 1];
+                                        //filename = DateTime.Now.Ticks + extension;
+                                        filename = NewFile.FileName;
+                                        var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "upload");
+                                        if (!Directory.Exists(pathBuilt))
+                                        {
+                                            Directory.CreateDirectory(pathBuilt);
+                                        }
+                                        var path = Path.Combine(Directory.GetCurrentDirectory(), "upload", filename);
+                                        using (var stream = new FileStream(path, FileMode.Create))
+                                        {
+                                            await NewFile.CopyToAsync(stream);
+                                            if (AllFileName == null)
+                                            {
+                                                AllFileName = filename;
+                                            }
+                                            else
+                                            {
+                                                AllFileName = AllFileName + "," + filename;
+                                            }
+                                        }
+                                    }
+
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    result.status = "error";
+                                    result.message = "File Not Upload";
+                                    result.messageMar = "";
+                                    return result;
+                                }
+                                //// File Upload Code End
+
                                 ulbObjData.ULBId = obj.ULBId;
                                 ulbObjData.DocSubID = obj.DocSubID;
                                 ulbObjData.DocStatus = obj.DocStatus;
                                 ulbObjData.DocCreateDate = DateTime.Now;
                                 ulbObjData.DocCreateUserId = obj.userId;
                                 ulbObjData.Note = obj.Note;
-
+                                ulbObjData.AllFileName = AllFileName;
                                 dbMain.ULB_DigCopy_Recs.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
 
@@ -2618,7 +2659,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             }
                             else
                             {
-
                                 result.status = "Error";
                                 result.message = "ULB Doc Sub Name Does Not Exist";
                                 result.messageMar = "ULB डॉक सब नाव अस्तित्वात नाही";
@@ -2703,20 +2743,20 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
             {
                 using (dbMain)
                 {
-                    var ulbObj = await dbMain.ULB_HardCopy_Recs.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID).FirstOrDefaultAsync();
+                    var ulbObj = await dbMain.ULB_HardCopy_Recs.Where(a => a.ULBId == obj.ULBId && a.DocSubID == obj.DocSubID && a.Id == obj.Id).FirstOrDefaultAsync();
                     if (await dbMain.EmployeeMasters.AnyAsync(a => a.Id == obj.userId))
                     {
                         if (ulbObj != null)
                         {
                             if (await dbMain.DocSubMasters.AnyAsync(a => a.Id == obj.DocSubID))
                             {
-                                if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
-                                {
+                                //if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
+                                //{
                                     ulbObj.DocStatus = obj.DocStatus;
                                     ulbObj.DocUpdateUserId = obj.userId;
                                     ulbObj.DocUpdateDate = DateTime.Now;
                                     ulbObj.Note = obj.Note;
-                                }
+                                //}
                                 await dbMain.SaveChangesAsync();
 
                                 result.status = "success";
@@ -2741,13 +2781,54 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
                                 var ulbObjData = new ULB_HardCopy_Rec();
 
+                                //// File Upload Code Start
+                                string filename = "";
+                                string AllFileName = null;
+                                try
+                                {
+                                    foreach (var NewFile in obj.file)
+                                    {
+                                        // var extension = "." + obj.file.FileName.Split('.')[obj.file.FileName.Split('.').Length - 1];
+                                        //filename = DateTime.Now.Ticks + extension;
+                                        filename = NewFile.FileName;
+                                        var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "upload");
+                                        if (!Directory.Exists(pathBuilt))
+                                        {
+                                            Directory.CreateDirectory(pathBuilt);
+                                        }
+                                        var path = Path.Combine(Directory.GetCurrentDirectory(), "upload", filename);
+                                        using (var stream = new FileStream(path, FileMode.Create))
+                                        {
+                                            await NewFile.CopyToAsync(stream);
+                                            if (AllFileName == null)
+                                            {
+                                                AllFileName = filename;
+                                            }
+                                            else
+                                            {
+                                                AllFileName = AllFileName + "," + filename;
+                                            }
+                                        }
+                                    }
+
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    result.status = "error";
+                                    result.message = "File Not Upload";
+                                    result.messageMar = "";
+                                    return result;
+                                }
+                                //// File Upload Code End
+
                                 ulbObjData.ULBId = obj.ULBId;
                                 ulbObjData.DocSubID = obj.DocSubID;
                                 ulbObjData.DocStatus = obj.DocStatus;
                                 ulbObjData.DocCreateDate = DateTime.Now;
                                 ulbObjData.DocCreateUserId = obj.userId;
                                 ulbObjData.Note = obj.Note;
-
+                                ulbObjData.AllFileName = AllFileName;
                                 dbMain.ULB_HardCopy_Recs.Add(ulbObjData);
                                 await dbMain.SaveChangesAsync();
 
@@ -2896,45 +2977,147 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         public async Task<Result> DeleteFileAsync(string filename, string type, int id)
         {
+            string NewAllFileName = null;
             Result result = new Result();
             try
             {
                 using (dbMain)
                 {
-                    var filepath = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files", filename);
+                    var filepath = Path.Combine(Directory.GetCurrentDirectory(), "upload", filename);
                     if (File.Exists(filepath))
                     {
-                        File.Delete(filepath);
-                        string NewAllFileName = null;
-                        var getfilename = await dbMain.ULB_Doc_Sends.Where(c => c.Id == id).FirstOrDefaultAsync();
-                        string[] fileList = getfilename.AllFileName.Split(',');
-
-                        foreach (var item in fileList)
+                        if (type == "DS")
                         {
-                            if (item != filename && item !="")
+                            var getfilename = await dbMain.ULB_Doc_Sends.Where(c => c.Id == id).FirstOrDefaultAsync();
+                            if (getfilename.AllFileName != null)
                             {
-                                if (NewAllFileName == null || NewAllFileName == "")
+                                string[] fileList = getfilename.AllFileName.Split(',');
+                                foreach (var item in fileList)
                                 {
-                                    NewAllFileName = item;
+                                    if (item != filename && item != "")
+                                    {
+                                        if (NewAllFileName == null || NewAllFileName == "")
+                                        {
+                                            NewAllFileName = item;
+                                        }
+                                        else
+                                        {
+                                            NewAllFileName = NewAllFileName + "," + item + ",";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        File.Delete(filepath);
+                                    }
+                                }
+
+                                if (NewAllFileName == null)
+                                {
+                                    getfilename.AllFileName = NewAllFileName;
                                 }
                                 else
                                 {
-                                    NewAllFileName = NewAllFileName + "," + item + ",";
+                                    getfilename.AllFileName = NewAllFileName.TrimEnd(',');
                                 }
                             }
+                            else
+                            {
+                                result.status = "Error";
+                                result.message = "Data & File Not Found";
+                                result.messageMar = "";
+                                return result;
+                            }
+
+                        }
+                        else if (type == "DC")
+                        {
+
+                            var getfilename = await dbMain.ULB_DigCopy_Recs.Where(c => c.Id == id).FirstOrDefaultAsync();
+                            if (getfilename.AllFileName != null)
+                            {
+                                string[] fileList = getfilename.AllFileName.Split(',');
+                                foreach (var item in fileList)
+                                {
+                                    if (item != filename && item != "")
+                                    {
+                                        if (NewAllFileName == null || NewAllFileName == "")
+                                        {
+                                            NewAllFileName = item;
+                                        }
+                                        else
+                                        {
+                                            NewAllFileName = NewAllFileName + "," + item + ",";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        File.Delete(filepath);
+                                    }
+                                }
+
+                                if (NewAllFileName == null)
+                                {
+                                    getfilename.AllFileName = NewAllFileName;
+                                }
+                                else
+                                {
+                                    getfilename.AllFileName = NewAllFileName.TrimEnd(',');
+                                }
+                            }
+                            else
+                            {
+                                result.status = "Error";
+                                result.message = "Data & File Not Found";
+                                result.messageMar = "";
+                                return result;
+                            }
+
+                        }
+                        else if (type == "HC")
+                        {
+                            var getfilename = await dbMain.ULB_HardCopy_Recs.Where(c => c.Id == id).FirstOrDefaultAsync();
+                            if (getfilename.AllFileName != null)
+                            {
+                                string[] fileList = getfilename.AllFileName.Split(',');
+                                foreach (var item in fileList)
+                                {
+                                    if (item != filename && item != "")
+                                    {
+                                        if (NewAllFileName == null || NewAllFileName == "")
+                                        {
+                                            NewAllFileName = item;
+                                        }
+                                        else
+                                        {
+                                            NewAllFileName = NewAllFileName + "," + item + ",";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        File.Delete(filepath);
+                                    }
+                                }
+
+                                if (NewAllFileName == null)
+                                {
+                                    getfilename.AllFileName = NewAllFileName;
+                                }
+                                else
+                                {
+                                    getfilename.AllFileName = NewAllFileName.TrimEnd(',');
+                                }
+                            }
+                            else
+                            {
+                                result.status = "Error";
+                                result.message = "Data & File Not Found";
+                                result.messageMar = "";
+                                return result;
+                            }
+
                         }
 
-                        if (NewAllFileName == null)
-                        {
-                            getfilename.AllFileName = NewAllFileName;
-                        }
-                        else
-                        {
-                            getfilename.AllFileName = NewAllFileName.TrimEnd(',');
-                        }
-                       
                         dbMain.SaveChanges();
-
                         result.status = "Success";
                         result.message = "File Delete Successfully";
                         result.messageMar = "";
