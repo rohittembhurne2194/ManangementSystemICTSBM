@@ -58,5 +58,9 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         Task<Result> SaveAddAhwalAsync(int ulbId, int docId);
 
         Task<Result> DeleteFileAsync(string filename, string type, int id);
+
+        Task<List<EmployeeMasterVM>> GetUserListDetailsAsync();
+
+        Task<List<Directory_FileDownload>> GetDirectoryFileNameAsync(Directory_FileDownload filename); 
     }
 }

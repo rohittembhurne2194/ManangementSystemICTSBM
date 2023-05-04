@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.AspNetCore.StaticFiles;
+using System.IO.Compression;
 
 namespace MSysICTSBM.Controllers
 {
@@ -269,8 +270,9 @@ namespace MSysICTSBM.Controllers
         [HttpGet("File/Download")]
         public async Task<IActionResult> DownloadFile([FromHeader] string filename)
         {
+            string[] fileList = filename.Split(',');
 
-            var filepath = Path.Combine(Directory.GetCurrentDirectory(), "upload\\files", filename);
+            var filepath = Path.Combine(Directory.GetCurrentDirectory(), "upload", filename);
             var provider = new FileExtensionContentTypeProvider();
             if (!provider.TryGetContentType(filepath, out var contenttype))
             {
@@ -280,11 +282,48 @@ namespace MSysICTSBM.Controllers
             return File(bytes, contenttype, Path.GetFileName(filepath));
         }
 
+        [HttpGet("File/DownloadNew")]    // File's Download In Zip
+        public async Task<IActionResult> DownloadFileNew([FromHeader] string filename)
+        {
+            string[] fileList = filename.Replace(" ", "").Trim().Split(',');
+            using (var outStream=new MemoryStream())
+            {
+                using (var archive=new ZipArchive(outStream, ZipArchiveMode.Create, true))
+                {
+                    //foreach(var file in Directory.GetFiles("upload"))   //// For All File Download From Folder in Zip
+                    foreach (var file in fileList)    //// For  Selected File Download From Folder in Zip
+                    {
+                        var fileInArchive = archive.CreateEntry(Path.GetFileName("upload\\" + file), CompressionLevel.Optimal);
+                        using (var entryStream = fileInArchive.Open())
+                        {
+                            using (var fileCompressionStream = new MemoryStream(System.IO.File.ReadAllBytes("upload\\" + file)))
+                            {
+                                await fileCompressionStream.CopyToAsync(entryStream);
+                            }
+                        }
+                    }
+
+                }
+                outStream.Position = 0;
+                return File(outStream.ToArray(), "application/zip", "AllFileDownlaod.zip");
+            }
+         }
+
+
         [HttpPost("File/Delete")]
         public async Task<Result> DeleteFile([FromHeader] string filename, [FromHeader] string type, [FromHeader] int id)
         {
             Result objResult = new Result();
             objResult = await objRep.DeleteFileAsync(filename,type, id);
+            return objResult;
+        }
+
+
+        [HttpGet("Get/DirectoryFileName")]
+        public async Task<List<Directory_FileDownload>> GetDirectoryFileName([FromBody] Directory_FileDownload filename)
+        {
+            List<Directory_FileDownload> objResult = new List<Directory_FileDownload>();
+            objResult = await objRep.GetDirectoryFileNameAsync(filename);
             return objResult;
         }
 

@@ -57,5 +57,14 @@ namespace MSysICTSBM.Controllers
             objResult = await objRep.SaveUserAsync(objUser);
             return objResult;
         }
+
+        [HttpGet("Get/UserList")]
+        public async Task<List<EmployeeMasterVM>> GetUserListDetails()
+        {
+            List<EmployeeMasterVM> objResult = new List<EmployeeMasterVM>();
+            objResult = await objRep.GetUserListDetailsAsync();
+            return objResult;
+        }
+
     }
 }

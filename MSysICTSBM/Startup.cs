@@ -164,9 +164,25 @@ namespace MSysICTSBM
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-           
 
-          
+            ////  START Code :- 02-05-2023  add by roshan for image get from Directory/Folder
+            app.UseStaticFiles();// For the wwwroot folder
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine(Directory.GetCurrentDirectory(), "upload")),
+                RequestPath = "/upload"
+            });
+            //Enable directory browsing
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine(Directory.GetCurrentDirectory(), "upload")),
+                RequestPath = "/upload"
+            });
+
+            //// END Code :- 02-05-2023  add by roshan for image get from Directory/Folder
 
 
             app.UseEndpoints(endpoints =>

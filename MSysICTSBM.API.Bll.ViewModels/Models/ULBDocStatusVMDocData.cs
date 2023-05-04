@@ -38,6 +38,7 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public DateTime? CreationDate { get; set; }
         public string DocSubName { get; set; }
         //public bool DocSentStatus { get; set; }
+        public string AllFileName { get; set; }
     }
     public class DigCopy
     {
@@ -46,6 +47,7 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public string Note { get; set; }
         public DateTime? CreationDate { get; set; }
         public string DocSubName { get; set; }
+        public string AllFileName { get; set; }
     }
 
     public class HardCopy
@@ -55,6 +57,7 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
         public string Note { get; set; }
         public DateTime? CreationDate { get; set; }
         public string DocSubName { get; set; }
+        public string AllFileName { get; set; }
     }
    
 }

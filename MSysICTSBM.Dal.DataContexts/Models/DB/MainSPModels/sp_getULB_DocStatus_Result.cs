@@ -37,5 +37,6 @@ namespace MSysICTSBM.Dal.DataContexts.Models.DB.MainSPModels
         public string DocHardCopyNote { get; set; }
 
         public int Id { get; set; }
+        public string AllFileName { get; set; }
     }
 }

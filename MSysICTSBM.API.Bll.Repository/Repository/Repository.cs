@@ -334,8 +334,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                     {
                         if (await dbMain.EmployeeMasters.AnyAsync(a => a.Username == obj.Username))
                         {
-
-
                             result.status = "Error";
                             result.message = "User Name  already Exist";
                             result.messageMar = "नाव आधीपासून अस्तित्वात आहे..";
@@ -392,7 +390,8 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                         {
                             if (userobj.IsActiveULB != null)
                             {
-                                string[] arrAppId = userobj.IsActiveULB.Split(',');
+
+                                string[] arrAppId = userobj.IsActiveULB.Replace(" ", "").Trim().Split(',');
                                 result = await dbMain.ULB_Details.Where(a => arrAppId.Contains(a.Id.ToString())).Select(a => new ULB_DetailVM
                                 {
                                     Id = a.Id,
@@ -1094,6 +1093,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     UserName = c.DocSentCreateUserName,
                                     DocSubName = a.DocSubName,
                                     CreationDate = c.DocSentCreateDate,
+                                    AllFileName = c.AllFileName,
 
                                 });
                             }
@@ -1109,6 +1109,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     UserName = d.DocSentCreateUserName,
                                     DocSubName = a.DocSubName,
                                     CreationDate = d.DocSentCreateDate,
+                                    AllFileName = d.AllFileName,
 
                                 });
                             }
@@ -1123,6 +1124,7 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                                     UserName = e.DocSentCreateUserName,
                                     DocSubName = a.DocSubName,
                                     CreationDate = e.DocSentCreateDate,
+                                    AllFileName = e.AllFileName,
                                 });
                             }
 
@@ -2393,10 +2395,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 //if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
                                 //{
-                                    ulbObj.DocStatus = obj.DocStatus;
-                                    ulbObj.DocUpdateUserId = obj.userId;
-                                    ulbObj.DocUpdateDate = DateTime.Now;
-                                    ulbObj.Note = obj.Note;
+                                ulbObj.DocStatus = obj.DocStatus;
+                                ulbObj.DocUpdateUserId = obj.userId;
+                                ulbObj.DocUpdateDate = DateTime.Now;
+                                ulbObj.Note = obj.Note;
                                 //}
                                 await dbMain.SaveChangesAsync();
 
@@ -2573,11 +2575,11 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 //if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
                                 //{
-                                    ulbObj.DocStatus = obj.DocStatus;
-                                    ulbObj.DocUpdateUserId = obj.userId;
-                                    ulbObj.DocUpdateDate = DateTime.Now;
-                                    ulbObj.Note = obj.Note;
-                               // }
+                                ulbObj.DocStatus = obj.DocStatus;
+                                ulbObj.DocUpdateUserId = obj.userId;
+                                ulbObj.DocUpdateDate = DateTime.Now;
+                                ulbObj.Note = obj.Note;
+                                // }
                                 await dbMain.SaveChangesAsync();
 
                                 result.status = "success";
@@ -2752,10 +2754,10 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
                             {
                                 //if (((ulbObj.DocStatus is null || ulbObj.DocStatus == false) && obj.DocStatus == true) || (ulbObj.DocStatus == true && obj.DocStatus == false))
                                 //{
-                                    ulbObj.DocStatus = obj.DocStatus;
-                                    ulbObj.DocUpdateUserId = obj.userId;
-                                    ulbObj.DocUpdateDate = DateTime.Now;
-                                    ulbObj.Note = obj.Note;
+                                ulbObj.DocStatus = obj.DocStatus;
+                                ulbObj.DocUpdateUserId = obj.userId;
+                                ulbObj.DocUpdateDate = DateTime.Now;
+                                ulbObj.Note = obj.Note;
                                 //}
                                 await dbMain.SaveChangesAsync();
 
@@ -3145,6 +3147,67 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         }
 
+
+        public async Task<List<EmployeeMasterVM>> GetUserListDetailsAsync()
+        {
+            var result = new List<EmployeeMasterVM>();
+            try
+            {
+                using (dbMain)
+                {
+                    result = await dbMain.EmployeeMasters.Select(a => new EmployeeMasterVM
+                    {
+                        Id = a.Id,
+                        Name = a.Name,
+                        Username = a.Username,
+                        Password = a.Password,
+                        MobileNumber = a.MobileNumber,
+                        Address = a.Address,
+                        Type = a.Type,
+                        IsActive = a.IsActive,
+                        IsActiveULB = a.IsActiveULB
+
+                    }).ToListAsync();
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return result;
+            }
+
+        }
+
+
+        public async Task<List<Directory_FileDownload>> GetDirectoryFileNameAsync(Directory_FileDownload filename)
+        {
+            List<Directory_FileDownload> result = new List<Directory_FileDownload>();
+            var path = "http://114.143.244.134:5054/upload/";
+            var fileNew = filename.FileName;
+            try
+            {
+                string[] fileList = fileNew.Replace(" ", "").Trim().Split(',');
+                foreach (var file in fileList)
+                {
+                    result.Add(new Directory_FileDownload()
+                    {
+                        FileName = path+file,
+                        
+                    });
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return result;
+            }
+
+        }
+
+        //
 
     }
 }
