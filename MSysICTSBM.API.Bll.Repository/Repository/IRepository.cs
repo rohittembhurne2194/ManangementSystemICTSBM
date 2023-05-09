@@ -61,6 +61,6 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
 
         Task<List<EmployeeMasterVM>> GetUserListDetailsAsync();
 
-        Task<List<Directory_FileDownload>> GetDirectoryFileNameAsync(Directory_FileDownload filename); 
+        Task<List<Directory_FileDownload>> GetDirectoryFileNameAsync(string filename); 
     }
 }

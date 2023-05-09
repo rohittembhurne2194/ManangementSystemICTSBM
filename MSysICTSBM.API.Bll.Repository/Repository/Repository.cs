@@ -3182,19 +3182,20 @@ namespace MSysICTSBM.API.Bll.Repository.Repository
         }
 
 
-        public async Task<List<Directory_FileDownload>> GetDirectoryFileNameAsync(Directory_FileDownload filename)
+        public async Task<List<Directory_FileDownload>> GetDirectoryFileNameAsync(string filename)
         {
             List<Directory_FileDownload> result = new List<Directory_FileDownload>();
             var path = "http://114.143.244.134:5054/upload/";
-            var fileNew = filename.FileName;
+            var fileNew = filename;
             try
             {
-                string[] fileList = fileNew.Replace(" ", "").Trim().Split(',');
+                string[] fileList = fileNew.Replace(", ", ",").Trim().Split(',');
+                //string[] fileList = fileNew.Split(',');
                 foreach (var file in fileList)
                 {
                     result.Add(new Directory_FileDownload()
                     {
-                        FileName = path+file,
+                        filename = path+file,
                         
                     });
                 }

@@ -320,7 +320,7 @@ namespace MSysICTSBM.Controllers
 
 
         [HttpGet("Get/DirectoryFileName")]
-        public async Task<List<Directory_FileDownload>> GetDirectoryFileName([FromBody] Directory_FileDownload filename)
+        public async Task<List<Directory_FileDownload>> GetDirectoryFileName([FromHeader] string filename)
         {
             List<Directory_FileDownload> objResult = new List<Directory_FileDownload>();
             objResult = await objRep.GetDirectoryFileNameAsync(filename);

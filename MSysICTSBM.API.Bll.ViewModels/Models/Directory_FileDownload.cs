@@ -8,6 +8,6 @@ namespace MSysICTSBM.API.Bll.ViewModels.Models
 {
    public  class Directory_FileDownload
     {
-        public string FileName { get; set; }
+        public string filename { get; set; }
     }
 }
